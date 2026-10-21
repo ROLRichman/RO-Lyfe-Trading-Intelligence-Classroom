@@ -1,0 +1,1 @@
+Place approved teaching screenshots and licensed image assets in this folder. Add descriptive captions and source/permission notes. The starter chart is generated with JavaScript and does not require image files.

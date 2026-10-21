@@ -1,0 +1,63 @@
+# RO-Lyfe-Trading-Intelligence-Classroom
+
+**RO’Lyfe Trading Intelligence Classroom™** is a mobile-first, static educational interface for chart study, options strategy comparison, stock-first risk planning, and a local practice journal.
+
+## Files
+
+- `index.html` — classroom layout and sections
+- `css/styles.css` — responsive dark classroom styling
+- `js/app.js` — illustrative OHLC generator, Heikin-Ashi transformation, moving averages, sample oscillators, strategy comparison, risk worksheet, journal, and question helper
+- `assets/` — place optional licensed screenshots and learning images here
+- `modules/` — reserved for future modular lessons and strategy modules
+
+## Run locally
+
+Open `index.html` in a modern browser. No build process is required. An internet connection may be used to load the optional Google Fonts; the page remains usable if they are unavailable.
+
+## Deploy with GitHub Pages
+
+1. Upload the contents of this folder to the root of the `RO-Lyfe-Trading-Intelligence-Classroom` repository.
+2. Commit to the branch configured for Pages (commonly `main`).
+3. In **Settings → Pages**, select the correct branch and `/ (root)` if Pages is not already configured.
+4. Open the Pages URL shown by GitHub after deployment completes.
+
+## Chart and indicator notes
+
+The charts use deterministic illustrative OHLC sample data. They are not live market data, and the chart's regenerate button creates another sample sequence. The app calculates:
+
+- Heikin-Ashi candles from sample OHLC bars
+- Simple moving averages: 20, 50, 200 periods
+- Slow Stochastic-style %K smoothing with 20/80 reference levels
+- RSI with 30/70 reference levels
+- An illustrative MACD histogram
+
+The displayed MA series are calculated from the sample close series. The chart labels sample values and does not provide market forecasts. VWAP is discussed in the lessons but is not presented as a live/fully calculated indicator in this starter build.
+
+**Important:** Heikin-Ashi open/close values are synthetic calculations. Do not use them as executable prices. Use actual market OHLC/quotes and verify the broker's order ticket when planning real entries and exits.
+
+## Trade planner
+
+The worksheet compares the stock entry and invalidation levels, calculates their distance, and optionally compares a stock target distance to that chart risk. If an option premium is entered, it shows the approximate gross premium debit for standard 100-share equity contracts.
+
+It intentionally does not claim that a stock-chart stop predicts the option's loss. Option value depends on multiple factors, including underlying price, delta, time remaining, implied volatility, liquidity, and bid/ask spread. It does not submit orders or connect to a brokerage.
+
+## Journal and privacy
+
+Journal notes are stored in browser `localStorage` on the current device and browser. They are not synced or backed up. Use **Export journal as JSON** to save a copy. Avoid entering account numbers, passwords, or other sensitive information.
+
+## AI question helper
+
+The floating assistant is a prompt builder. It does not call an AI API or transmit questions. It copies the question to the clipboard when browser permissions allow. A future connected AI integration requires an explicit provider, authentication, server-side secret handling, usage limits, and privacy review. Never place an API secret in client-side JavaScript.
+
+## Next integrations
+
+- Verified live chart/quote provider and documented licensing
+- Actual VWAP and optional EMA/SMA selection
+- Import of user-approved coach screenshots into `assets/` with captions and rights notes
+- Connection back to the RO’Lyfe Tactical Intelligence Center
+- Optional server-backed journal, authentication and AI provider
+- More rigorous options payoff and expiration calculators
+
+## Educational disclaimer
+
+This is an educational and research aid, not investment advice, a trade signal service, or a brokerage platform. Sample charts are illustrative. Options involve risk and may expire worthless. Stops may execute at worse prices than expected, and stop-limit orders may not execute. Verify all strategy mechanics and broker order behavior before live trading.

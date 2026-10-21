@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111f">
+  <meta name="description" content="RO'Lyfe Trading Intelligence Classroom — Heikin-Ashi chart study, strategy comparison, risk planning, and trading education.">
+  <title>RO’Lyfe Trading Intelligence Classroom™</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="RO'Lyfe Classroom home">
+      <span class="brand-mark">R</span>
+      <span><strong>RO’Lyfe</strong><small>TRADING INTELLIGENCE CLASSROOM™</small></span>
+    </a>
+    <button class="icon-btn menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav">☰ <span class="sr-only">Toggle menu</span></button>
+    <nav id="mainNav">
+      <a href="#chart-lab">Chart Lab</a><a href="#strategy">Strategy Advantage</a><a href="#trade-planner">Trade Planner</a><a href="#classroom">Classroom</a><a href="#journal">Journal</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">STUDY • PLAN • EXECUTE • REVIEW</p>
+        <h1>Read the chart.<br><span>Respect the risk.</span></h1>
+        <p class="hero-sub">A mobile-first trading classroom built around the RO’Lyfe stock-first method. Learn with illustrative charts before risking real capital.</p>
+        <div class="hero-actions"><a class="btn primary" href="#chart-lab">Open Chart Lab</a><a class="btn ghost" href="#strategy">Compare Strategies</a></div>
+        <p class="disclaimer-mini">Educational tool · Sample data only · No brokerage connection</p>
+      </div>
+      <div class="hero-panel">
+        <div class="panel-head"><span class="live-dot"></span> CLASSROOM STATUS <span class="pill">PRACTICE MODE</span></div>
+        <div class="hero-stat-grid">
+          <div><small>Chart mode</small><strong>Heikin-Ashi</strong></div>
+          <div><small>Trend map</small><strong>20 / 50 / 200 MA</strong></div>
+          <div><small>Momentum</small><strong>RSI + Stoch + MACD</strong></div>
+          <div><small>Execution plan</small><strong>Bracket + runner</strong></div>
+        </div>
+        <div class="rule-strip"><span>01</span> Stock chart first <span class="rule-arrow">→</span> <span>02</span> Option risk second</div>
+      </div>
+    </section>
+
+    <section class="section" id="chart-lab">
+      <div class="section-heading"><div><p class="eyebrow">01 / TECHNICAL STUDY</p><h2>Chart Intelligence Lab</h2><p class="muted">Illustrative OHLC data generated in this page. Not live prices or a signal service.</p></div><span class="pill">SIMULATED</span></div>
+      <div class="chart-toolbar">
+        <div class="control-group"><label for="chartSymbol">Study symbol</label><select id="chartSymbol"><option value="DEMO">DEMO · Example trend</option><option value="BULL">BULL · Trend continuation</option><option value="BEAR">BEAR · Trend reversal</option><option value="RANGE">RANGE · Sideways market</option></select></div>
+        <div class="control-group"><label for="candleMode">Candle type</label><select id="candleMode"><option value="heikin">Heikin-Ashi</option><option value="regular">Regular candles</option></select></div>
+        <div class="control-group"><label for="timeframe">Study timeframe</label><select id="timeframe"><option>Daily</option><option>4H</option><option>1H</option><option>15m</option><option>5m</option></select></div>
+        <button class="btn small" id="refreshChart">Regenerate example</button>
+      </div>
+      <div class="chart-card">
+        <div class="chart-legend">
+          <span><i class="legend-line ma20"></i> MA 20</span><span><i class="legend-line ma50"></i> MA 50</span><span><i class="legend-line ma200"></i> MA 200</span><span class="muted">Illustrative candles</span>
+        </div>
+        <div class="chart-wrap"><canvas id="priceChart" aria-label="Illustrative stock candlestick chart with moving averages"></canvas></div>
+        <div class="chart-notes"><div><small>Trend context</small><strong id="trendRead">Loading study…</strong></div><div><small>Last sample close</small><strong id="lastClose">—</strong></div><div><small>Chart mode</small><strong id="modeRead">Heikin-Ashi</strong></div></div>
+      </div>
+      <div class="indicator-grid">
+        <article class="indicator-card"><div class="indicator-title"><h3>Slow Stochastic</h3><span class="pill">20 / 80</span></div><canvas id="stochChart" class="mini-chart" aria-label="Illustrative slow stochastic panel"></canvas><p>Below 20 can indicate an oversold condition; above 80 can indicate an overbought condition. Neither guarantees a reversal.</p></article>
+        <article class="indicator-card"><div class="indicator-title"><h3>RSI</h3><span class="pill">30 / 70</span></div><canvas id="rsiChart" class="mini-chart" aria-label="Illustrative RSI panel"></canvas><p>Use RSI for momentum context. Customize thresholds in the settings rather than treating a single reading as an automatic trade.</p></article>
+        <article class="indicator-card"><div class="indicator-title"><h3>MACD concept</h3><span class="pill">Momentum</span></div><canvas id="macdChart" class="mini-chart" aria-label="Illustrative MACD histogram panel"></canvas><p>Histogram and line behavior can help assess momentum shifts. MACD values depend on the instrument and settings.</p></article>
+      </div>
+      <div class="notice"><strong>Heikin-Ashi reminder:</strong> the candles are calculated from current and prior OHLC values to smooth visual trends. Their displayed open/close values are synthetic calculations—not prices at which an order can necessarily execute. Use actual market prices for entries, stops and fills.</div>
+    </section>
+
+    <section class="section" id="strategy">
+      <div class="section-heading"><div><p class="eyebrow">02 / CHOOSE THE TOOL FOR THE JOB</p><h2>Strategy Advantage</h2><p class="muted">Compare strategy purpose, obligations, and risk before selecting a setup.</p></div></div>
+      <div class="strategy-tabs" role="tablist" aria-label="Strategy comparison">
+        <button class="strategy-tab active" data-strategy="long" role="tab" aria-selected="true">Long calls / puts</button>
+        <button class="strategy-tab" data-strategy="covered" role="tab" aria-selected="false">Covered calls</button>
+        <button class="strategy-tab" data-strategy="calendar" role="tab" aria-selected="false">Calendar spread</button>
+        <button class="strategy-tab" data-strategy="vertical" role="tab" aria-selected="false">Vertical spread</button>
+      </div>
+      <article class="strategy-detail" id="strategyDetail" aria-live="polite"></article>
+      <div class="strategy-callout"><strong>RO’Lyfe default:</strong> directional option buying stays the core workflow. Covered calls and spreads are separate strategies with different obligations and risk models—not add-ons required for every trade.</div>
+    </section>
+
+    <section class="section" id="trade-planner">
+      <div class="section-heading"><div><p class="eyebrow">03 / PRE-TRADE DISCIPLINE</p><h2>Stock-First Trade Planner</h2><p class="muted">A planning worksheet, not a broker order ticket.</p></div></div>
+      <div class="planner-layout">
+        <form class="planner-form" id="plannerForm">
+          <div class="field"><label for="direction">Directional idea</label><select id="direction"><option value="Bullish">Bullish — study calls</option><option value="Bearish">Bearish — study puts</option><option value="Neutral">Neutral / range-bound</option></select></div>
+          <div class="field"><label for="underlying">Underlying symbol (optional)</label><input id="underlying" placeholder="e.g., XYZ (your research)" maxlength="12"></div>
+          <div class="field"><label for="entry">Planned stock entry</label><input id="entry" type="number" min="0" step="0.01" placeholder="0.00" required></div>
+          <div class="field"><label for="invalidation">Stock chart invalidation</label><input id="invalidation" type="number" min="0" step="0.01" placeholder="0.00" required></div>
+          <div class="field"><label for="target">First stock-price target (optional)</label><input id="target" type="number" min="0" step="0.01" placeholder="0.00"></div>
+          <div class="field"><label for="premium">Option premium paid per share</label><input id="premium" type="number" min="0" step="0.01" placeholder="e.g., 1.25"></div>
+          <div class="field"><label for="contracts">Contracts</label><input id="contracts" type="number" min="1" step="1" value="1"></div>
+          <div class="field"><label for="maxLoss">Maximum option risk budget ($)</label><input id="maxLoss" type="number" min="0" step="1" placeholder="e.g., 125"></div>
+          <button class="btn primary" type="submit">Review risk plan</button>
+        </form>
+        <div class="plan-output" id="planOutput" aria-live="polite"><div class="empty-state"><span class="empty-icon">◎</span><h3>Your plan appears here</h3><p>Enter a stock entry and invalidation level. The tool will calculate chart distance and an illustrative option premium exposure when provided.</p></div></div>
+      </div>
+      <div class="notice"><strong>Risk rule:</strong> stock-chart invalidation and option-premium risk are different measures. Option values can change due to delta, time decay, implied volatility and bid/ask spreads. The worksheet does not calculate a reliable option stop from the stock stop.</div>
+    </section>
+
+    <section class="section" id="classroom">
+      <div class="section-heading"><div><p class="eyebrow">04 / LEARN THE WHY</p><h2>Classroom Modules</h2><p class="muted">Open a lesson, review the rule, and test your understanding.</p></div></div>
+      <div class="lesson-list">
+        <details open><summary>Heikin-Ashi vs. regular candles</summary><p>Heikin-Ashi smooths price presentation to make trends easier to study. Regular candles show actual OHLC prices for the period. Use Heikin-Ashi to inspect trend structure, then use actual market prices for execution and risk calculations.</p></details>
+        <details><summary>Moving averages: 20 / 50 / 200</summary><p>The 20-period average provides shorter-term context, the 50-period average intermediate context, and the 200-period average longer-term context. Their usefulness depends on the timeframe. A crossover is not a guarantee of future direction.</p></details>
+        <details><summary>Slow Stochastic, RSI, MACD and VWAP</summary><p>These tools measure different aspects of momentum or price context. Stochastic and RSI can remain overbought or oversold during strong trends. MACD can lag. VWAP is most commonly used as an intraday volume-weighted reference. Look for confluence, not certainty.</p></details>
+        <details><summary>ATM options and 14–20 DTE</summary><p>This is your preferred study window, not a universal best expiration. Shorter-dated options generally have greater time-decay sensitivity. Compare liquidity, spread, delta, implied volatility, event risk and the intended holding period before deciding.</p></details>
+        <details><summary>Brackets, partial profits and runners</summary><p>Plan the entry, invalidation, target, partial exit and runner rules before the trade. Confirm how your broker handles linked orders, stop triggers, partial fills and option order types. Stops can fill at worse prices; stop-limit orders can fail to fill.</p></details>
+        <details><summary>Covered calls and calendar spreads</summary><p>A covered call generally pairs 100 shares with one standard short call contract; it caps upside at the strike and still leaves substantial stock downside. A calendar spread uses different expirations at the same strike and has its own volatility, timing and expiration risks.</p></details>
+      </div>
+    </section>
+
+    <section class="section" id="journal">
+      <div class="section-heading"><div><p class="eyebrow">05 / REVIEW THE PROCESS</p><h2>Practice Journal</h2><p class="muted">Local-only sample journal. Nothing is sent to a brokerage.</p></div></div>
+      <form class="journal-form" id="journalForm">
+        <div class="field"><label for="journalSymbol">Symbol / setup</label><input id="journalSymbol" placeholder="Example: DEMO bullish pullback" required maxlength="80"></div>
+        <div class="field"><label for="journalNote">What did you observe or learn?</label><textarea id="journalNote" rows="3" placeholder="Chart context, plan, result, lesson…" required maxlength="1000"></textarea></div>
+        <button class="btn primary" type="submit">Add journal note</button>
+      </form>
+      <div id="journalEntries" class="journal-entries"><p class="muted">No notes yet. Your entries will remain in this browser on this device.</p></div>
+      <button class="btn ghost small" id="exportJournal">Export journal as JSON</button>
+    </section>
+
+    <section class="section links-section">
+      <div class="section-heading"><div><p class="eyebrow">06 / RO’LYFE ECOSYSTEM</p><h2>Trading Links</h2></div></div>
+      <div class="link-grid">
+        <a href="https://github.com/ROLRichman/RO-Lyfe-Tactical-Intelligence-Center-" target="_blank" rel="noopener"><strong>Tactical Intelligence Center™</strong><span>Main trading cockpit</span></a>
+        <a href="https://github.com/ROLRichman/rolyfe-market-terminal" target="_blank" rel="noopener"><strong>Market Terminal</strong><span>Market research workspace</span></a>
+        <a href="https://github.com/ROLRichman/ROlyfe-Trading-Calculator-Pro" target="_blank" rel="noopener"><strong>Trading Calculator Pro</strong><span>Risk and trade calculations</span></a>
+        <a href="https://github.com/ROLRichman/rolyfe-family-wealth-academy" target="_blank" rel="noopener"><strong>Family Wealth & Trading Academy</strong><span>Family education project</span></a>
+      </div>
+      <p class="muted tiny">Repository links are convenience links and should be checked if a project has been renamed or made private.</p>
+    </section>
+
+    <footer><div class="brand footer-brand"><span class="brand-mark">R</span><span><strong>RO’Lyfe</strong><small>TRADE SMART. STAY DISCIPLINED.</small></span></div><p>Educational use only. This page uses illustrative data, not live quotes, investment advice, or brokerage execution. Options involve risk and may expire worthless.</p><a href="#top" class="back-top">↑ Back to top</a></footer>
+  </main>
+
+  <button class="ai-fab" id="aiFab" aria-label="Open AI classroom questions" aria-expanded="false">✦<span>Ask AI</span></button>
+  <aside class="ai-panel" id="aiPanel" aria-label="AI question helper" hidden>
+    <div class="ai-head"><div><strong>RO’Lyfe Intelligence Desk</strong><small>Question builder · No live data connected</small></div><button class="icon-btn" id="aiClose" aria-label="Close assistant">×</button></div>
+    <p class="muted">Choose a topic or type a question. This helper builds a prompt you can copy into your preferred AI assistant; it does not send your information anywhere.</p>
+    <div class="ai-chips"><button data-prompt="Explain this Heikin-Ashi chart in educational terms.">Explain chart</button><button data-prompt="Compare this options strategy's risks and payoff.">Compare strategies</button><button data-prompt="Help me review this stock-first trade plan and identify missing risk controls.">Review trade plan</button><button data-prompt="Help me evaluate a real-estate investment's assumptions and downside risks.">Real estate</button></div>
+    <label for="aiQuestion">Your question</label><textarea id="aiQuestion" rows="4" placeholder="Ask a trading, investing or real-estate question…"></textarea>
+    <div class="ai-actions"><button class="btn primary small" id="copyPrompt">Copy question</button><button class="btn ghost small" id="clearPrompt">Clear</button></div>
+    <p id="aiStatus" class="tiny muted" aria-live="polite"></p>
+  </aside>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
