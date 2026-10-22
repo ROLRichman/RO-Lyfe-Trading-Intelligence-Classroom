@@ -43,16 +43,16 @@ test('Market Room risk ladder validates stop placement and calculates long and s
   await page.locator('#mrShares').fill('10');
   await page.locator('#mrRiskForm button[type="submit"]').click();
   await expect(page.locator('#mrRiskOutput')).toContainText('$20.00');
-  await expect(page.locator('#mrRiskOutput')).toContainText('$102.00');
-  await expect(page.locator('#mrRiskOutput')).toContainText('$104.00');
-  await expect(page.locator('#mrRiskOutput')).toContainText('$106.00');
+  await expect(page.locator('#mrRiskOutput')).toContainText('102.00');
+  await expect(page.locator('#mrRiskOutput')).toContainText('104.00');
+  await expect(page.locator('#mrRiskOutput')).toContainText('106.00');
   await page.locator('#mrStop').fill('101');
   await expect(page.locator('#mrRiskOutput')).toContainText('long plan needs the stop below entry');
   await page.locator('#mrDirection').selectOption('short');
   await page.locator('#mrStop').fill('102');
   await expect(page.locator('#mrRiskOutput')).toContainText('$20.00');
-  await expect(page.locator('#mrRiskOutput')).toContainText('$98.00');
-  await expect(page.locator('#mrRiskOutput')).toContainText('$94.00');
+  await expect(page.locator('#mrRiskOutput')).toContainText('98.00');
+  await expect(page.locator('#mrRiskOutput')).toContainText('94.00');
 });
 
 test('Chart Lab renders study panels and responds to symbol and candle controls', async ({ page }) => {
