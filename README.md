@@ -82,3 +82,19 @@ The Stage 1 Market Room adds a separate practice-data workspace to the classroom
 - [ ] Test long and short risk plans, including invalid stop placement.
 - [ ] Check layout on a narrow phone screen and a desktop viewport.
 - [ ] Before live data is added, select a licensed provider and implement credentials only on a trusted server-side endpoint.
+
+## Automated browser checks
+
+The branch includes a Playwright end-to-end suite and a GitHub Actions workflow at `.github/workflows/classroom-tests.yml`. On GitHub, open **Actions → Classroom browser tests** to view run status and detailed failures.
+
+To run the checks locally with Node.js 20 or newer:
+
+```bash
+npm install
+npx playwright install chromium
+npm test
+```
+
+The suite covers navigation and section loading, Market Room asset/symbol/timeframe controls, sample-chart rendering, long/short 1R/2R/3R calculations and invalid stop placement, Chart Lab indicator canvases and candle controls, strategy tabs, the stock-first planner, local journal persistence/deletion/JSON export, the AI prompt helper, and mobile viewport overflow/menu behavior. It runs Chromium with desktop and mobile device settings.
+
+A source-level syntax/selector check has been performed. A green GitHub Actions result is still required to confirm the browser-driven suite passes in CI; no test result should be inferred from the presence of the workflow alone.
