@@ -7,6 +7,7 @@
   <meta name="description" content="RO'Lyfe Trading Intelligence Classroom — Heikin-Ashi chart study, strategy comparison, risk planning, and trading education.">
   <title>RO’Lyfe Trading Intelligence Classroom™</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/market-room.css">
 </head>
 <body>
   <header class="topbar">
@@ -16,7 +17,7 @@
     </a>
     <button class="icon-btn menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav">☰ <span class="sr-only">Toggle menu</span></button>
     <nav id="mainNav">
-      <a href="#chart-lab">Chart Lab</a><a href="#strategy">Strategy Advantage</a><a href="#trade-planner">Trade Planner</a><a href="#classroom">Classroom</a><a href="#journal">Journal</a>
+      <a href="#market-room">Market Room</a><a href="#chart-lab">Chart Lab</a><a href="#strategy">Strategy Advantage</a><a href="#trade-planner">Trade Planner</a><a href="#classroom">Classroom</a><a href="#journal">Journal</a>
     </nav>
   </header>
 
@@ -26,7 +27,7 @@
         <p class="eyebrow">STUDY • PLAN • EXECUTE • REVIEW</p>
         <h1>Read the chart.<br><span>Respect the risk.</span></h1>
         <p class="hero-sub">A mobile-first trading classroom built around the RO’Lyfe stock-first method. Learn with illustrative charts before risking real capital.</p>
-        <div class="hero-actions"><a class="btn primary" href="#chart-lab">Open Chart Lab</a><a class="btn ghost" href="#strategy">Compare Strategies</a></div>
+        <div class="hero-actions"><a class="btn primary" href="#market-room">Open Market Room</a><a class="btn ghost" href="#strategy">Compare Strategies</a></div>
         <p class="disclaimer-mini">Educational tool · Sample data only · No brokerage connection</p>
       </div>
       <div class="hero-panel">
@@ -39,6 +40,33 @@
         </div>
         <div class="rule-strip"><span>01</span> Stock chart first <span class="rule-arrow">→</span> <span>02</span> Option risk second</div>
       </div>
+    </section>
+
+
+    <section class="section market-room-section" id="market-room">
+      <div class="section-heading"><div><p class="eyebrow">STAGE 1 / MARKET MAPPING</p><h2>RO’Lyfe Market Room</h2><p class="muted">A stock-first command desk for watchlists, trend context and disciplined risk planning.</p></div><span class="pill">PRACTICE DATA</span></div>
+      <div class="mr-status-row"><span class="mr-status-dot"></span><strong>SIMULATION MODE</strong><span>Quotes are illustrative placeholders, not live market prices.</span></div>
+      <div class="mr-toolbar">
+        <div class="mr-field"><label for="mrAssetClass">Market</label><select id="mrAssetClass"><option value="stocks">Stocks</option><option value="crypto">Crypto</option><option value="futures">Futures</option></select></div>
+        <div class="mr-field"><label for="mrTimeframe">Chart timeframe</label><select id="mrTimeframe"><option value="6M / 1D">6M / 1D — Big picture</option><option value="4H">4H — Structure</option><option value="1H">1H — Setup</option><option value="15m">15m — Timing</option><option value="5m">5m — Execution context</option></select></div>
+        <button class="btn small" id="mrRefresh" type="button">Refresh sample</button>
+      </div>
+      <div class="mr-grid">
+        <article class="mr-panel mr-watch-panel"><div class="mr-panel-head"><div><p class="eyebrow">01 / WATCHLIST</p><h3>Market instruments</h3></div><span class="mr-tag">SAMPLE</span></div><div class="mr-symbol-list" id="mrSymbolList" aria-label="Choose a sample instrument"></div><p class="mr-small">Select a symbol to update the illustrative chart and market posture.</p></article>
+        <article class="mr-panel mr-chart-panel"><div class="mr-panel-head"><div><p class="eyebrow">02 / PRICE STRUCTURE</p><h3 id="mrChartTitle">AAPL · Study chart</h3></div><span class="mr-tag" id="mrTimeframeTag">6M / 1D</span></div><div class="mr-chart-wrap"><canvas id="mrChart" aria-label="Illustrative market chart"></canvas></div><div class="mr-chart-legend"><span><i class="mr-dot up"></i> Up candle</span><span><i class="mr-dot down"></i> Down candle</span><span id="mrChartNote">Illustrative series</span></div></article>
+        <article class="mr-panel mr-posture-panel"><div class="mr-panel-head"><div><p class="eyebrow">03 / MARKET POSTURE</p><h3>Context, not a signal</h3></div></div><div class="mr-posture-main"><span class="mr-posture-label">Sample posture</span><strong id="mrPosture">WAIT FOR STRUCTURE</strong><p id="mrPostureText">Review trend, levels and invalidation before considering a trade.</p></div><div class="mr-metric-grid"><div><small>Trend structure</small><strong id="mrTrendMetric">—</strong></div><div><small>Momentum context</small><strong id="mrMomentumMetric">—</strong></div><div><small>Risk discipline</small><strong>Required</strong></div><div><small>Live data</small><strong>No</strong></div></div><div class="mr-rule-note"><strong>RO’Lyfe rule:</strong> map 6M/1D → 4H → 1H → 15m → 5m. Do not let a lower timeframe overrule the larger structure without a reason.</div></article>
+      </div>
+      <article class="mr-panel mr-planner-panel"><div class="mr-panel-head"><div><p class="eyebrow">04 / RTIC™ TRADE LADDER</p><h3>Stock-first risk planner</h3><p class="muted">Plan the underlying instrument first. Options are a separate risk layer.</p></div><span class="mr-tag">WORKSHEET</span></div>
+        <form id="mrRiskForm" class="mr-risk-form">
+          <div class="mr-field"><label for="mrDirection">Bias</label><select id="mrDirection"><option value="long">Long / bullish</option><option value="short">Short / bearish</option></select></div>
+          <div class="mr-field"><label for="mrEntry">Planned entry</label><input id="mrEntry" type="number" min="0.0001" step="any" placeholder="e.g. 100.00" required></div>
+          <div class="mr-field"><label for="mrStop">Stock stop / invalidation</label><input id="mrStop" type="number" min="0.0001" step="any" placeholder="e.g. 98.00" required></div>
+          <div class="mr-field"><label for="mrShares">Shares / units</label><input id="mrShares" type="number" min="1" step="1" value="10" required></div>
+          <button class="btn primary" type="submit">Calculate 1R / 2R / 3R</button>
+        </form>
+        <div class="mr-risk-output" id="mrRiskOutput" aria-live="polite"><p class="mr-small">Enter a planned entry and invalidation level to calculate risk and illustrative target levels.</p></div>
+        <p class="mr-disclaimer">Calculation is educational and excludes fees, slippage, gaps, contract multipliers and option pricing. A target is not a forecast. Confirm order sizing and risk with your own rules.</p>
+      </article>
     </section>
 
     <section class="section" id="chart-lab">
@@ -143,5 +171,6 @@
   </aside>
 
   <script src="js/app.js"></script>
+  <script src="js/market-room.js"></script>
 </body>
 </html>
