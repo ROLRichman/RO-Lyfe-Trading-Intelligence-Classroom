@@ -129,8 +129,8 @@ test('AI helper is clearly a prompt builder and opens/closes', async ({ page }) 
   await expect(page.locator('#aiPanel')).toBeHidden();
 });
 
-test('mobile layout has no horizontal page overflow and menu closes after navigation', async ({ page, isMobile }) => {
-  test.skip(!isMobile, 'Mobile viewport check runs in the mobile project');
+test('mobile layout has no horizontal page overflow and menu closes after navigation', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile viewport check runs in the mobile project');
   await page.setViewportSize({ width: 360, height: 800 });
   await page.goto('/');
   const dimensions = await page.evaluate(() => ({
