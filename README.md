@@ -61,3 +61,24 @@ The floating assistant is a prompt builder. It does not call an AI API or transm
 ## Educational disclaimer
 
 This is an educational and research aid, not investment advice, a trade signal service, or a brokerage platform. Sample charts are illustrative. Options involve risk and may expire worthless. Stops may execute at worse prices than expected, and stop-limit orders may not execute. Verify all strategy mechanics and broker order behavior before live trading.
+
+## Stage 1 — Market Room (branch: `stage-1-market-room`)
+
+The Stage 1 Market Room adds a separate practice-data workspace to the classroom:
+
+- `css/market-room.css` — responsive styling for the Market Room.
+- `js/market-room.js` — selectable sample watchlists for stocks, crypto and futures; generated illustrative candles; timeframe label controls; a contextual posture panel; and a stock-first 1R/2R/3R risk worksheet.
+- The Market Room is linked from the top navigation and hero button in `index.html`.
+
+**Data integrity:** watchlist names and trend labels are educational examples, not current quotes or trade signals. The timeframe control changes the displayed study label; it does not fetch or resample real historical bars. No API keys, user accounts, live data, or brokerage connection are configured in this stage.
+
+**Risk worksheet:** for a long plan, stop must be below entry; for a short plan, stop must be above entry. R targets are calculated from entry-to-stop distance multiplied by the selected unit count. Fees, slippage, gaps, futures contract multipliers, and options pricing are not included. Confirm instrument-specific sizing independently.
+
+### Stage 1 validation checklist
+
+- [ ] Open the branch preview and verify Market Room appears in navigation and page flow.
+- [ ] Switch Stocks / Crypto / Futures and confirm symbols and chart update.
+- [ ] Change timeframe and refresh the sample chart.
+- [ ] Test long and short risk plans, including invalid stop placement.
+- [ ] Check layout on a narrow phone screen and a desktop viewport.
+- [ ] Before live data is added, select a licensed provider and implement credentials only on a trusted server-side endpoint.
