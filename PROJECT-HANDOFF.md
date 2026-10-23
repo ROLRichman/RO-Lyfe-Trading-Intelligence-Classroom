@@ -118,3 +118,16 @@ The Playwright configuration starts a static server at `http://127.0.0.1:4173`. 
 - [Live classroom / Market Room](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/#market-room)
 - [GitHub Actions](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions)
 - [Playwright documentation](https://playwright.dev/docs/intro)
+
+## Stage 2 work in progress — Integrated Market Workstation
+
+**Branch:** `stage-2-integrated-market-workstation`  
+**Review status:** Not merged to `main`; run the browser workflow and inspect the PR before merging.
+
+This branch adds `css/market-workstation.css` and `js/market-workstation.js`, updates `index.html`, and documents the new behavior in `README.md`. The new workstation has two separate TradingView embedded chart rooms (stocks/ETFs and crypto), interval controls (1m, 5m, 10m, 15m, 30m, 1h, 2h, 4h, 1D), lookback windows (5D, 1M, 3M, 6M, 1Y), a broader stock/ETF list, 30 crypto pairs, market context links, and an interactive pre-trade checklist.
+
+**Important boundary:** this is embedded TradingView charting, not yet a first-party backend market-data engine. Quote timing, exchange coverage and studies depend on TradingView entitlements and provider support. The existing Market Room and Chart Lab still use illustrative sample data. No provider API keys are added to the branch. Provider API integrations, server-side secrets, true OHLC aggregation, tested indicator calculations over provider bars, options quote integration, and a live AI connection remain future implementation tasks.
+
+**Required validation before merge:** confirm the GitHub Actions browser suite on this branch; inspect desktop and mobile layout; verify that both embedded charts render and that symbol, interval and range controls reload correctly; verify behavior when TradingView is blocked/unavailable; confirm no horizontal overflow; review browser console errors. If chart script loading fails, the UI should show an explanatory message rather than claiming the chart is live.
+
+**Security:** keys or webhook secrets pasted into chat should be rotated. Keep all replacement credentials server-side, such as Supabase Edge Function secrets; never embed them in public JavaScript or HTML.

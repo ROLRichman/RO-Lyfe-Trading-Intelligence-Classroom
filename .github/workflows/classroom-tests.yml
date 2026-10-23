@@ -2,7 +2,7 @@ name: Classroom browser tests
 
 on:
   push:
-    branches: [stage-1-market-room, stage-1-market-room-upgrade]
+    branches: [stage-1-market-room, stage-1-market-room-upgrade, stage-2-integrated-market-workstation]
   pull_request:
     branches: [main, stage-1-market-room]
   workflow_dispatch:
