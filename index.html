@@ -7,7 +7,7 @@
   <meta name="description" content="RO'Lyfe Trading Intelligence Classroom — Heikin-Ashi chart study, strategy comparison, risk planning, and trading education.">
   <title>RO’Lyfe Trading Intelligence Classroom™</title>
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/market-room.css">
+  <link rel="stylesheet" href="css/market-room.css">\n  <link rel="stylesheet" href="css/market-workstation.css">
 </head>
 <body>
   <header class="topbar">
@@ -17,7 +17,7 @@
     </a>
     <button class="icon-btn menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav">☰ <span class="sr-only">Toggle menu</span></button>
     <nav id="mainNav">
-      <a href="#market-room">Market Room</a><a href="#chart-lab">Chart Lab</a><a href="#strategy">Strategy Advantage</a><a href="#trade-planner">Trade Planner</a><a href="#classroom">Classroom</a><a href="#journal">Journal</a>
+      <a href="#market-room">Market Room</a><a href="#market-workstation">Live Charts</a><a href="#chart-lab">Chart Lab</a><a href="#strategy">Strategy Advantage</a><a href="#trade-planner">Trade Planner</a><a href="#classroom">Classroom</a><a href="#journal">Journal</a>
     </nav>
   </header>
 
@@ -70,7 +70,69 @@
       </article>
     </section>
 
-    <section class="section" id="chart-lab">
+
+    <section class="section market-workstation" id="market-workstation">
+      <div class="section-heading"><div><p class="eyebrow">STAGE 2 / CONNECTED CHARTING</p><h2>RO’Lyfe Market Workstation</h2><p class="muted">Two chart rooms, a broader watchlist, multi-timeframe context, premarket preparation and market-posture resources.</p></div><span class="pill">TRADINGVIEW EMBED</span></div>
+      <p class="rtw-intro">Use the stock or ETF chart first, map the larger structure, then step down to the execution timeframe. Use the crypto chart as a separate 24/7 market room. These embedded charts are supplied by TradingView; available symbols, indicators, exchange coverage and real-time versus delayed quotes depend on TradingView and the relevant data entitlements.</p>
+      <div class="rtw-disclosure"><strong>Data integrity:</strong> this is an embedded charting connection, not a private market-data API or brokerage connection. Do not assume every exchange feed is real-time. Check the symbol, exchange, timestamp and quote entitlement inside the chart before acting. The original sample-data classroom remains available below.</div>
+      <div class="rtw-grid">
+        <article class="rtw-panel" aria-labelledby="rtw-stocks-title">
+          <div class="rtw-panel-head"><div><p class="rtw-kicker">01 / STOCKS + ETFs</p><h3 id="rtw-stocks-title">Stock-first chart room</h3><p class="rtw-note">Starting studies: VWAP, RSI and MACD where supported by the chart widget.</p></div><span class="rtw-chip">US EQUITIES</span></div>
+          <div class="rtw-controls"><label for="rtw-stocks-search">Ticker / exchange symbol<input id="rtw-stocks-search" type="text" maxlength="20" placeholder="e.g. AAPL or NASDAQ:NVDA"></label><button class="btn small" id="rtw-stocks-go" type="button">Load symbol</button></div>
+          <p class="rtw-kicker">Chart interval</p><div class="rtw-buttons" id="rtw-stocks-intervals" aria-label="Stock chart intervals"></div>
+          <p class="rtw-kicker">Viewing window</p><div class="rtw-buttons" id="rtw-stocks-ranges" aria-label="Stock chart date ranges"></div>
+          <p class="rtw-kicker">Watchlist — tap a ticker</p><div class="rtw-symbols" id="rtw-stocks-symbols" aria-label="Stock and ETF watchlist"></div>
+          <div class="rtw-chart" id="rtw-stocks-chart" aria-label="TradingView stock and ETF chart"><p class="rtw-note" style="padding:16px">Loading stock chart…</p></div>
+        </article>
+        <article class="rtw-panel" aria-labelledby="rtw-crypto-title">
+          <div class="rtw-panel-head"><div><p class="rtw-kicker">02 / CRYPTO</p><h3 id="rtw-crypto-title">Digital asset chart room</h3><p class="rtw-note">Crypto symbols default to Binance USDT pairs; confirm pair and exchange before comparing charts.</p></div><span class="rtw-chip">24/7 MARKET</span></div>
+          <div class="rtw-controls"><label for="rtw-crypto-search">Crypto ticker / exchange symbol<input id="rtw-crypto-search" type="text" maxlength="20" placeholder="e.g. BTC or BINANCE:ETHUSDT"></label><button class="btn small" id="rtw-crypto-go" type="button">Load symbol</button></div>
+          <p class="rtw-kicker">Chart interval</p><div class="rtw-buttons" id="rtw-crypto-intervals" aria-label="Crypto chart intervals"></div>
+          <p class="rtw-kicker">Viewing window</p><div class="rtw-buttons" id="rtw-crypto-ranges" aria-label="Crypto chart date ranges"></div>
+          <p class="rtw-kicker">30-asset watchlist — tap a ticker</p><div class="rtw-symbols" id="rtw-crypto-symbols" aria-label="Crypto watchlist"></div>
+          <div class="rtw-chart" id="rtw-crypto-chart" aria-label="TradingView cryptocurrency chart"><p class="rtw-note" style="padding:16px">Loading crypto chart…</p></div>
+        </article>
+      </div>
+
+      <div class="rtw-section-gap">
+        <div class="section-heading"><div><p class="eyebrow">03 / PREMARKET + MARKET POSTURE</p><h2>Prepare before the bell</h2><p class="muted">A repeatable checklist for premarket research and regular-hours review—not an automatic buy list.</p></div></div>
+        <article class="rtw-panel">
+          <div class="rtw-panel-head"><div><p class="rtw-kicker">PREMARKET ROUTINE</p><h3>Low-price candidates still need liquidity</h3></div><span class="rtw-chip">CHECKLIST</span></div>
+          <div class="rtw-checklist" id="rtw-posture-checklist">
+            <label class="rtw-check"><input type="checkbox"> Check broad-market futures, SPY/QQQ and the economic calendar for scheduled risk.</label>
+            <label class="rtw-check"><input type="checkbox"> Check premarket gap, volume, spread and the reason for the move; thin premarket prices can mislead.</label>
+            <label class="rtw-check"><input type="checkbox"> Mark prior-day high/low, premarket high/low, opening range and higher-timeframe structure.</label>
+            <label class="rtw-check"><input type="checkbox"> Compare price with VWAP on the active intraday chart; do not infer the 5-minute posture from a daily chart.</label>
+            <label class="rtw-check"><input type="checkbox"> Confirm actual average volume, float/market cap, bid-ask spread and whether options have usable liquidity.</label>
+            <label class="rtw-check"><input type="checkbox"> Define entry, invalidation, share size and 1R/2R/3R targets before considering an options contract.</label>
+            <label class="rtw-check"><input type="checkbox"> Check news, earnings, splits and economic releases; decide whether the setup is still valid after the open.</label>
+            <label class="rtw-check"><input type="checkbox"> Skip if spread, slippage, unclear structure or planned loss is outside the rules. No-trade is a valid outcome.</label>
+          </div>
+          <p class="rtw-note" id="rtw-check-progress" aria-live="polite">0 of 8 pre-trade checks complete</p>
+          <p class="rtw-note">Low share price does not mean low risk. Premarket orders can face wide spreads and thin liquidity. Use a price filter as a research preference, not a reason to force one trade each day.</p>
+        </article>
+      </div>
+
+      <div class="rtw-section-gap">
+        <div class="section-heading"><div><p class="eyebrow">04 / MARKET CONTEXT TOOLS</p><h2>Research desk</h2><p class="muted">Your supplied resources organized in one place.</p></div></div>
+        <div class="rtw-links">
+          <a class="rtw-link" href="https://stockcharts.com/freecharts/perf.php?$COMPQ,iwm,$INDU,$SPX" target="_blank" rel="noopener noreferrer"><strong>Index performance</strong><span>Compare Nasdaq, Russell 2000, Dow and S&P 500.</span></a>
+          <a class="rtw-link" href="https://stockcharts.com/freecharts/perf.php?SPY,XLY,XLC,XLK,XLI,XLB,XLE,XLP,XLV,XLU,XLF" target="_blank" rel="noopener noreferrer"><strong>Sector rotation</strong><span>Compare sector ETF relative performance.</span></a>
+          <a class="rtw-link" href="https://finviz.com/map.ashx?t=sec" target="_blank" rel="noopener noreferrer"><strong>S&P 500 heat map</strong><span>Quick view of sector and stock performance.</span></a>
+          <a class="rtw-link" href="https://finviz.com/screener.ashx?v=211&f=sh_avgvol_o2000,sh_opt_optionshort,sh_price_o10,ta_sma200_pa,ta_sma50_pa&o=-perf4w" target="_blank" rel="noopener noreferrer"><strong>Finviz bullish screen</strong><span>Your supplied scan filters; adjust price and liquidity for the day’s plan.</span></a>
+          <a class="rtw-link" href="https://www.marketwatch.com/economy-politics/calendar" target="_blank" rel="noopener noreferrer"><strong>Economic calendar</strong><span>Check scheduled events and volatility windows.</span></a>
+          <a class="rtw-link" href="https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html" target="_blank" rel="noopener noreferrer"><strong>CME FedWatch</strong><span>Monitor market-implied policy-rate expectations.</span></a>
+          <a class="rtw-link" href="https://finance.yahoo.com/" target="_blank" rel="noopener noreferrer"><strong>Yahoo Finance</strong><span>News, futures context and market headlines.</span></a>
+          <a class="rtw-link" href="https://www.tradingview.com/" target="_blank" rel="noopener noreferrer"><strong>TradingView</strong><span>Open full charting, symbol search and account features.</span></a>
+          <a class="rtw-link" href="https://api.marketdata.app/v1/options/quotes/" target="_blank" rel="noopener noreferrer"><strong>Options quote API docs</strong><span>MarketData.app contract quotes and available Greeks; API access and plan limits apply.</span></a>
+          <a class="rtw-link" href="https://finnhub.io/" target="_blank" rel="noopener noreferrer"><strong>Finnhub developer portal</strong><span>Review supported endpoints, quotas and market-data entitlements.</span></a>
+          <a class="rtw-link" href="https://www.alphavantage.co/" target="_blank" rel="noopener noreferrer"><strong>Alpha Vantage</strong><span>Review stock, indicator and crypto endpoints with plan limits.</span></a>
+          <a class="rtw-link" href="https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/" target="_blank" rel="noopener noreferrer"><strong>Tactical Intelligence Center</strong><span>Return to the wider RO’Lyfe research ecosystem.</span></a>
+        </div>
+      </div>
+      <div class="rtw-section-gap notice"><strong>RO’Lyfe timeframe rule:</strong> start with 1Y/1D or 6M/1D, then 3M/1D and 1M/1D for context. Step down to 4H → 1H → 15m → 5m, using 1m/10m/30m as needed. A daily chart above VWAP does not mean a 5-minute chart is above its own VWAP. VWAP is timeframe/session-dependent; price above VWAP can support a bullish intraday thesis and price below can support a bearish thesis, but neither guarantees continuous profits. Confirm trend, structure, volume, risk and invalidation.</div>
+    </section>
+\n    <section class="section" id="chart-lab">
       <div class="section-heading"><div><p class="eyebrow">01 / TECHNICAL STUDY</p><h2>Chart Intelligence Lab</h2><p class="muted">Illustrative OHLC data generated in this page. Not live prices or a signal service.</p></div><span class="pill">SIMULATED</span></div>
       <div class="chart-toolbar">
         <div class="control-group"><label for="chartSymbol">Study symbol</label><select id="chartSymbol"><option value="DEMO">DEMO · Example trend</option><option value="BULL">BULL · Trend continuation</option><option value="BEAR">BEAR · Trend reversal</option><option value="RANGE">RANGE · Sideways market</option></select></div>
@@ -172,6 +234,6 @@
   </aside>
 
   <script src="js/app.js"></script>
-  <script src="js/market-room.js"></script>
+  <script src="js/market-room.js"></script>\n  <script src="js/market-workstation.js"></script>
 </body>
 </html>
