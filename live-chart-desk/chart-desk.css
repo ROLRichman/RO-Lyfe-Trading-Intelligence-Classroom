@@ -7,3 +7,33 @@
 @media(min-width:901px){.sidebar-toggle{display:inline-flex}.layout.sidebar-collapsed{grid-template-columns:minmax(0,1fr)}.layout.sidebar-collapsed .sidebar{display:none}}
 
 .indicator-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0;padding:11px;background:#080d15;border:1px solid var(--line);border-radius:9px}.indicator-toolbar label{font-size:12px;color:#aebdd0;font-weight:700}.indicator-toolbar select,.real-chart-launcher select{background:#101a27;border:1px solid #355273;color:#eaf1fa;border-radius:8px;padding:9px 11px;font:inherit;max-width:100%}#indicatorReadout{font-size:11px;color:#a6b8cd;overflow-wrap:anywhere}.indicator-chart{height:210px;min-width:0;overflow:hidden;background:#05070b;border:1px solid var(--line);border-radius:9px;margin-top:8px}.indicator-chart canvas{display:block}.indicator-note{font-size:11px;color:var(--muted);margin:7px 0 12px}.real-chart-launcher{margin:22px 0;padding:18px;background:var(--panel,#0b1018);border:1px solid var(--line,#1e2b3b);border-radius:14px}.real-chart-launcher label{display:block;margin:10px 0 6px}.real-chart-launcher select{width:100%}.real-chart-launcher iframe{display:block;width:100%;height:1100px;border:1px solid var(--line,#1e2b3b);border-radius:12px;margin-top:12px;background:#05070b}.real-chart-launcher iframe[hidden]{display:none}@media(max-width:600px){.real-chart-launcher iframe{height:1250px}.indicator-toolbar{align-items:stretch;flex-direction:column}.indicator-toolbar select{width:100%}}
+
+/* RO’Lyfe Option Premium Ladder + Bracket Planner */
+.option-ladder{margin-top:16px;padding:clamp(14px,2.2vw,22px);border:1px solid #2b4058;border-radius:12px;background:linear-gradient(145deg,#0b1420,#080d14)}
+.option-ladder-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.option-ladder h2{font-size:clamp(20px,2.5vw,27px);line-height:1.2;margin:2px 0 6px;letter-spacing:-.025em}
+.option-ladder h3{margin:0 0 8px;font-size:14px}
+.option-sub{color:#a7b6c9;margin:0;font-size:12px}
+.option-context{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:11px 0;border-bottom:1px solid #1e2b3b;margin-bottom:12px;color:#a7b6c9;font-size:11px}
+.option-context strong{color:#fff;font-size:14px}
+.option-input-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.option-input-grid label{display:flex;flex-direction:column;gap:5px;color:#afc0d4;font-size:11px}
+.option-input-grid input,.option-input-grid select{width:100%;min-width:0;background:#05080e;border:1px solid #2b3d52;border-radius:8px;color:#f2f7ff;padding:10px 9px;font:inherit;font-size:13px}
+.option-input-grid input:focus,.option-input-grid select:focus{outline:2px solid #5687be;outline-offset:1px}
+.option-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.option-summary-grid>div{min-width:0;padding:12px 11px;border-radius:9px;background:#070b11;border:1px solid #1d2e41}
+.option-summary-grid span{display:block;color:#91a6bf;font-size:10px;line-height:1.35}
+.option-summary-grid strong{display:block;color:#f4f8ff;font-size:clamp(16px,2vw,22px);margin-top:5px;overflow-wrap:anywhere}
+.option-error{padding:10px;margin:10px 0;border:1px solid #8d4653;border-radius:8px;color:#ffb4c0;background:#251119;font-size:12px}
+.option-table-wrap{width:100%;overflow-x:auto;border:1px solid #1e2b3b;border-radius:9px}
+.option-target-table{width:100%;border-collapse:collapse;min-width:570px;font-variant-numeric:tabular-nums}
+.option-target-table th,.option-target-table td{padding:10px 9px;text-align:right;border-bottom:1px solid #1b2839;font-size:11px;white-space:nowrap}
+.option-target-table th{background:#101b29;color:#9fb3cc;font-weight:700}
+.option-target-table th:first-child,.option-target-table td:first-child{text-align:left}
+.option-target-table td strong{color:#eaf1fa}
+.option-target-table tbody tr:last-child td{border-bottom:0}
+.option-bracket-box{margin-top:12px;padding:13px;border:1px solid #263a50;border-radius:9px;background:#070b11}
+.option-bracket-box p{margin:5px 0;color:#c2d0e1;font-size:12px;overflow-wrap:anywhere}
+.option-bracket-box .option-small{color:#8fa0b5;font-size:10px;line-height:1.55;margin-top:10px}
+@media(max-width:850px){.option-input-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.option-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.option-input-grid{gap:8px}.option-summary-grid strong{font-size:16px}.option-target-table th,.option-target-table td{padding:9px 8px}}
