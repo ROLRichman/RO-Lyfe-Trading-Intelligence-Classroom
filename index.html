@@ -90,6 +90,13 @@
         <article class="indicator-card"><div class="indicator-title"><h3>RSI</h3><span class="pill">30 / 70</span></div><canvas id="rsiChart" class="mini-chart" aria-label="Illustrative RSI panel"></canvas><p>Use RSI for momentum context. Customize thresholds in the settings rather than treating a single reading as an automatic trade.</p></article>
         <article class="indicator-card"><div class="indicator-title"><h3>MACD concept</h3><span class="pill">Momentum</span></div><canvas id="macdChart" class="mini-chart" aria-label="Illustrative MACD histogram panel"></canvas><p>Histogram and line behavior can help assess momentum shifts. MACD values depend on the instrument and settings.</p></article>
       </div>
+      <article class="indicator-confluence-card">
+        <div class="indicator-title"><div><p class="eyebrow">CONFIRMATION / MULTI-INDICATOR VIEW</p><h3>Indicator Confluence Chart</h3></div><span class="pill">ILLUSTRATIVE</span></div>
+        <p class="muted">A second synchronized study panel: RSI and Stochastic are plotted together against their guide levels to help learners compare momentum context with the price chart above.</p>
+        <div class="confluence-legend"><span><i class="legend-line ma50"></i> RSI (14) · 30 / 70 guides</span><span><i class="legend-line ma20"></i> Stochastic · 20 / 80 guides</span></div>
+        <div class="confluence-wrap"><canvas id="confluenceChart" aria-label="Illustrative RSI and Stochastic indicator chart"></canvas></div>
+        <p class="mr-small">Sample-generated data only. Indicator readings are educational context, not trade signals or live market analysis.</p>
+      </article>
       <div class="notice"><strong>Heikin-Ashi reminder:</strong> the candles are calculated from current and prior OHLC values to smooth visual trends. Their displayed open/close values are synthetic calculations—not prices at which an order can necessarily execute. Use actual market prices for entries, stops and fills.</div>
     </section>
 
