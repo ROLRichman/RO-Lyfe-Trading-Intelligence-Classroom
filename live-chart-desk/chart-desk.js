@@ -45,7 +45,7 @@ document.querySelectorAll("[data-interval]").forEach(b=>b.addEventListener("clic
 $("#refreshBars").addEventListener("click",loadBars);
 $("#addForm").addEventListener("submit",e=>{e.preventDefault();addSymbol($("#addSymbol").value);$("#addSymbol").value="";});
 const sidebarToggle=$("#toggleSidebar"),sidebarBackdrop=$("#sidebarBackdrop"),layout=$(".layout");
-function setSidebar(open){layout.classList.toggle("sidebar-open",open);sidebarToggle.setAttribute("aria-expanded",String(open));sidebarToggle.textContent=open?"Close watchlist ✕":"☰ Watchlist";sidebarBackdrop.hidden=!open;}
+function setSidebar(open){layout.classList.toggle("sidebar-open",open);layout.classList.toggle("sidebar-collapsed",window.innerWidth>900&&!open);sidebarToggle.setAttribute("aria-expanded",String(open));sidebarToggle.textContent=open?"Close watchlist ✕":"☰ Watchlist";sidebarBackdrop.hidden=!open;}
 sidebarToggle.addEventListener("click",()=>setSidebar(!layout.classList.contains("sidebar-open")));
 sidebarBackdrop.addEventListener("click",()=>setSidebar(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")setSidebar(false);});
