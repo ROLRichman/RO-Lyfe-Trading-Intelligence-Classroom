@@ -1,0 +1,32 @@
+(() => {
+"use strict";
+const $=s=>document.querySelector(s);
+const API="https://ykmdyfbklvuoseqdjnxy.supabase.co/functions/v1/market-data";
+const ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I";
+const defaults={stocks:[{symbol:"NASDAQ:AAPL",name:"Apple"},{symbol:"NASDAQ:NVDA",name:"NVIDIA"},{symbol:"NASDAQ:TSLA",name:"Tesla"},{symbol:"NASDAQ:AMD",name:"AMD"},{symbol:"AMEX:SPY",name:"S&P 500 ETF"},{symbol:"NASDAQ:MSFT",name:"Microsoft"}],crypto:[{symbol:"BINANCE:BTCUSDT",name:"Bitcoin",api:"BTC"},{symbol:"BINANCE:ETHUSDT",name:"Ethereum",api:"ETH"},{symbol:"BINANCE:SOLUSDT",name:"Solana",api:"SOL"},{symbol:"BINANCE:XRPUSDT",name:"XRP",api:"XRP"},{symbol:"BINANCE:LINKUSDT",name:"Chainlink",api:"LINK"},{symbol:"BINANCE:HYPEUSDT",name:"Hyperliquid",api:"HYPE"}]};
+let lists=JSON.parse(JSON.stringify(defaults)),activeList="stocks",current="NASDAQ:AAPL",quotes={};
+const fmt=n=>Number.isFinite(n)?n.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:n<1?5:2}):"—";
+function chart(symbol){current=symbol;$("#symbolSearch").value=symbol;$("#chartHeading").textContent=symbol;$("#chartStatus").textContent="CONNECTING";$("#tvChart").innerHTML="";
+const s=document.createElement("script");s.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";s.async=true;s.type="text/javascript";
+const config={autosize:true,symbol,interval:"D",timezone:"America/New_York",theme:"dark",style:"1",locale:"en",allow_symbol_change:true,calendar:false,support_host:"https://www.tradingview.com",details:true,hotlist:true,withdateranges:true,save_image:false,watchlist:lists.stocks.map(x=>x.symbol).concat(lists.crypto.map(x=>x.symbol)),studies:["STD;EMA","STD;RSI","STD;MACD","STD;Volume"],hide_side_toolbar:false,enable_publishing:false};
+s.innerHTML=JSON.stringify(config);$("#tvChart").append(s);$("#chartStatus").textContent="WIDGET LOADED";
+const item=findItem(symbol);showQuote(item).catch(()=>{});
+}
+function findItem(symbol){for(const group of Object.values(lists)){const x=group.find(a=>a.symbol===symbol);if(x)return x;}return {symbol,name:symbol.split(":").pop()};}
+async function getQuote(item){const crypto=Boolean(item.api)||/BINANCE:/.test(item.symbol);let endpoint;
+if(crypto){const api=item.api||({BTCUSDT:"BTC",ETHUSDT:"ETH",SOLUSDT:"SOL",XRPUSDT:"XRP",LINKUSDT:"LINK",HYPEUSDT:"HYPE"}[item.symbol.split(":").pop()]||"");if(!api)throw Error("No quote mapping for this crypto ticker");endpoint=API+"?provider=coingecko&symbol="+encodeURIComponent(api);}
+else{const ticker=item.symbol.split(":").pop();endpoint=API+"?provider=finnhub&symbol="+encodeURIComponent(ticker);}
+const r=await fetch(endpoint,{headers:{apikey:ANON,Authorization:"Bearer "+ANON,Accept:"application/json"},cache:"no-store"});const d=await r.json();if(!r.ok||!Number.isFinite(d.price)||d.price<=0)throw Error(d.error||"Quote unavailable");return {price:d.price,change:typeof d.changePercent24h==="number"?d.changePercent24h:(typeof d.changePercent==="number"?d.changePercent:parseFloat(d.changePercent)),provider:d.provider,stamp:d.lastUpdatedAt?new Date(d.lastUpdatedAt*1000).toLocaleString():d.timestamp?new Date(d.timestamp*1000).toLocaleString():(d.latestTradingDay||"provider timestamp not supplied")};}
+async function showQuote(item){$("#quoteName").textContent=item.symbol+" · "+item.name;$("#quotePrice").textContent="Loading quote…";$("#quoteChange").textContent="Fetching provider response";$("#quoteChange").className="change";$("#quoteMeta").textContent="Quote may be delayed; provider access varies.";
+try{const q=await getQuote(item);quotes[item.symbol]=q;$("#quotePrice").textContent=fmt(q.price);$("#quoteChange").textContent=(Number.isFinite(q.change)?(q.change>0?"+":"")+q.change.toFixed(2)+"%  ·  24-hour change":"Change not supplied");$("#quoteChange").className="change "+(q.change<0?"negative":q.change>0?"positive":"");$("#quoteMeta").textContent=q.provider+" · provider response · "+q.stamp+" · Not a guaranteed real-time quote";renderList();}
+catch(e){$("#quotePrice").textContent="Quote unavailable";$("#quoteChange").textContent="Provider did not return a usable quote";$("#quoteMeta").textContent="Check ticker, provider entitlement or usage limits. Chart widget is independent.";}}
+function renderList(){const root=$("#watchlist");root.innerHTML="";lists[activeList].forEach(item=>{const q=quotes[item.symbol];const b=document.createElement("button");b.type="button";b.className="watch-item"+(item.symbol===current?" active":"");const left=document.createElement("span"),right=document.createElement("span"),sym=document.createElement("strong"),name=document.createElement("small"),price=document.createElement("strong"),delta=document.createElement("small");sym.className="sym";sym.textContent=item.symbol.split(":").pop();name.textContent=item.name;left.append(sym,name);price.className="price";price.textContent=q?fmt(q.price):"—";delta.className="delta"+(q&&q.change<0?" negative":q&&q.change>0?" positive":"");delta.textContent=q&&Number.isFinite(q.change)?(q.change>0?"+":"")+q.change.toFixed(2)+"%":"Quote pending";right.append(price,delta);b.append(left,right);b.addEventListener("click",()=>chart(item.symbol));root.append(b);});}
+function addSymbol(raw){let symbol=raw.trim().toUpperCase();if(!symbol)return;if(!symbol.includes(":"))symbol="NASDAQ:"+symbol;const list=lists[activeList];if(list.some(x=>x.symbol===symbol)){chart(symbol);return;}const item={symbol,name:symbol.split(":").pop()};list.push(item);renderList();chart(symbol);}
+$("#loadSymbol").addEventListener("click",()=>chart($("#symbolSearch").value.trim()||"NASDAQ:AAPL"));
+$("#symbolSearch").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();chart($("#symbolSearch").value.trim());}});
+document.querySelectorAll("[data-symbol]").forEach(b=>b.addEventListener("click",()=>chart(b.dataset.symbol)));
+document.querySelectorAll("[data-list]").forEach(b=>b.addEventListener("click",()=>{activeList=b.dataset.list;document.querySelectorAll("[data-list]").forEach(x=>x.classList.toggle("active",x===b));renderList();}));
+$("#addForm").addEventListener("submit",e=>{e.preventDefault();addSymbol($("#addSymbol").value);$("#addSymbol").value="";});
+renderList();chart(current);
+setInterval(()=>{const item=findItem(current);showQuote(item).catch(()=>{});},60000);
+})();
