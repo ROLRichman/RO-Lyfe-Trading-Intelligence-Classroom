@@ -37,3 +37,33 @@
 .option-bracket-box .option-small{color:#8fa0b5;font-size:10px;line-height:1.55;margin-top:10px}
 @media(max-width:850px){.option-input-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.option-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.option-input-grid{gap:8px}.option-summary-grid strong{font-size:16px}.option-target-table th,.option-target-table td{padding:9px 8px}}
+
+/* Compact in-classroom embed keeps the watchlist usable without pushing chart controls away */
+body.classroom-embed .top{position:relative;top:auto;padding:0 14px}
+body.classroom-embed main{padding:14px;max-width:none}
+body.classroom-embed .intro{gap:12px;margin-bottom:12px}
+body.classroom-embed .intro h1{font-size:clamp(23px,3vw,32px)}
+body.classroom-embed .market-label{min-width:190px}
+body.classroom-embed .searchbar{padding:12px;margin-bottom:12px}
+body.classroom-embed .sidebar{max-height:calc(100vh - 140px);overflow-y:auto;overscroll-behavior:contain}
+body.classroom-embed .watchlist{max-height:calc(100vh - 460px);overflow-y:auto;overscroll-behavior:contain}
+body.classroom-embed .tv-chart{height:500px}
+@media(max-width:900px){
+ body.classroom-embed .intro{flex-direction:column}
+ body.classroom-embed .market-label{width:100%}
+ body.classroom-embed .layout{grid-template-columns:1fr}
+ body.classroom-embed .sidebar{max-height:none;overflow:visible;order:1}
+ body.classroom-embed .watchlist{grid-template-columns:repeat(2,minmax(0,1fr));max-height:300px;overflow-y:auto;align-content:start}
+ body.classroom-embed .chart-panel{order:2}
+ body.classroom-embed .tv-chart{height:430px}
+}
+@media(max-width:480px){
+ body.classroom-embed main{padding:9px}
+ body.classroom-embed .top{padding:0 10px}
+ body.classroom-embed .top .brand{font-size:15px}
+ body.classroom-embed .top-actions{gap:6px}
+ body.classroom-embed .sidebar-toggle{padding:7px 8px;font-size:11px}
+ body.classroom-embed .back{font-size:11px}
+ body.classroom-embed .searchline{flex-wrap:wrap}
+ body.classroom-embed .searchline button{min-height:42px}
+}
