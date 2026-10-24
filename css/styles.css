@@ -12,3 +12,16 @@ footer{padding:30px clamp(18px,5vw,72px) 100px;border-top:1px solid #24364b;disp
 @media(max-width:850px){nav{gap:12px;font-size:10px}.hero{grid-template-columns:1fr;gap:28px}.hero-panel{max-width:650px}.indicator-grid{grid-template-columns:1fr}.planner-layout{grid-template-columns:1fr}.link-grid{grid-template-columns:repeat(2,1fr)}.journal-form{grid-template-columns:1fr 1fr}.journal-form .btn{grid-column:1/-1}footer{grid-template-columns:1fr;gap:12px}}
 @media(max-width:620px){.topbar{height:66px}.menu-toggle{display:block}nav{display:none;position:absolute;top:65px;left:0;right:0;padding:15px 20px 20px;background:#081421;border-bottom:1px solid #2b4058;flex-direction:column;gap:0}nav.open{display:flex}nav a{padding:12px 0;font-size:13px;border-bottom:1px solid #172b40}.brand-mark{width:37px;height:37px}.brand small{font-size:8px}.hero{padding-top:43px}.hero h1{font-size:43px}.hero-panel{padding:15px}.hero-stat-grid{gap:8px}.hero-stat-grid>div{padding:11px}.hero-stat-grid strong{font-size:11px}.section{padding-top:30px;padding-bottom:40px}.section-heading{align-items:flex-start;flex-direction:column}.chart-toolbar{display:grid;grid-template-columns:1fr 1fr;width:100%}.control-group{min-width:0}.chart-toolbar .btn{grid-column:1/-1}.chart-card{padding:10px}.chart-wrap{height:270px}.chart-legend{gap:9px;font-size:9px}.chart-notes{gap:6px}.chart-notes strong{font-size:11px}.chart-notes small{font-size:9px}.planner-form{grid-template-columns:1fr;padding:15px}.planner-form .btn{grid-column:auto}.strategy-tabs{display:grid;grid-template-columns:1fr 1fr}.strategy-tab{padding:10px 7px}.strategy-detail{padding:17px}.journal-form{grid-template-columns:1fr}.journal-form .btn{grid-column:auto}.link-grid{grid-template-columns:1fr 1fr}.link-grid a{padding:12px}.link-grid strong{font-size:11px}.ai-fab{right:13px;bottom:13px;padding:12px 14px}.ai-panel{right:10px;bottom:72px;width:calc(100vw - 20px)}footer{padding-bottom:95px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
+
+/* All-in-one classroom real-market study embed */
+.real-chart-launcher{margin:2.25rem 0;padding:clamp(1rem,2.5vw,1.5rem);border:1px solid rgba(88,166,255,.38);border-radius:18px;background:rgba(8,17,31,.94);box-shadow:0 12px 40px rgba(0,0,0,.18)}
+.real-chart-launcher h2{margin:.15rem 0 .5rem}
+.real-chart-launcher>label{display:block;margin:.9rem 0 .4rem;font-weight:700}
+.real-chart-launcher select{display:block;width:100%;max-width:100%;padding:.85rem 1rem;color:#eef5ff;background:#101c2e;border:1px solid #40536c;border-radius:10px;font:inherit}
+.classroom-chart-status{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;color:#9eb5d2;font-size:.68rem;letter-spacing:.06em;padding:.8rem .1rem}
+#classroomChartFrameWrap{width:100%;overflow:hidden;border:1px solid #1e2b3b;border-radius:14px;background:#05070b}
+#classroomChartFrame{display:block;width:100%;height:1680px;border:0;background:#05070b}
+.classroom-advanced-link{margin:.9rem 0 0}
+.classroom-advanced-link a{font-weight:700}
+@media(min-width:901px){#classroomChartFrame{height:1400px}}
+@media(max-width:600px){#classroomChartFrame{height:1850px}.classroom-chart-status{font-size:.6rem}}
