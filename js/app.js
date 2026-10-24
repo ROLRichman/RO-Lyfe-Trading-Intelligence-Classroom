@@ -57,6 +57,7 @@
     $("#trendRead").textContent=trend;$("#modeRead").textContent=$("#candleMode").value==="heikin"?"Heikin-Ashi":"Regular candles";
     drawOscillator($("#stochChart"),stochastic(raw),[20,80],colors.purple);
     drawOscillator($("#rsiChart"),rsi(raw.map(d=>d.close)),[30,70],colors.blue);
+    drawConfluence(stochastic(raw),rsi(raw.map(d=>d.close)));
     const closes=raw.map(d=>d.close), e12=ema(closes,12),e26=ema(closes,26),macd=e12.map((v,i)=>v===null||e26[i]===null?null:v-e26[i]),sig=ema(macd.map(v=>v===null?0:v),9);
     drawHistogram($("#macdChart"),macd.map((v,i)=>v===null||sig[i]===null?null:v-sig[i]));
   }
@@ -64,6 +65,18 @@
     const {ctx,w,h}=setupCanvas(canvas);ctx.clearRect(0,0,w,h);ctx.fillStyle=colors.bg;ctx.fillRect(0,0,w,h);
     const pad=8, y=v=>h-pad-(v/100)*(h-2*pad);ctx.strokeStyle=colors.grid;ctx.setLineDash([4,4]);levels.forEach(v=>{ctx.beginPath();ctx.moveTo(0,y(v));ctx.lineTo(w,y(v));ctx.stroke();});ctx.setLineDash([]);
     ctx.beginPath();let started=false;vals.forEach((v,i)=>{if(v===null||!Number.isFinite(v))return;let xx=i/(vals.length-1)*w,yy=y(v);if(!started){ctx.moveTo(xx,yy);started=true;}else ctx.lineTo(xx,yy);});ctx.strokeStyle=color;ctx.lineWidth=1.8;ctx.stroke();
+  }
+  function drawConfluence(stochVals,rsiVals){
+    const canvas=$("#confluenceChart");if(!canvas)return;
+    const {ctx,w,h}=setupCanvas(canvas);ctx.clearRect(0,0,w,h);ctx.fillStyle=colors.bg;ctx.fillRect(0,0,w,h);
+    const pad={l:34,r:12,t:16,b:24},plotH=h-pad.t-pad.b;
+    const y=v=>pad.t+(100-v)/100*plotH;
+    ctx.font="10px DM Mono, monospace";ctx.fillStyle=colors.text;ctx.strokeStyle=colors.grid;ctx.lineWidth=1;
+    [0,20,30,50,70,80,100].forEach(v=>{const yy=y(v);ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(w-pad.r,yy);ctx.stroke();ctx.fillText(String(v),4,yy+3);});
+    function line(values,color){ctx.beginPath();let started=false;values.forEach((v,i)=>{if(v===null||!Number.isFinite(v))return;const xx=pad.l+i/(values.length-1)*(w-pad.l-pad.r),yy=y(v);if(!started){ctx.moveTo(xx,yy);started=true;}else ctx.lineTo(xx,yy);});ctx.strokeStyle=color;ctx.lineWidth=2;ctx.stroke();}
+    ctx.save();ctx.setLineDash([4,4]);[20,30,70,80].forEach(v=>{ctx.beginPath();ctx.moveTo(pad.l,y(v));ctx.lineTo(w-pad.r,y(v));ctx.strokeStyle=v===30||v===70?"#66b8ff":"#55e0a3";ctx.globalAlpha=.55;ctx.stroke();});ctx.restore();
+    line(rsiVals,colors.ma50);line(stochVals,colors.ma20);
+    ctx.fillStyle=colors.text;ctx.fillText("Earlier",pad.l,h-7);ctx.textAlign="right";ctx.fillText("Latest · sample",w-pad.r,h-7);ctx.textAlign="left";
   }
   function drawHistogram(canvas,vals){
     const {ctx,w,h}=setupCanvas(canvas);ctx.clearRect(0,0,w,h);ctx.fillStyle=colors.bg;ctx.fillRect(0,0,w,h);const mid=h/2;ctx.strokeStyle=colors.grid;ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(w,mid);ctx.stroke();const max=Math.max(0.001,...vals.filter(v=>v!==null).map(Math.abs));const bw=w/vals.length;
