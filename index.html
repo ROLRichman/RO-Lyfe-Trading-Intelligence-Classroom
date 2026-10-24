@@ -178,6 +178,8 @@
     <p id="aiStatus" class="tiny muted" aria-live="polite"></p>
   </aside>
 
+  <section class="real-chart-launcher" id="real-chart-study"><p class="eyebrow">REAL MARKET DATA</p><h2>Open Real Chart Study</h2><label for="realChartToggle">Chart workspace</label><select id="realChartToggle"><option value="closed">Choose an option…</option><option value="open">Open Live Chart Desk + indicators</option></select><p class="muted tiny">Uses provider historical candles when available. Unsupported symbols/timeframes are labeled rather than replaced with sample data.</p><div id="realChartFrameWrap" hidden><iframe title="Live Chart Desk real market chart" loading="lazy" src="live-chart-desk/"></iframe></div></section>
+  <script>document.addEventListener("DOMContentLoaded",()=>{const s=document.getElementById("realChartToggle"),w=document.getElementById("realChartFrameWrap");if(s&&w)s.addEventListener("change",()=>{w.hidden=s.value!=="open";if(!w.hidden)w.scrollIntoView({behavior:"smooth",block:"start"});});});</script>
   <script src="js/app.js"></script>
   <script src="js/market-room.js"></script>
 </body>
