@@ -21,7 +21,7 @@ test('Market Room switches asset class, symbols, timeframe and refreshes chart',
   const title = page.locator('#mrChartTitle');
   await expect(title).toContainText('AAPL');
   await page.locator('#mrAssetClass').selectOption('crypto');
-  await expect(page.locator('#mrSymbolList button')).toHaveCount(5);
+  await expect(page.locator('#mrSymbolList button')).toHaveCount(6);
   await expect(title).toContainText('BTC-USD');
   await page.locator('#mrSymbolList button').filter({ hasText: 'ETH-USD' }).click();
   await expect(title).toContainText('ETH-USD');
