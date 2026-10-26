@@ -143,3 +143,23 @@ test('mobile layout has no horizontal page overflow and menu closes after naviga
   await page.locator('#mainNav a[href="#market-room"]').click();
   await expect(page.locator('#mainNav')).not.toHaveClass(/open/);
 });
+
+test('classroom provides working live Tactical Center launch links', async ({ page }) => {
+  await page.goto('/');
+  const heroLink = page.getByRole('link', { name: /Open Tactical Center/ });
+  const ecosystemLink = page.getByRole('link', { name: /Launch Tactical Intelligence Center/ });
+  const expectedUrl = 'https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/';
+
+  await expect(heroLink).toBeVisible();
+  await expect(heroLink).toHaveAttribute('href', expectedUrl);
+  await expect(heroLink).toHaveAttribute('target', '_blank');
+
+  await expect(ecosystemLink).toBeAttached();
+  await expect(ecosystemLink).toHaveAttribute('href', expectedUrl);
+  await expect(ecosystemLink).toHaveAttribute('target', '_blank');
+
+  const missingHrefs = await page.locator('a').evaluateAll(links =>
+    links.filter(link => !link.getAttribute('href')).map(link => link.textContent.trim())
+  );
+  expect(missingHrefs).toEqual([]);
+});
