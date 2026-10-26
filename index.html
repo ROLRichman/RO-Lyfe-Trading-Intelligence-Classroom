@@ -271,5 +271,30 @@
 
   <script src="js/app.js"></script>
   <script src="js/market-room.js"></script>
+
+<script id="ROLYFEClassroomShare">
+(function(){
+ const emails="Richman@rootoflyfe.com,Richmoneybroker@gmail.com";
+ const $=id=>document.getElementById(id);
+ function collectWork(){
+  const fields={};
+  document.querySelectorAll('#trade-planner input,#trade-planner select,#trade-planner textarea,#journal input,#journal textarea').forEach(el=>{if(el.id)fields[el.id]=el.value});
+  let journal=[];
+  try{journal=JSON.parse(localStorage.getItem('rolyfeClassroomJournalV1')||'[]')}catch(_){}
+  const result=$('planOutput'),entries=$('journalEntries');
+  return {product:"RO’Lyfe Trading Intelligence Classroom",savedAt:new Date().toISOString(),page:location.href,fields,visiblePlan:result?result.innerText:"",journalEntries:journal,visibleJournal:entries?entries.innerText:"",disclaimer:"Practice/educational content only. No brokerage connection. Local save is not cloud backup."};
+ }
+ function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200)}
+ function init(){
+  if(!$('classroomSaveWork')||$('classroomSaveWork').dataset.ready)return;
+  $('classroomSaveWork').dataset.ready='1';
+  $('classroomSaveWork').addEventListener('click',()=>{try{localStorage.setItem('rolyfe-classroom-work-backup',JSON.stringify(collectWork()));$('classroomSaveStatus').textContent='Saved in this browser on this device. Download a copy for a separate backup.'}catch(e){$('classroomSaveStatus').textContent='Local storage is unavailable or full. Use Download work instead.'}});
+  $('classroomDownloadWork').addEventListener('click',()=>{download('ROLyfe_Classroom_Work_Backup.json',JSON.stringify(collectWork(),null,2),'application/json;charset=utf-8');$('classroomSaveStatus').textContent='Download requested. Check your browser downloads.'});
+  $('classroomEmailWork').addEventListener('click',()=>{const w=collectWork(),body=["RO’Lyfe Trading Intelligence Classroom — work summary","","Saved: "+w.savedAt,"Page: "+w.page,"","PLANNER INPUTS",JSON.stringify(w.fields,null,2),"","VISIBLE PLAN / RESULTS",w.visiblePlan||"(No plan results displayed)","","JOURNAL",w.visibleJournal||"(No journal entries displayed)","","For a complete structured copy, use Download work (.json) and attach it to this email.",w.disclaimer].join("\n");location.href='mailto:'+emails+'?subject='+encodeURIComponent('RO’Lyfe Classroom Work Backup')+'&body='+encodeURIComponent(body.slice(0,9000));$('classroomSaveStatus').textContent='Your email app should open a draft addressed to both email addresses. Review it, attach the JSON download if desired, and send it yourself.'});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
 </body>
 </html>
