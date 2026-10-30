@@ -98,3 +98,7 @@ body.auction-embed .quote-popup{max-height:calc(100dvh - 18px)}
  body.auction-embed .tv-chart{height:410px}
  body.auction-embed .option-ladder{padding:12px;margin-top:9px}
 }
+
+.chart-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.quote-open{border:1px solid #355070;background:#10233a;color:#e8f4ff;border-radius:8px;padding:8px 10px;font-size:10px;font-weight:800;cursor:pointer}
+.quote-open:hover{border-color:#66d9ff;color:#66d9ff}
