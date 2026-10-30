@@ -15,7 +15,7 @@ function candleSymbolForApi(symbol){const s=symbolForApi(symbol);const crypto=s.
 function setupChart(){const root=$("#tvChart");root.innerHTML="";if(!window.LightweightCharts){root.innerHTML='<div class="loading">Chart library could not load. Check your connection and reload.</div>';$("#chartStatus").textContent="CHART LIBRARY ERROR";return false;}
 chartObj=LightweightCharts.createChart(root,{width:root.clientWidth,height:root.clientHeight,layout:{background:{type:"solid",color:"#05070b"},textColor:"#b8c9dc"},grid:{vertLines:{color:"#15202d"},horzLines:{color:"#15202d"}},rightPriceScale:{borderColor:"#29384b"},timeScale:{borderColor:"#29384b",timeVisible:true,secondsVisible:false},crosshair:{mode:LightweightCharts.CrosshairMode.Normal},handleScroll:true,handleScale:true});
 candleSeries=chartObj.addCandlestickSeries({upColor:"#50e0a2",downColor:"#ff7186",borderUpColor:"#50e0a2",borderDownColor:"#ff7186",wickUpColor:"#50e0a2",wickDownColor:"#ff7186"});
-volumeSeries=chartObj.addHistogramSeries({priceFormat:{type:"volume"},priceScaleId:"volume",lastValueVisible:false,priceLineVisible:false});vwapSeries=chartObj.addLineSeries({color:"#f7d46a",lineWidth:2,title:"VWAP",priceLineVisible:false,lastValueVisible:true});const maColors={"5":"#f6c453","10":"#55d6be","20":"#6ea8fe","50":"#c1a5ff","200":"#ff8c69"};[5,10,20,50,200].forEach(n=>{maSeries[n]=chartObj.addLineSeries({color:maColors[n],lineWidth:n===200?3:2,title:"EMA "+n,priceLineVisible:false,lastValueVisible:true});});
+volumeSeries=chartObj.addHistogramSeries({priceFormat:{type:"volume"},priceScaleId:"volume",lastValueVisible:false,priceLineVisible:false});vwapSeries=chartObj.addLineSeries({color:"#f7d46a",lineWidth:2,title:"VWAP",priceLineVisible:false,lastValueVisible:true});const maColors={"5":"#f6c453","10":"#55d6be","20":"#6ea8fe","40":"#4fd1c5","50":"#c1a5ff","200":"#ff8c69"};[5,10,20,40,50,200].forEach(n=>{maSeries[n]=chartObj.addLineSeries({color:maColors[n],lineWidth:n===200?3:2,title:"EMA "+n,priceLineVisible:false,lastValueVisible:true});});
 chartObj.priceScale("volume").applyOptions({scaleMargins:{top:.82,bottom:0},borderVisible:false});
 chartObj.timeScale().fitContent();
 if(resizeObserver)resizeObserver.disconnect();resizeObserver=new ResizeObserver(()=>{if(chartObj)chartObj.applyOptions({width:root.clientWidth,height:root.clientHeight});});resizeObserver.observe(root);
@@ -36,7 +36,7 @@ chartObj.timeScale().fitContent();renderMovingAverages();renderIndicator();$("#c
 function renderMovingAverages(){
 const host=$("#maReadout");if(!chartObj||!latestBars.length||!host)return;
 const closes=latestBars.map(b=>b.close),labels=[];
-[5,10,20,50,200].forEach(n=>{
+[5,10,20,40,50,200].forEach(n=>{
  let p=null,k=2/(n+1);const values=closes.map((v,i)=>{p=p===null?v:v*k+p*(1-k);return i<n-1?null:p;});
  const control=Array.from(document.querySelectorAll(".ma-toggle")).find(el=>Number(el.value)===n),enabled=control?control.checked:n!==200,s=maSeries[n];
  if(!s)return;if(enabled){s.applyOptions({visible:true});s.setData(latestBars.map((b,i)=>({time:b.time,value:values[i]})).filter(x=>Number.isFinite(x.value)));if(values[values.length-1]!=null)labels.push("EMA "+n+" "+fmt(values[values.length-1]));}
