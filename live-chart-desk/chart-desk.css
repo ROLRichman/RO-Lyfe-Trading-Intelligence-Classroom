@@ -76,3 +76,25 @@ body.classroom-embed .tv-chart{height:500px}
 /* Candle style selector */
 .candle-style-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 9px;padding:10px 12px;background:#080d15;border:1px solid var(--line);border-radius:9px}.candle-style-toolbar label{font-size:12px;color:#c9d8e9;font-weight:750}.candle-style-toolbar select{min-width:0;max-width:100%;background:#101a27;border:1px solid #355273;color:#eaf1fa;border-radius:8px;padding:9px 11px;font:inherit;font-size:12px}.candle-style-toolbar span{font-size:11px;color:#a6b8cd;flex-basis:100%;overflow-wrap:anywhere}
 @media(max-width:600px){.candle-style-toolbar{align-items:stretch;flex-direction:column}.candle-style-toolbar select{width:100%}}
+
+
+/* Compact chart-only surface for RO'Lyfe Auction Capital Machine */
+body.auction-embed .top,
+body.auction-embed .intro,
+body.auction-embed .searchbar,
+body.auction-embed .sidebar,
+body.auction-embed footer{display:none!important}
+body.auction-embed main{max-width:none;padding:8px}
+body.auction-embed .layout{display:block}
+body.auction-embed .chart-panel{width:100%;padding:12px;border-radius:10px}
+body.auction-embed .tv-chart{height:500px}
+body.auction-embed .chart-foot{display:none}
+body.auction-embed .data-disclosure{display:none}
+body.auction-embed .option-ladder{margin-top:12px}
+body.auction-embed .quote-popup{max-height:calc(100dvh - 18px)}
+@media(max-width:600px){
+ body.auction-embed main{padding:5px}
+ body.auction-embed .chart-panel{padding:8px}
+ body.auction-embed .tv-chart{height:410px}
+ body.auction-embed .option-ladder{padding:12px;margin-top:9px}
+}
