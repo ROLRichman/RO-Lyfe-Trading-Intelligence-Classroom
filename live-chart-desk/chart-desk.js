@@ -92,9 +92,18 @@ if(latestBars.length<20){
 const bars=latestBars,cl=bars.map(b=>b.close),hi=bars.map(b=>b.high),lo=bars.map(b=>b.low),vol=bars.map(b=>Math.max(0,Number(b.volume)||0));
 const mean=a=>a.reduce((s,v)=>s+v,0)/Math.max(1,a.length);
 const sma=(a,n)=>a.map((v,i)=>i<n-1?null:mean(a.slice(i-n+1,i+1)));
+const wilder=(a,n)=>{
+ const out=Array(a.length).fill(null);let seed=0,count=0,prev=null;
+ a.forEach((v,i)=>{
+  if(v===null||!Number.isFinite(v))return;
+  if(prev===null){seed+=v;count++;if(count===n){prev=seed/n;out[i]=prev;}}
+  else{prev=((prev*(n-1))+v)/n;out[i]=prev;}
+ });
+ return out;
+};
 const ema=(a,n)=>{let p=null,k=2/(n+1);return a.map((v,i)=>{if(v===null||!Number.isFinite(v))return null;p=p===null?v:v*k+p*(1-k);return i<n-1?null:p;});};
 const tr=bars.map((b,i)=>i===0?b.high-b.low:Math.max(b.high-b.low,Math.abs(b.high-bars[i-1].close),Math.abs(b.low-bars[i-1].close)));
-const atrValues=sma(tr,14);
+const atrValues=wilder(tr,14);
 let vals=[],guides=[],label="",color="#78a9ff",suffix="",modeText="",histogram=false;
 if(mode==="rsi"){
  label="RSI (14)";guides=[30,70];
@@ -118,9 +127,9 @@ if(mode==="rsi"){
  label="ADX (14)";guides=[20,25,40];color="#55e0a3";
  const plus=bars.map((b,i)=>i===0?0:Math.max(0,b.high-bars[i-1].high>bars[i-1].low-b.low?b.high-bars[i-1].high:0));
  const minus=bars.map((b,i)=>i===0?0:Math.max(0,bars[i-1].low-b.low> b.high-bars[i-1].high?bars[i-1].low-b.low:0));
- const pAvg=sma(plus,14),mAvg=sma(minus,14);
+ const pAvg=wilder(plus,14),mAvg=wilder(minus,14);
  const dx=bars.map((b,i)=>{if(!atrValues[i]||pAvg[i]===null||mAvg[i]===null)return null;const p=100*pAvg[i]/atrValues[i],m=100*mAvg[i]/atrValues[i],sum=p+m;return sum?100*Math.abs(p-m)/sum:null;});
- vals=sma(dx.map(v=>v===null?0:v),14).map((v,i)=>i<26?null:v);
+ vals=wilder(dx,14);
 }else if(mode==="bollinger"){
  label="Bollinger %B (20,2)";guides=[0,50,100];color="#78a9ff";
  vals=bars.map((b,i)=>{if(i<19)return null;const w=cl.slice(i-19,i+1),avg=mean(w),sd=Math.sqrt(mean(w.map(x=>(x-avg)*(x-avg)))),u=avg+2*sd,l=avg-2*sd;return u===l?50:100*(b.close-l)/(u-l);});
@@ -129,12 +138,12 @@ if(mode==="rsi"){
  let total=0;vals=bars.map((b,i)=>{if(i>0){if(b.close>bars[i-1].close)total+=vol[i];else if(b.close<bars[i-1].close)total-=vol[i];}return total;});
 }else if(mode==="ttm"){
  label="TTM Squeeze · momentum proxy";guides=[0];color="#c1a5ff";histogram=true;
- const mid=sma(cl,20),atr20=sma(tr,20),ema20=ema(cl,20),states=[];
+ const mid=sma(cl,20),atr20=wilder(tr,20),ema20=ema(cl,20),states=[];
  vals=bars.map((b,i)=>{if(i<19||mid[i]===null||atr20[i]===null||ema20[i]===null){states.push(null);return null;}const w=cl.slice(i-19,i+1),sd=Math.sqrt(mean(w.map(x=>(x-mid[i])*(x-mid[i])))),bbU=mid[i]+2*sd,bbL=mid[i]-2*sd,kcU=ema20[i]+1.5*atr20[i],kcL=ema20[i]-1.5*atr20[i];states.push(bbU<kcU&&bbL>kcL);return b.close-mid[i];});
  modeText=states[states.length-1]===null?"Squeeze unavailable":states[states.length-1]?"SQUEEZE ON":"SQUEEZE RELEASED";
 }else if(mode==="supertrend"){
  label="Supertrend (10,3) direction";guides=[0];color="#55e0a3";histogram=true;
- const atr10=sma(tr,10),upper=[],lower=[],trend=[];
+ const atr10=wilder(tr,10),upper=[],lower=[],trend=[];
  bars.forEach((b,i)=>{
   if(atr10[i]===null){upper.push(null);lower.push(null);trend.push(null);return;}
   const mid=(b.high+b.low)/2,bu=mid+3*atr10[i],bl=mid-3*atr10[i];
