@@ -22,7 +22,7 @@ if(resizeObserver)resizeObserver.disconnect();resizeObserver=new ResizeObserver(
 return true;}
 function toHeikinAshi(bars){let previousOpen=null,previousClose=null;return bars.map((b)=>{const close=(b.open+b.high+b.low+b.close)/4;const open=previousOpen===null?(b.open+b.close)/2:(previousOpen+previousClose)/2;const high=Math.max(b.high,open,close);const low=Math.min(b.low,open,close);previousOpen=open;previousClose=close;return {time:b.time,open,high,low,close};});}
 function renderCandles(){if(!candleSeries||!latestBars.length)return;const data=candleStyle==="heikinashi"?toHeikinAshi(latestBars):latestBars.map(({time,open,high,low,close})=>({time,open,high,low,close}));candleSeries.setData(data);const note=$("#candleStyleNote");if(note)note.textContent=candleStyle==="heikinashi"?"Heikin-Ashi smooths candles for trend reading; displayed OHLC values are synthetic, not executable prices.":"Standard candles show actual open, high, low and close.";const meta=$("#chartMeta");if(meta&&latestBars.length){const last=latestBars[latestBars.length-1];meta.textContent="Tickerbot · "+latestBars.length+" candles · "+interval+" · "+(candleStyle==="heikinashi"?"Heikin-Ashi view · actual last close ":"Standard candles · last close ")+fmt(last.close)+" · "+new Date(last.time*1000).toLocaleString();}}
-async function loadBars(){const seq=++loadSequence;$("#chartStatus").textContent="LOADING CANDLES";$("#chartMeta").textContent="Requesting "+interval+" bars from Tickerbot…";
+async function loadBars(){const seq=++loadSequence;$("#chartStatus").textContent="LOADING CANDLES";$("#chartMeta").textContent="Requesting "+interval+" bars from Tickerbot…";renderTechnicalPosture(true);
 if(!chartObj&&!setupChart())return;
 const ticker=candleSymbolForApi(current);
 try{const url=API+"?provider=tickerbot&symbol="+encodeURIComponent(ticker)+"&interval="+encodeURIComponent(interval)+"&limit=300";const r=await fetch(url,{headers:{apikey:ANON,Authorization:"Bearer "+ANON,Accept:"application/json"},cache:"no-store"});const d=await r.json();if(seq!==loadSequence)return;if(!r.ok)throw Error(d.error||d.message||("HTTP "+r.status));if(!Array.isArray(d.bars)||!d.bars.length)throw Error("No candles returned for this symbol and timeframe.");
@@ -30,8 +30,8 @@ const bars=d.bars.map(b=>({time:Math.floor(Number(b.t)/1000),open:Number(b.o),hi
 if(!bars.length)throw Error("Provider returned no valid OHLCV bars.");
 latestBars=bars;renderCandles();
 volumeSeries.setData(bars.map(b=>({time:b.time,value:b.volume,color:b.close>=b.open?"rgba(80,224,162,.38)":"rgba(255,113,134,.38)"})));
-chartObj.timeScale().fitContent();renderMovingAverages();renderIndicator();$("#chartStatus").textContent="CANDLES LOADED";const last=bars[bars.length-1];renderCandles();$("#chartMeta").textContent+=" · "+(d.coverage||"coverage not supplied");
-}catch(e){if(seq!==loadSequence)return;latestBars=[];renderIndicator();$("#chartStatus").textContent="DATA UNAVAILABLE";$("#chartMeta").textContent="Tickerbot candle request failed: "+e.message;$("#tvChart").dataset.error=e.message;}}
+chartObj.timeScale().fitContent();renderMovingAverages();renderIndicator();renderTechnicalPosture(false);$("#chartStatus").textContent="CANDLES LOADED";const last=bars[bars.length-1];renderCandles();$("#chartMeta").textContent+=" · "+(d.coverage||"coverage not supplied");
+}catch(e){if(seq!==loadSequence)return;latestBars=[];renderIndicator();renderTechnicalPosture(false);$("#chartStatus").textContent="DATA UNAVAILABLE";$("#chartMeta").textContent="Tickerbot candle request failed: "+e.message;$("#tvChart").dataset.error=e.message;}}
 
 function renderMovingAverages(){
 const host=$("#maReadout");if(!chartObj||!latestBars.length||!host)return;
@@ -80,6 +80,49 @@ function renderOptionLadder(){
  host.innerHTML=levels.map((v,i)=>'<tr><td><strong>'+(i===3?'4R · Runner':v.r+'R · Target '+v.r)+'</strong></td><td>'+optionMoney(v.premium)+'</td><td>'+v.qty+'</td><td>'+optionMoney(v.perContract)+'</td><td>'+optionMoney(v.perContract*v.qty)+'</td></tr>').join("");
  const optionLabel=(strike?"$"+Number(strike).toFixed(2)+" ":"")+" "+(expiry||"expiration TBD");
  $("#optionBracketText").textContent=(overBudget?"⚠ RISK BUDGET EXCEEDED · ":"")+"Underlying "+current+" · "+type+" · "+optionLabel+" | Entry premium "+optionMoney(entry)+" | Protective stop "+optionMoney(stop)+" | Estimated total debit "+optionMoney(debit)+" | Estimated stop loss "+optionMoney(risk)+" | Planned risk budget "+optionMoney(budget)+". Stage limit exits: "+levels.map(v=>v.r+"R at "+optionMoney(v.premium)+" ("+v.qty+" contract"+(v.qty===1?"":"s")+")").join("; ")+".";
+}
+
+function renderTechnicalPosture(loading){
+ const panel=$("#technicalPosturePanel"),badge=$("#technicalPostureBadge"),copy=$("#technicalPostureCopy"),metrics=$("#technicalPostureMetrics"),tf=$("#technicalPostureTimeframe");
+ if(!panel||!badge||!copy||!metrics)return;
+ tf.textContent="Selected chart · "+String(interval||"").toUpperCase();
+ panel.classList.remove("bullish","bearish");panel.classList.add("neutral");
+ if(loading){badge.textContent="◌ UPDATING";copy.textContent="Loading the selected ticker and timeframe. The previous reading is being replaced.";metrics.textContent="Waiting for fresh candle data…";return;}
+ if(!latestBars.length){badge.textContent="⏸ NEUTRAL / WAITING";copy.textContent="No usable candles returned. Check the selected symbol, timeframe, provider coverage, and refresh.";metrics.textContent="EMA 20 / 50 · —   |   RSI 14 · —   |   MACD · —   |   Stoch · —";return;}
+ const bars=latestBars,closes=bars.map(b=>b.close),highs=bars.map(b=>b.high),lows=bars.map(b=>b.low);
+ if(bars.length<50){badge.textContent="⏸ NEUTRAL / WAITING";copy.textContent="Need at least 50 valid candles on this timeframe before assigning a directional posture. Current: "+bars.length+".";metrics.textContent="EMA 20 / 50 · building   |   RSI 14 · building   |   MACD · building   |   Stoch · building";return;}
+ const emaSeries=(values,period)=>{
+  const out=Array(values.length).fill(null),k=2/(period+1);let seed=0,prev=null,count=0;
+  values.forEach((v,i)=>{if(!Number.isFinite(v))return;if(prev===null){seed+=v;count++;if(count===period){prev=seed/period;out[i]=prev;}}else{prev=v*k+prev*(1-k);out[i]=prev;}});
+  return out;
+ };
+ const ema20=emaSeries(closes,20),ema50=emaSeries(closes,50);
+ const e20=ema20[ema20.length-1],e50=ema50[ema50.length-1],last=closes[closes.length-1];
+ let avgGain=0,avgLoss=0,rsi=NaN;
+ for(let i=1;i<=14;i++){const d=closes[i]-closes[i-1];avgGain+=Math.max(d,0)/14;avgLoss+=Math.max(-d,0)/14;}
+ for(let i=15;i<closes.length;i++){const d=closes[i]-closes[i-1];avgGain=(avgGain*13+Math.max(d,0))/14;avgLoss=(avgLoss*13+Math.max(-d,0))/14;}
+ rsi=avgLoss===0?100:100-100/(1+avgGain/avgLoss);
+ const fast=emaSeries(closes,12),slow=emaSeries(closes,26);
+ const macdLine=fast.map((v,i)=>v===null||slow[i]===null?null:v-slow[i]);
+ const signal=emaSeries(macdLine.map(v=>v===null?NaN:v),9);
+ const macdHist=macdLine[macdLine.length-1]-signal[signal.length-1];
+ const rawK=bars.map((b,i)=>{if(i<13)return null;const hi=Math.max(...highs.slice(i-13,i+1)),lo=Math.min(...lows.slice(i-13,i+1));return hi===lo?50:100*(b.close-lo)/(hi-lo);});
+ const validK=rawK.filter(Number.isFinite),stochK=validK[validK.length-1],stochD=validK.slice(-3).reduce((a,v)=>a+v,0)/Math.min(3,validK.length);
+ const ready=[e20,e50,rsi,macdHist,stochK,stochD,last].every(Number.isFinite);
+ if(!ready){badge.textContent="⏸ NEUTRAL / WAITING";copy.textContent="Some required studies are incomplete for this provider response. No directional posture assigned.";metrics.textContent="EMA / RSI / MACD / Stoch · incomplete";return;}
+ let score=0;
+ const alignedUp=last>e20&&e20>e50,alignedDown=last<e20&&e20<e50;
+ if(alignedUp)score+=2;else if(alignedDown)score-=2;
+ if(rsi>=55)score++;else if(rsi<=45)score--;
+ if(macdHist>0)score++;else if(macdHist<0)score--;
+ if(stochK>stochD)score++;else if(stochK<stochD)score--;
+ let posture="neutral",label="⏸ NEUTRAL / WAITING",explain="Signals are mixed or lack enough alignment. Wait for price, trend and momentum to agree.";
+ if(score>=3&&alignedUp){posture="bullish";label="🏹 ↑ BULLISH";explain="Price is above rising EMA 20 / EMA 50 alignment, with momentum confirmation on this timeframe.";}
+ else if(score<=-3&&alignedDown){posture="bearish";label="🏹 ↓ BEARISH";explain="Price is below falling EMA 20 / EMA 50 alignment, with downside momentum confirmation on this timeframe.";}
+ panel.classList.remove("bullish","bearish","neutral");panel.classList.add(posture);
+ badge.textContent=label;copy.textContent=explain+" Score "+(score>0?"+":"")+score+" · "+bars.length+" candles.";
+ const signed=n=>(n>0?"+":"")+Number(n).toFixed(4);
+ metrics.innerHTML="<span>EMA 20 / 50 · "+fmt(e20)+" / "+fmt(e50)+"</span><span>RSI 14 · "+rsi.toFixed(1)+"</span><span>MACD hist · "+signed(macdHist)+"</span><span>Stoch K / D · "+stochK.toFixed(1)+" / "+stochD.toFixed(1)+"</span>";
 }
 function renderIndicator(){
 const host=$("#indicatorChart"),readout=$("#indicatorReadout"),mode=$("#indicatorSelect")?.value||"rsi";
