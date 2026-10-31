@@ -102,3 +102,19 @@ body.auction-embed .quote-popup{max-height:calc(100dvh - 18px)}
 .chart-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .quote-open{border:1px solid #355070;background:#10233a;color:#e8f4ff;border-radius:8px;padding:8px 10px;font-size:10px;font-weight:800;cursor:pointer}
 .quote-open:hover{border-color:#66d9ff;color:#66d9ff}
+
+/* RO'Lyfe chart-derived technical posture */
+.technical-posture{margin:10px 0 12px;padding:12px 14px;border:1px solid #34475d;border-radius:10px;background:#0a121d;color:#eef4fb}
+.technical-posture-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.technical-posture-kicker{display:block;color:#9eb3ca;font-size:10px;font-weight:850;letter-spacing:.12em}
+.technical-posture-head small{display:block;color:#8fa4bb;font-size:9px;margin-top:3px}
+.technical-posture-head strong{display:inline-flex;align-items:center;gap:5px;border:1px solid #806b3e;background:#2b2415;color:#f2d28b;border-radius:999px;padding:7px 11px;font-size:11px;letter-spacing:.04em}
+.technical-posture.bullish{border-color:#347b55;background:linear-gradient(110deg,rgba(16,41,30,.9),rgba(10,18,29,.96))}
+.technical-posture.bullish .technical-posture-head strong{border-color:#347b55;background:#10291e;color:#72e5a4}
+.technical-posture.bearish{border-color:#874848;background:linear-gradient(110deg,rgba(48,25,25,.9),rgba(10,18,29,.96))}
+.technical-posture.bearish .technical-posture-head strong{border-color:#874848;background:#301919;color:#ff9292}
+.technical-posture p{font-size:11px;line-height:1.45;color:#c5d2e1;margin:8px 0}
+.technical-posture-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.technical-posture-metrics span{padding:7px;border:1px solid #27394d;border-radius:7px;color:#aebed0;font-size:9px;overflow-wrap:anywhere}
+.technical-posture-note{display:block;color:#8195aa;font-size:9px;line-height:1.4;margin-top:8px}
+@media(max-width:560px){.technical-posture{padding:10px}.technical-posture-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.technical-posture-head strong{font-size:10px}}
