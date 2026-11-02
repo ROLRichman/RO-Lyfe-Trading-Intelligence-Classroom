@@ -177,6 +177,21 @@ test('Classroom exposes funding and credit links, utility controls and five-lang
   await expect(page.locator('#classroomChartFrame')).toHaveAttribute('src', /live-chart-desk/);
 });
 
+test('AI Co-Pilot sends the selected teaching role to the secure analysis endpoint', async ({ page }) => {
+  let requestBody = null;
+  await page.route('**/functions/v1/rol-trading-ai', async route => {
+    requestBody = route.request().postDataJSON();
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'Professor mode test response', model: 'test-model' }) });
+  });
+  await page.goto('/live-chart-desk/?embed=classroom');
+  await page.locator('#rolSidekickMode').selectOption('professor');
+  await page.locator('#rolTradeAiQuestion').fill('Explain EMA 20 and VWAP.');
+  await page.locator('#rolTradeAiForm button[type="submit"]').click();
+  await expect(page.locator('#rolTradeAiAnswer')).toContainText('Professor mode test response');
+  expect(requestBody.sidekickMode).toBe('professor');
+  expect(JSON.parse(requestBody.context).sidekickMode).toBe('professor');
+});
+
 test('Live Desk has additional discovery and futures lists, same-chart scanner, Stock and Option Ladders', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
@@ -186,12 +201,48 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await expect(page.locator('[data-list="discovery"]')).toBeAttached();
   await expect(page.locator('[data-list="futures"]')).toBeAttached();
   await expect(page.locator('#symbol-scanner')).toBeAttached();
+  if ((page.viewportSize()?.width ?? 1280) <= 900) {
+    await page.locator('#toggleSidebar').click();
+  }
+  await expect(page.locator('#marketSidebar')).toBeVisible();
+  await page.locator('#symbol-scanner > summary').click();
   await expect(page.locator('#scanWatchlist')).toBeVisible();
+  if ((page.viewportSize()?.width ?? 1280) <= 900) {
+    await expect(page.locator('#closeSidebar')).toBeVisible();
+    await page.locator('#closeSidebar').click();
+    await expect(page.locator('.layout')).not.toHaveClass(/sidebar-open/);
+  }
   await expect(page.locator('#stock-ladder')).toBeAttached();
   await expect(page.locator('#option-ladder')).toBeAttached();
+  await expect(page.locator('#optionStopPresetRows tr')).toHaveCount(5);
+  await page.locator('[data-apply-option-stop="10"]').click();
+  await expect(page.locator('#optStop')).toHaveValue('1.1250');
+  await expect(page.locator('#optRisk')).toHaveText('$50.00');
+  await page.locator('[data-apply-option-stop="15"]').click();
+  await expect(page.locator('#optStop')).toHaveValue('1.0625');
+  await expect(page.locator('#optRisk')).toHaveText('$75.00');
+  await page.locator('[data-apply-option-stop="5"]').click();
+  await expect(page.locator('#optStop')).toHaveValue('1.1875');
+  await page.locator('[data-apply-option-stop="7"]').click();
+  await expect(page.locator('#optStop')).toHaveValue('1.1625');
+  await page.locator('[data-apply-option-stop="20"]').click();
+  await expect(page.locator('#optStop')).toHaveValue('1.0000');
   await expect(page.locator('#loadOptionChain')).toBeVisible();
   await expect(page.locator('#rolTradeAiForm')).toBeAttached();
+  await expect(page.locator('#rolSidekickMode option')).toHaveCount(3);
+  await expect(page.locator('#rolMediaHubFrame')).toHaveAttribute('src', 'media-hub.html');
+  const media = page.frameLocator('#rolMediaHubFrame');
+  await expect(media.locator('.primary-grid .card')).toHaveCount(2);
+  await expect(media.locator('.channels details')).toHaveCount(4);
+  await expect(media.locator('#muteAll')).toBeVisible();
+  await expect(media.locator('#sports-center iframe')).toHaveAttribute('src', /RO-Lyfe-Live-Sports-Center/);
   await expect(page.locator('#translator [data-translate-target]')).toHaveCount(5);
+  await expect(page.locator('#technicalPosturePanel')).toBeAttached();
+  await expect(page.locator('#hmaToggle')).toBeAttached();
+  await expect(page.locator('#indicatorSelect option[value="hma"]')).toHaveCount(1);
+  await expect(page.locator('#rolPostureEnhancements')).toBeAttached();
+  await expect(page.locator('#rolMtfGrid .rol-mtf-card')).toHaveCount(5);
+  await expect(page.locator('#rolIvReadout')).toBeAttached();
   await expect(page.locator('#expandChartBtn')).toBeVisible();
   await expect(page.locator('#rolZoomSlider')).toBeVisible();
   expect(pageErrors).toEqual([]);

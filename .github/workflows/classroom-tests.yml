@@ -2,7 +2,7 @@ name: Classroom browser tests
 
 on:
   push:
-    branches: [main, stage-1-market-room, stage-1-market-room-upgrade, feature/rtic-live-desk-upgrade]
+    branches: [main, stage-1-market-room, stage-1-market-room-upgrade, feature/rtic-live-desk-upgrade, feature/live-desk-timeframes-quotes-snapshot]
   pull_request:
     branches: [main, stage-1-market-room]
   workflow_dispatch:

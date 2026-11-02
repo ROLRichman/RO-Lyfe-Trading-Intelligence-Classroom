@@ -1,120 +1,199 @@
 # RO’Lyfe Trading Intelligence Classroom — Project Handoff
 
-**Project:** RO’Lyfe Trading Intelligence Classroom™  
-**Repository:** https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom  
+**Repository:** [ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom)  
 **Live site:** https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/  
-**Current baseline:** Stage 1 Market Room merged into `main`  
-**Merge commit reported by GitHub:** `4311b35`  
-**Handoff date:** 2026-10-23
+**Handoff updated:** 2026-11-02  
+**Default branch:** `main`  
+**Active work branch:** `feature/live-desk-timeframes-quotes-snapshot`  
+**Active pull request:** [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)  
+**Latest tested feature head:** `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`  
+**Merge status:** NOT MERGED. The user authorized commits and merge. Desktop and mobile Playwright checks pass on the current feature head. Final visual review of the new controls can be completed against the deployed page after merge; retain educational and no-brokerage boundaries.
 
-## 1. Mission and product intent
+---
+
+## 1. Current checkpoint — read this first
+
+### Live Desk media + AI sidekick upgrade
+
+The active feature branch adds the following work:
+
+- Two featured media players in the Live Desk.
+- Expandable channels for Real Estate Intelligence, Weather Intelligence, Trading Education, and RO’Lyfe Learning Network.
+- Embedded RO’Lyfe Live Sports Center inside the Live Desk media hub.
+- Mute control for the embedded YouTube players (it changes player mute parameters and reloads the players; it is not a native instant mixer).
+- Three AI sidekick roles: Trading Coach, Market Analyst, and Professor Mode.
+- Server-side role guidance in the Supabase `rol-trading-ai` Edge Function, deployed as version 2 with JWT verification retained.
+- Playwright assertions for the media hub, Sports embed, role selector, and role request payload.
+
+- Five-timeframe technical confluence panel: 6M/1D, 4H, 1H, 15M, and 5M. Each timeframe is requested and calculated separately; unavailable provider coverage must be shown as unavailable.
+- Adds HMA 32 as a selectable lower-panel study and a chart overlay with direction coloring; EMA/RSI/MACD/Stochastic rows display directional readings.
+- Adds option premium stop comparisons for 5%, 7%, 10%, 15%, and 20%; selected presets apply a premium-based stop and recalculate risk/contract, total risk, and budget status. Stop premiums are shown to four decimals; 10% is labeled as the standard planning ceiling; 15%/20% are labeled aggressive.
+- Scanner uses the Supabase `market-data` `tickerbot-scan` route. Selecting a watchlist/scanner symbol loads its chart/quote and chart-derived indicators; whole-list scanning remains a manual action.
+- Playwright covers scanner expansion, five timeframe cards, HMA controls, and the 10% / 15% option stop calculations.
+- Adds a compact in-drawer mobile Watchlist close button; the backdrop and top-level toggle remain supported.
+
+### User review state
+
+**The user reviewed the Live Desk page and explicitly liked its layout and workflow.** The multi-timeframe posture/HMA upgrades, option premium stop presets, and mobile drawer close control were added afterward and are covered by the passing desktop/mobile browser suite. The user authorized merge; allow them to inspect the deployed refinements after Pages publishes.
+
+### Automated test state — PASSED
+
+- Workflow: **Classroom browser tests**
+- Latest tested branch head: `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`
+- Push run [#122](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519211343): **passed**
+- Pull-request run [#123](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519225902): **passed**
+- Test coverage includes desktop and mobile Chromium, Live Desk structure, AI role payload, media hub, embedded Sports Center, scanner panel visibility, five timeframe posture cards, HMA overlay/study controls, and all five option premium stop presets.
+- The 10% preset is verified to set a $1.1250 stop from a $1.25 premium and recalculate $50 total risk for four standard contracts; 15% is verified at $1.0625 / $75 total risk. The 5%, 7%, and 20% stop preset values are also covered.
+- Mobile layout now exposes an in-drawer `×` close button so the Watchlist can be closed without relying on the top navigation or tapping outside the drawer.
+- Earlier failures were diagnosed and fixed:
+  1. Test expected scanner button visible while its parent details element was collapsed; test now opens the scanner.
+  2. Browser script had an accidental duplicated trailing fragment; removed, and JavaScript syntax checks passed.
+  3. Mobile scanner test left the off-canvas Watchlist open, then tried to interact behind its overlay. Added an explicit close button and made the test use it before interacting with the chart/option planner.
+
+**Release checkpoint:** The currently recorded code head is green on both push and PR Actions runs. If documentation is committed afterward, check the newly triggered runs for that documentation commit before merging PR #10.
+---
+
+## 2. Current implementation map
+
+### GitHub files changed on the active branch
+
+1. `live-chart-desk/index.html`
+   - Adds the AI sidekick role selector.
+   - Embeds `media-hub.html` in the Live Desk using iframe `rolMediaHubFrame`.
+
+2. `live-chart-desk/chart-desk.css`
+   - Styles the media hub shell and iframe.
+   - Desktop iframe height is approximately 1480px; mobile height approximately 1780px. Confirm usability during visual review.
+
+3. `live-chart-desk/media-hub.html` — new
+   - Two featured video players: Schwab Network and CBS News.
+   - Expandable Real Estate, Weather, Trading Education, and RO’Lyfe Learning channels.
+   - Sports Center iframe and standalone/source links.
+   - Important: featured YouTube embeds may be replays or featured videos, not guaranteed continuous live streams. Official live-watch links are supplied where available.
+
+4. `js/rol-tools.js`
+   - Reads the selected AI role and passes `sidekickMode` with the analysis request.
+
+5. `tests/classroom.spec.js`
+   - Adds media structure and AI role request assertions.
+
+6. `.github/workflows/classroom-tests.yml`
+   - Includes the active feature branch in push triggers.
+
+### AI role backend
+
+- Supabase project: `ROLyfe-Trading-Intelligence-Classroom`
+- Project ID: `ykmdyfbklvuoseqdjnxy`
+- Edge Function: `rol-trading-ai`
+- Deployed version: **2**
+- JWT verification: retained (`verify_jwt: true`)
+- Server-side role allowlist and guidance:
+  - `coach`: setup, risk, sizing, invalidation, missing evidence, safer alternatives; no trade commands.
+  - `analyst`: bullish/bearish/neutral scenarios, timeframe context, catalysts, liquidity, volume, thesis invalidation; separate facts from uncertainty.
+  - `professor`: plain-language step-by-step teaching, definitions, examples, and a knowledge-check question.
+
+### Media and Sports destinations
+
+- Sports Center live site: https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/
+- Sports Center repository: https://github.com/ROLRichman/RO-Lyfe-Live-Sports-Center
+- Sports provider previously reported an account suspension. The embedded page may load while live sports data remains unavailable. Verify provider status separately; do not claim live scores are working unless tested.
+
+---
+
+## 3. Project mission and core trading method
 
 A mobile-first, high-tech trading education classroom built around the RO’Lyfe stock-first method:
 
 1. Study the larger chart structure.
 2. Map the setup through 6M/1D → 4H → 1H → 15m → 5m.
-3. Define the underlying stock’s entry and invalidation before considering an option.
-4. Plan risk, targets, exits and review notes before any real-money decision.
-5. Learn and practice using illustrative examples.
+3. Define the underlying stock's entry and invalidation before considering an option.
+4. Plan risk, targets, exits, and review notes before any real-money decision.
+5. Learn and practice using clearly labeled illustrative examples.
 
 The classroom is educational software—not a broker, investment adviser, live signal service, or guarantee of trading results.
 
-## 2. Stage 1 delivered
+## 4. Existing features to preserve
 
-The `stage-1-market-room` branch was merged into `main` through pull request #1. GitHub displayed one successful check and no merge conflicts at merge time.
+Do not remove or casually replace existing classroom capabilities while working on the Live Desk:
 
-### Market Room
-
-- `index.html`: Market Room section, navigation link, and hero entry point.
-- `css/market-room.css`: responsive Market Room styling.
-- `js/market-room.js`: sample watchlists for stocks, crypto and futures; generated illustrative candlestick chart; sample context labels; timeframe selector; refresh button; and stock-first 1R/2R/3R risk worksheet.
-- `README.md`: scope, limitations, and testing notes.
-
-### Existing classroom features retained
-
-- Chart Intelligence Lab with illustrative chart and indicator panels.
+- Market Room and watchlists.
+- Chart Intelligence Lab and indicator panels.
 - Strategy Advantage tabs.
 - Stock-First Trade Planner.
 - Classroom lesson modules.
 - Local practice journal and JSON export.
-- AI helper that builds a prompt; it does not call an AI API.
-- Trading ecosystem links and mobile navigation.
+- Existing navigation, responsive layout, and trading ecosystem links.
+- Existing chart, scanner, timeframe, multi-chart, and market tools in the Live Desk.
 
-### Test tooling added
+The Live Desk and media hub are additions. Preserve existing features unless the user explicitly approves a scoped change.
 
-- `package.json`: Playwright test command and dependency.
-- `playwright.config.js`: desktop Chromium and mobile Chromium/Pixel 7 projects, served locally with Python's static HTTP server.
-- `tests/classroom.spec.js`: nine end-to-end test cases covering core navigation, Market Room controls and chart, long/short risk calculations, invalid stop placement, Chart Lab, strategy tabs, trade planner, journal persistence/export, AI prompt helper, and mobile layout/menu.
-- `.github/workflows/classroom-tests.yml`: attempts to run browser checks on branch pushes, pull requests targeting `stage-1-market-room`, or manual dispatch.
+## 5. Data integrity and known limitations
 
-## 3. Data integrity and known limitations
+- Do not describe sample or illustrative data as live market data.
+- A video embed is not proof of a continuous live broadcast.
+- A Sports Center iframe loading does not prove its upstream live-data provider is operational.
+- The AI sidekick is educational/advisory. It must not execute trades or imply autonomous brokerage access.
+- Supabase `rol-trading-ai` currently reports the AI integration as disconnected when `OPENAI_API_KEY` is absent; add the key through Supabase Edge Function Secrets (never commit it). The five-language text translator uses this same AI function and will also remain unavailable until that key is configured.
+- Whole-page translation, Chinese (Simplified/Traditional), and a Google Cloud Translation API integration are future work; do not describe them as implemented.
+- Never expose API keys or service-role secrets in browser JavaScript.
+- Distinguish underlying-stock chart risk from option-premium risk.
+- A passing structural browser test does not prove third-party media playback or external API health.
 
-**Do not describe the current Market Room as live market data.**
+## 6. Verification checklist
 
-- All Market Room prices/candles, watchlists’ bias labels, and posture descriptions are illustrative sample data.
-- The timeframe selector changes the displayed study label; it does not fetch or resample historical market data.
-- No market-data provider, API credentials, backend, user account system, or brokerage integration is configured.
-- The existing AI helper is a local prompt builder only.
-- The 1R/2R/3R worksheet is simple arithmetic. It does not account for fees, slippage, gaps, futures contract multipliers, or options pricing.
-- Stock-chart invalidation and option-premium risk are different measures. Do not represent the stock stop as a reliable option-loss estimate.
-- A GitHub “successful check” is not, by itself, proof that all Playwright desktop/mobile tests passed unless the check details show that exact workflow and successful job.
+### Automated
+- [x] Inspect failure artifacts and identify root causes.
+- [x] Correct scanner collapsed-state test behavior.
+- [x] Repair the chart script syntax and verify JavaScript parsing.
+- [x] Correct mobile Watchlist open/close interaction and add a visible drawer close control.
+- [x] Pass desktop and mobile Playwright suite on branch head `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559` (push run #122 and pull-request run #123).
+### Manual user review
+- [ ] User opens the Live Desk and reviews the overall page.
+- [ ] Confirm no existing Classroom or Live Desk features disappeared.
+- [ ] Confirm media hub scrolls inside its frame without taking over the full Classroom page.
+- [ ] Confirm two featured players render and official live links work.
+- [ ] Confirm each expandable channel opens and closes.
+- [ ] Confirm mute control behavior is clearly understood.
+- [ ] Confirm Sports Center iframe loads and report provider/data status honestly.
+- [ ] Test Coach, Analyst, and Professor responses and ensure role guidance changes appropriately.
+- [ ] Check narrow mobile layout, horizontal overflow, iframe height, and navigation.
+- [ ] Check browser console for uncaught errors.
 
-## 4. Verification status at handoff
+### Release gate
+**Do not merge PR #10 until automated checks pass, manual review is complete, and the user approves.**
 
-### Confirmed from the available project review
+---
 
-- Stage 1 code is merged into `main`.
-- The user opened the deployed GitHub Pages site and shared its rendered content.
-- The live page displays the Market Room and existing classroom sections.
-- Source-level JavaScript syntax and selector checks were previously performed.
-- The Market Room risk worksheet source contains long/short validation and 1R/2R/3R arithmetic.
+## 7. How to resume this project
 
-### Still to verify explicitly
+Start with this file, then inspect the live GitHub state rather than assuming the recorded checkpoint is still current.
 
-- Open GitHub **Actions → Classroom browser tests** and inspect the latest run, including desktop and mobile results. Record the run URL and outcome here.
-- Test long example: entry 100, stop 98, units 10 → risk $20; targets 102, 104, 106.
-- Test short example: entry 100, stop 102, units 10 → risk $20; targets 98, 96, 94.
-- Test invalid long example: entry 100, stop 101 → warning should appear.
-- Switch Stocks → Crypto → Futures; confirm the symbol list and chart title update.
-- Change timeframe and refresh; confirm the chart still renders and the label updates.
-- On a narrow phone viewport, confirm no horizontal page overflow and verify the menu opens and closes after navigation.
-- Check the browser console for uncaught errors.
-- Verify the deployed page reflects the latest `main` commit after GitHub Pages finishes publishing.
+1. Read this handoff.
+2. Check PR #10 and its latest head commit.
+3. Check the latest Actions run for that exact commit.
+4. Inspect the failed artifact/report before editing.
+5. Continue on `feature/live-desk-timeframes-quotes-snapshot`.
+6. Update this file after every meaningful implementation, test, integration, or deployment change.
 
-**Status:** The feature is merged and visible on the live site, but a full desktop/mobile browser-test pass has not been independently confirmed in this handoff.
+## 8. Prior Stage 1 baseline
 
-## 5. How to run the browser suite locally
+The earlier Stage 1 Market Room was merged into `main` through PR #1. It included sample watchlists for stocks, crypto, and futures; illustrative chart controls; a stock-first risk worksheet; Playwright setup; and the initial Classroom sections. Its historical test and feature details remain in the repository's commit history and earlier handoff version. Current Live Desk work is a later feature branch and must not be confused with the Stage 1 baseline.
 
-Requires Node.js 20 or newer and Python 3.
+## 9. Handoff operating rules
 
-```bash
-npm install
-npx playwright install chromium
-npm test
-```
+- Every active RO’Lyfe repository should have a root-level `PROJECT-HANDOFF.md`.
+- Update its checkpoint whenever meaningful work is done; record facts, not assumptions.
+- Record exact repo, branch, commit, PR, workflow run, deployment, and external dependency identifiers when known.
+- Clearly label what is complete, in progress, failed, blocked, and awaiting user review.
+- Preserve existing functionality and identify destructive/risky changes before making them.
+- Keep secrets out of handoff files.
+- The workspace-level index should connect related repositories and identify which integrations are actually implemented versus merely planned.
 
-The Playwright configuration starts a static server at `http://127.0.0.1:4173`. Review the test report and any failure artifacts; fix failures before marking the suite green.
-
-## 6. Suggested next steps
-
-1. **Close the verification loop:** confirm the exact GitHub Actions run and perform the manual risk and mobile checks.
-2. **Fix defects before expanding scope:** correct any failing assertions or user-facing behavior, and re-run tests.
-3. **Improve accessibility and mobile usability:** confirm readable contrast, keyboard navigation, visible focus, and chart labels.
-4. **Keep sample data clearly labeled:** retain “illustrative/sample” and “no live feed” language until a data provider is implemented.
-5. **Plan a future live-data stage separately:** select a licensed provider, use a trusted server-side endpoint for credentials, document rate limits and data timestamps, and add tests for loading, stale data, errors, and provider outages. Never expose secret API keys in browser JavaScript.
-6. **Keep changes branch-based:** create a focused feature branch, test it, open a pull request, review the diff and checks, and merge only after review.
-
-## 7. Handoff rules
-
-- Keep `main` deployable and avoid unreviewed direct edits.
-- Do not overwrite unrelated classroom features when updating `index.html`.
-- Do not claim live prices, predictive signals, or brokerage execution without a real, tested implementation.
-- Preserve the educational and risk disclosures.
-- Update this handoff when test status, integrations, deployment behavior, or project scope changes.
-
-## 8. Useful links
+## 10. Useful links
 
 - [Repository](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom)
-- [Live classroom / Market Room](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/#market-room)
-- [GitHub Actions](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions)
-- [Playwright documentation](https://playwright.dev/docs/intro)
+- [Live Classroom](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/)
+- [Live Desk pull request #10](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)
+- [Actions](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions)
+- [Sports Center](https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/)
+- [Sports Center repository](https://github.com/ROLRichman/RO-Lyfe-Live-Sports-Center)
