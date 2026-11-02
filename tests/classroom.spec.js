@@ -177,6 +177,21 @@ test('Classroom exposes funding and credit links, utility controls and five-lang
   await expect(page.locator('#classroomChartFrame')).toHaveAttribute('src', /live-chart-desk/);
 });
 
+test('AI Co-Pilot sends the selected teaching role to the secure analysis endpoint', async ({ page }) => {
+  let requestBody = null;
+  await page.route('**/functions/v1/rol-trading-ai', async route => {
+    requestBody = route.request().postDataJSON();
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'Professor mode test response', model: 'test-model' }) });
+  });
+  await page.goto('/live-chart-desk/?embed=classroom');
+  await page.locator('#rolSidekickMode').selectOption('professor');
+  await page.locator('#rolTradeAiQuestion').fill('Explain EMA 20 and VWAP.');
+  await page.locator('#rolTradeAiForm button[type="submit"]').click();
+  await expect(page.locator('#rolTradeAiAnswer')).toContainText('Professor mode test response');
+  expect(requestBody.sidekickMode).toBe('professor');
+  expect(JSON.parse(requestBody.context).sidekickMode).toBe('professor');
+});
+
 test('Live Desk has additional discovery and futures lists, same-chart scanner, Stock and Option Ladders', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
