@@ -26,7 +26,7 @@ If the project does not yet have a handoff file, create one using the standard s
 
 | Project | Repository | Live / deployed destination | Known relationship / status |
 |---|---|---|---|
-| Trading Intelligence Classroom | [RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom) | [Live Classroom](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/) | Active trading education hub. Current Live Desk media/AI work is on feature branch; PR #10 is draft and must not be merged until tests pass and user reviews. |
+| Trading Intelligence Classroom | [RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom) | [Live Classroom](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/) | Active trading education hub. Live Desk media/AI, multi-timeframe posture, HMA, mobile Watchlist close control, and option premium risk presets are on the active feature branch in open PR #10; code-level desktop/mobile Playwright passed on the tested implementation commit. Verify documentation-only follow-up checks before merge. |
 | Auction Capital Machine | [RO-Lyfe-Auction-Capital-Machine](https://github.com/ROLRichman/RO-Lyfe-Auction-Capital-Machine) | [Auction Capital Machine](https://rolrichman.github.io/ro-lyfe-auction-capital-machine/) | Property auction acquisition, due diligence, underwriting, and capital workflow. Treat as a separate project; confirm its own handoff and current branch before editing. |
 | Property Research Intelligence | [rolyfe-property-research-intelligence](https://github.com/ROLRichman/rolyfe-property-research-intelligence) | Verify deployed Pages URL in repository | Property research and due diligence workspace. Related to Auction Capital Machine; do not assume code is shared or embedded without checking. |
 | Live Sports Center | [RO-Lyfe-Live-Sports-Center](https://github.com/ROLRichman/RO-Lyfe-Live-Sports-Center) | [Live Sports Center](https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/) | Separate sports project. Embedded inside the Trading Intelligence Classroom Live Desk media hub on the active PR branch. Upstream sports provider previously reported suspended; iframe loading does not prove live data works. |
@@ -41,8 +41,9 @@ If the project does not yet have a handoff file, create one using the standard s
 - Supabase project name: `ROLyfe-Trading-Intelligence-Classroom`
 - Supabase project ID: `ykmdyfbklvuoseqdjnxy`
 - Edge Function: `rol-trading-ai`
-- Known deployed function version at this checkpoint: v2
-- JWT verification retained.
+- Edge Function `rol-trading-ai`: deployed v2; JWT verification retained.
+- Edge Function `market-data`: deployed v29; includes Tickerbot OHLCV and scanner paths plus quote/options provider routes.
+- `OPENAI_API_KEY` was not present when the AI function was checked; AI analysis and text translation remain disconnected until configured through Supabase Edge Function Secrets.
 - Never put secrets, API keys, or service-role credentials in this file or browser code.
 
 ### Sports Center
@@ -63,16 +64,13 @@ If the project does not yet have a handoff file, create one using the standard s
 ### Trading Intelligence Classroom
 - Branch: `feature/live-desk-timeframes-quotes-snapshot`
 - PR: [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)
-- Latest known feature commit before handoff update: `1f3aa859fcf4e5551a27c6c627420af063d0b672`
-- Handoff update commit: `0bea39a02017fd68d6a09cb141b122199d52f1c1`
-- Workflow run: [#41506319432](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41506319432)
-- Result: **FAILED** at the Playwright desktop/mobile browser test step.
-- Failure artifact: `playwright-test-results`, artifact ID `13170698350`.
-- Exact failing assertion still needs extraction from the artifact/report.
-- User has not yet reviewed the rendered page.
-- PR remains unmerged. Do not merge until the failing test is diagnosed/fixed, tests pass on the latest commit, and manual user review is complete.
+- Latest tested code commit: `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`
+- Code verification: push run [#122](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519211343) and pull-request run [#123](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519225902) both **PASSED** on that commit.
+- Handoff update commit: `0f2f81dbb591094604f59c3ca42eb41e6b038f5e`. Documentation-only push/PR runs were triggered for this latest branch head and must be checked before merge.
+- User has reviewed and liked the Live Desk page layout and approved commits/merge. Multi-timeframe posture/HMA, option stop, and the in-drawer mobile close refinements were added after the first page review and are covered by the passing desktop/mobile suite.
+- AI and text translation still require `OPENAI_API_KEY` in Supabase Edge Function Secrets. Whole-page Google translation and Chinese support remain future work.
+- PR #10 is open and not merged. Preserve all existing classroom functionality and the education/no-brokerage boundaries.
 - Full details: [PROJECT-HANDOFF.md](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/blob/feature/live-desk-timeframes-quotes-snapshot/PROJECT-HANDOFF.md).
-
 ## 5. Standard per-repository handoff requirements
 
 Every active RO’Lyfe repository should maintain a root-level `PROJECT-HANDOFF.md` with:
