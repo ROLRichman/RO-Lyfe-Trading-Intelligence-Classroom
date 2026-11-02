@@ -163,3 +163,37 @@ test('classroom provides working live Tactical Center launch links', async ({ pa
   );
   expect(missingHrefs).toEqual([]);
 });
+
+test('Classroom exposes funding and credit links, utility controls and five-language translator', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#mainNav .rol-nav-dropdown')).toBeAttached();
+  await expect(page.locator('#mainNav [data-rol-links-menu] a')).toHaveCount(50);
+  await expect(page.locator('#rolFullscreenBtn')).toBeVisible();
+  await expect(page.locator('#rolFocusBtn')).toBeVisible();
+  await expect(page.locator('#rolZoomSlider')).toHaveAttribute('min', '75');
+  await expect(page.locator('#rolZoomSlider')).toHaveAttribute('max', '125');
+  await expect(page.locator('#rol-classroom-translator [data-translate-target]')).toHaveCount(5);
+  await expect(page.locator('#classroomChartFrame')).toHaveAttribute('allow', /fullscreen/);
+  await expect(page.locator('#classroomChartFrame')).toHaveAttribute('src', /live-chart-desk/);
+});
+
+test('Live Desk has additional discovery and futures lists, same-chart scanner, Stock and Option Ladders', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  await page.goto('/live-chart-desk/?embed=classroom');
+  await expect(page.locator('[data-list="stocks"]')).toBeAttached();
+  await expect(page.locator('[data-list="crypto"]')).toBeAttached();
+  await expect(page.locator('[data-list="discovery"]')).toBeAttached();
+  await expect(page.locator('[data-list="futures"]')).toBeAttached();
+  await expect(page.locator('#symbol-scanner')).toBeAttached();
+  await expect(page.locator('#scanWatchlist')).toBeVisible();
+  await expect(page.locator('#stock-ladder')).toBeAttached();
+  await expect(page.locator('#option-ladder')).toBeAttached();
+  await expect(page.locator('#loadOptionChain')).toBeVisible();
+  await expect(page.locator('#rolTradeAiForm')).toBeAttached();
+  await expect(page.locator('#translator [data-translate-target]')).toHaveCount(5);
+  await expect(page.locator('#expandChartBtn')).toBeVisible();
+  await expect(page.locator('#rolZoomSlider')).toBeVisible();
+  expect(pageErrors).toEqual([]);
+});
+
