@@ -461,6 +461,7 @@ const sidebarToggle=$("#toggleSidebar"),sidebarBackdrop=$("#sidebarBackdrop"),la
 function setSidebar(open){layout.classList.toggle("sidebar-open",open);layout.classList.toggle("sidebar-collapsed",window.innerWidth>900&&!open);sidebarToggle.setAttribute("aria-expanded",String(open));sidebarToggle.textContent=open?"Close watchlist ✕":"☰ Watchlist";sidebarBackdrop.hidden=!open;}
 sidebarToggle.addEventListener("click",()=>setSidebar(!layout.classList.contains("sidebar-open")));
 sidebarBackdrop.addEventListener("click",()=>setSidebar(false));
+$("#closeSidebar")?.addEventListener("click",()=>setSidebar(false));
 let swipeStartX=null,swipeStartY=null,swipePointerId=null;
 function handleSwipeEnd(x,y){if(swipeStartX===null||swipeStartY===null)return;const dx=x-swipeStartX,dy=y-swipeStartY,startX=swipeStartX;swipeStartX=swipeStartY=null;swipePointerId=null;if(Math.abs(dx)<55||Math.abs(dx)<Math.abs(dy)*1.25)return;const opened=layout.classList.contains("sidebar-open");if(!opened&&dx>0&&startX<Math.min(90,window.innerWidth*.18))setSidebar(true);else if(opened&&dx<0)setSidebar(false);}
 document.addEventListener("touchstart",e=>{const t=e.changedTouches&&e.changedTouches[0];if(t){swipeStartX=t.clientX;swipeStartY=t.clientY;}},{passive:true,capture:true});
