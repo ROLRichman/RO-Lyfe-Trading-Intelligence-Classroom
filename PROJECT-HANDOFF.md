@@ -6,8 +6,8 @@
 **Default branch:** `main`  
 **Active work branch:** `feature/live-desk-timeframes-quotes-snapshot`  
 **Active pull request:** [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)  
-**Latest known PR head:** `1f3aa859fcf4e5551a27c6c627420af063d0b672`  
-**Merge status:** NOT MERGED. Keep PR #10 in draft until failures are diagnosed, the user reviews the rendered page, and required checks pass.
+**Latest known PR head:** `61008d2b61126da5e633819c3fb0faa8d60a188a`  
+**Merge status:** NOT MERGED. The user authorized commits and merge review. Merge only after the latest required checks pass and the newly added confluence/option-stop controls receive final visual review.
 
 ---
 
@@ -25,24 +25,28 @@ The active feature branch adds the following work:
 - Server-side role guidance in the Supabase `rol-trading-ai` Edge Function, deployed as version 2 with JWT verification retained.
 - Playwright assertions for the media hub, Sports embed, role selector, and role request payload.
 
+- Five-timeframe technical confluence panel: 6M/1D, 4H, 1H, 15M, and 5M. Each timeframe is requested and calculated separately; unavailable provider coverage must be shown as unavailable.
+- Adds HMA 32 as a selectable lower-panel study and a chart overlay with direction coloring; EMA/RSI/MACD/Stochastic rows display directional readings.
+- Adds option premium stop comparisons for 5%, 7%, 10%, 15%, and 20%; selected presets apply a premium-based stop and recalculate risk/contract, total risk, and budget status. 10% is labeled as the standard planning ceiling; 15%/20% are labeled aggressive.
+- Scanner uses the Supabase `market-data` `tickerbot-scan` route. Selecting a watchlist/scanner symbol loads its chart/quote and chart-derived indicators; whole-list scanning remains a manual action.
+- Playwright covers scanner expansion, five timeframe cards, HMA controls, and the 10% / 15% option stop calculations.
+
 ### User review state
 
-**The user has not yet reviewed the rendered Live Desk page.** Do not treat the implementation as visually approved. Next manual review should happen on the deployed preview/branch page if available, or after the PR branch is published to a reviewable environment.
+**The user reviewed the Live Desk page and explicitly liked the initial page layout.** The multi-timeframe posture/HMA upgrades and the new option-premium stop calculator were added after that review, so those specific additions still need visual confirmation on a reviewable deployment before merge.
 
-### Automated test state — FAILED
+### Automated test state — RETESTING
 
 - Workflow: **Classroom browser tests**
-- Run: [GitHub Actions run #41506319432](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41506319432)
-- Branch: `feature/live-desk-timeframes-quotes-snapshot`
-- Tested commit: `1f3aa859fcf4e5551a27c6c627420af063d0b672`
-- Job: `playwright`
-- Failed step: **Run desktop and mobile browser tests**
-- Setup, checkout, Node setup, dependency installation, Chromium installation, and artifact upload succeeded.
-- Failure artifact exists: `playwright-test-results` (artifact ID `13170698350`; expires 2027-01-31).
-- Exact failing assertion/error has NOT yet been extracted. Do not guess the cause or mark tests as passed.
+- Earlier failure run: [#41506319432](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41506319432)
+- Confirmed failure: the test expected `#scanWatchlist` to be visible while its parent `details#symbol-scanner` was still collapsed.
+- Corrective change: Playwright now opens the scanner panel before asserting its button is visible. The UI collapse behavior is preserved.
+- Additional assertion coverage: the 5 timeframe posture cards, HMA 32 overlay/control, and 10% / 15% option premium stop application and risk totals.
+- Latest branch head when this handoff was updated: `61008d2b61126da5e633819c3fb0faa8d60a188a`.
+- Latest workflow runs on that commit: push run [#41517239275](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41517239275) and pull-request run [#41517248629](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41517248629). Both were still running at the time of this update.
+- Do not report the suite as passing until one latest run for the current head completes successfully.
 
-**Required next action:** inspect the Playwright failure artifact / test report, identify the failing test and error, fix the cause on this branch, and rerun the suite. Then manually review desktop and phone layouts, embedded video behavior, Sports iframe loading, and all three AI roles. Do not merge until checks pass and the user has reviewed the page.
-
+**Required next action:** confirm the latest Playwright run(s), fix any real failures without weakening coverage, then obtain final visual review of the new confluence and option stop components. Do not merge until the current head is green.
 ---
 
 ## 2. Current implementation map
@@ -125,6 +129,8 @@ The Live Desk and media hub are additions. Preserve existing features unless the
 - A video embed is not proof of a continuous live broadcast.
 - A Sports Center iframe loading does not prove its upstream live-data provider is operational.
 - The AI sidekick is educational/advisory. It must not execute trades or imply autonomous brokerage access.
+- Supabase `rol-trading-ai` currently reports the AI integration as disconnected when `OPENAI_API_KEY` is absent; add the key through Supabase Edge Function Secrets (never commit it). The five-language text translator uses this same AI function and will also remain unavailable until that key is configured.
+- Whole-page translation, Chinese (Simplified/Traditional), and a Google Cloud Translation API integration are future work; do not describe them as implemented.
 - Never expose API keys or service-role secrets in browser JavaScript.
 - Distinguish underlying-stock chart risk from option-premium risk.
 - A passing structural browser test does not prove third-party media playback or external API health.
