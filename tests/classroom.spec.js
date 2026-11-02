@@ -217,6 +217,8 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await expect(media.locator('#sports-center iframe')).toHaveAttribute('src', /RO-Lyfe-Live-Sports-Center/);
   await expect(page.locator('#translator [data-translate-target]')).toHaveCount(5);
   await expect(page.locator('#technicalPosturePanel')).toBeAttached();
+  await expect(page.locator('#hmaToggle')).toBeAttached();
+  await expect(page.locator('#indicatorSelect option[value="hma"]')).toHaveCount(1);
   await expect(page.locator('#rolPostureEnhancements')).toBeAttached();
   await expect(page.locator('#rolMtfGrid .rol-mtf-card')).toHaveCount(5);
   await expect(page.locator('#rolIvReadout')).toBeAttached();
