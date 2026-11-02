@@ -103,3 +103,46 @@ body.rol-focus-locked .rol-utility-bar .rol-theme-picker{display:none}
 .rol-language-select-row select{min-width:175px;max-width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--text);font-size:12px}
 .rol-language-select-row button{margin-left:auto}
 @media(max-width:560px){.rol-language-select-row{align-items:stretch}.rol-language-select-row label{width:100%}.rol-language-select-row select,.rol-language-select-row button{width:100%;margin-left:0}}
+
+/* Apply the selected palette to the classroom's primary surfaces, not only its page canvas. */
+html[data-rol-theme] .topbar,
+html[data-rol-theme] .rol-utility-bar,
+html[data-rol-theme] .hero-panel,
+html[data-rol-theme] .chart-card,
+html[data-rol-theme] .indicator-card,
+html[data-rol-theme] .strategy-detail,
+html[data-rol-theme] .planner-form,
+html[data-rol-theme] .plan-output,
+html[data-rol-theme] .resource-group,
+html[data-rol-theme] .rol-translator,
+html[data-rol-theme] .ai-panel {
+ background:linear-gradient(150deg,var(--panel2),var(--panel));
+ border-color:var(--line);
+}
+html[data-rol-theme] .hero-stat-grid>div,
+html[data-rol-theme] .rule-strip,
+html[data-rol-theme] .control-group select,
+html[data-rol-theme] .field input,
+html[data-rol-theme] .field select,
+html[data-rol-theme] .field textarea,
+html[data-rol-theme] .ai-panel textarea,
+html[data-rol-theme] .strategy-tab,
+html[data-rol-theme] .result-tile,
+html[data-rol-theme] .lesson-list details,
+html[data-rol-theme] .journal-entry,
+html[data-rol-theme] .link-grid a,
+html[data-rol-theme] .rol-translator textarea,
+html[data-rol-theme] .rol-translator-output {
+ background:var(--panel);
+ border-color:var(--line);
+}
+html[data-rol-theme] .section,
+html[data-rol-theme] footer {
+ border-color:var(--line);
+}
+html[data-rol-theme] .ghost,
+html[data-rol-theme] .icon-btn,
+html[data-rol-theme] .ai-chips button {
+ background:var(--panel2);
+ border-color:var(--line);
+}
