@@ -278,8 +278,8 @@ test('Classroom themes change five background palettes and language selector sta
     ['crimson', '#1b090d', '#ef7187']
   ];
   for (const [name, background, accent] of themes) {
-    await page.locator('[data-rol-theme="' + name + '"]').click();
-    await expect(page.locator('[data-rol-theme="' + name + '"]')).toHaveClass(/active/);
+    await page.locator('.rol-theme-picker button[data-rol-theme="' + name + '"]').click();
+    await expect(page.locator('.rol-theme-picker button[data-rol-theme="' + name + '"]')).toHaveClass(/active/);
     const actual = await page.locator('html').evaluate(el => ({
       background: getComputedStyle(el).getPropertyValue('--bg').trim(),
       accent: getComputedStyle(el).getPropertyValue('--rol-accent').trim()
