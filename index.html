@@ -25,7 +25,7 @@
   <button type="button" class="rol-control" id="rolFullscreenBtn">⛶ Full Screen</button>
   <button type="button" class="rol-control" id="rolFocusBtn" aria-pressed="false">🔒 Lock Focus</button>
   <label class="rol-zoom-control" for="rolZoomSlider">Zoom <input id="rolZoomSlider" type="range" min="75" max="125" step="5" value="100"><output id="rolZoomValue">100%</output></label>
-  <div class="rol-theme-picker" aria-label="Choose classroom highlight color"><span>Accent</span><button type="button" data-rol-theme="blue" aria-label="Blue theme" style="--swatch:#70a7ff"></button><button type="button" data-rol-theme="green" aria-label="Green theme" style="--swatch:#65d6a0"></button><button type="button" data-rol-theme="amber" aria-label="Amber theme" style="--swatch:#e8bd68"></button><button type="button" data-rol-theme="violet" aria-label="Violet theme" style="--swatch:#b59aff"></button><button type="button" data-rol-theme="teal" aria-label="Teal theme" style="--swatch:#63d4d0"></button></div>
+  <div class="rol-theme-picker" aria-label="Choose classroom background theme"><span>Theme</span><button type="button" data-rol-theme="blue" aria-label="Ocean Blue background" title="Ocean Blue" style="--swatch:#70a7ff"></button><button type="button" data-rol-theme="green" aria-label="Lyfe Green background" title="Lyfe Green" style="--swatch:#65d6a0"></button><button type="button" data-rol-theme="amber" aria-label="Amber background" title="Amber" style="--swatch:#e8bd68"></button><button type="button" data-rol-theme="violet" aria-label="Violet background" title="Violet" style="--swatch:#b59aff"></button><button type="button" data-rol-theme="crimson" aria-label="Crimson background" title="Crimson" style="--swatch:#ef7187"></button></div>
 </div>
   <main id="top">
     <section class="hero">
@@ -66,6 +66,7 @@
 
 <section class="section rol-translator" id="rol-classroom-translator">
   <div class="section-heading"><div><p class="eyebrow">RO’LYFE CLASSROOM TOOLS</p><h2>Five-Language Translator</h2><p class="muted">Translate lessons, notes and trading explanations. Symbols, prices and formulas are preserved in the translation.</p></div></div>
+  <div class="rol-language-select-row"><label for="rolTranslateLanguageSelect">Select Language</label><select id="rolTranslateLanguageSelect"><option value="English">English</option><option value="Spanish">Español</option><option value="French">Français</option><option value="Haitian Creole">Kreyòl Ayisyen</option><option value="Portuguese">Português</option></select><button type="button" id="rolTranslateSelected" class="rol-control">Translate selected language</button></div>
   <label for="rolTranslateInput">Text to translate</label>
   <textarea id="rolTranslateInput" rows="3" maxlength="4000" placeholder="Paste the message, explanation or trading term here…"></textarea>
   <div class="rol-language-buttons" aria-label="Choose translation language">
@@ -273,8 +274,9 @@
     <a href="https://github.com/ROLRichman/RO-Lyfe-Live-Sports-Center" target="_blank" rel="noopener">Sports project source ↗</a>
   </div>
   <div class="sports-embed-frame-wrap">
-    <iframe id="classroomSportsFrame" title="RO’Lyfe Live Sports Center — scores, schedules and sports resources" src="https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/" loading="lazy" allow="fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <iframe id="classroomSportsFrame" title="RO’Lyfe Live Sports Center — scores, schedules and sports resources" src="https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/?embed=classroom" loading="lazy" allow="fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
   </div>
+  <script>(function(){const frame=document.getElementById("classroomSportsFrame"),wrap=frame?.parentElement;if(!frame)return;window.addEventListener("message",event=>{if(event.origin!==location.origin||event.source!==frame.contentWindow||!event.data||event.data.type!=="rol-sports-embed-height")return;const height=Number(event.data.height);if(Number.isFinite(height)&&height>500&&height<10000){frame.style.height=Math.ceil(height)+"px";if(wrap)wrap.style.height=Math.ceil(height)+"px";}});})();</script>
   <p class="tiny muted sports-embed-note">The sports project is maintained separately and embedded here, so updates to its existing repository flow into this classroom without duplicating its code. Its current live-score connections are soccer and American football; other categories provide sports resources and official links while additional feeds are verified. Sports feeds may be delayed or unavailable.</p>
 </section>
 
