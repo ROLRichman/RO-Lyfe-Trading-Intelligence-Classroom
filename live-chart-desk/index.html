@@ -11,11 +11,35 @@
 <main>
 <section class="intro"><div><p class="eyebrow">RO’LYFE TRADING INTELLIGENCE CLASSROOM</p><h1>Live Chart Desk</h1><p class="sub">Search a ticker, load its chart, and keep your watchlist beside the price action.</p></div><div class="market-label"><span>CHART FEED</span><strong>Tickerbot OHLCV</strong><small>Historical candles; refresh and coverage depend on provider.</small></div></section>
 <section class="searchbar"><label for="symbolSearch">Search ticker / symbol</label><div class="searchline"><input id="symbolSearch" value="NASDAQ:AAPL" placeholder="e.g. NASDAQ:NVDA, BTCUSD, NYSE:SPY" autocomplete="off"><button id="loadSymbol">Load chart</button></div><div class="quick"><button data-symbol="NASDAQ:AAPL">AAPL</button><button data-symbol="NASDAQ:NVDA">NVDA</button><button data-symbol="NASDAQ:TSLA">TSLA</button><button data-symbol="AMEX:SPY">SPY</button><button data-symbol="BTC-USD">BTC</button><button data-symbol="ETH-USD">ETH</button><button data-symbol="SOL-USD">SOL</button></div><p class="hint">Use a stock ticker such as NVDA or SPY. Crypto candles use Tickerbot's X:BASEUSD format; quote symbols remain BASE-USD.</p></section>
+<details class="market-context-dock" id="marketContextDock">
+ <summary>🌎 Market posture, sector rotation &amp; research tools</summary>
+ <div class="context-link-grid">
+  <a target="_blank" rel="noopener" href="https://stockcharts.com/freecharts/perf.php?$COMPQ,iwm,$INDU,$SPX"><strong>Major Market Posture</strong><small>Nasdaq · Russell 2000 · Dow · S&amp;P 500</small></a>
+  <a target="_blank" rel="noopener" href="https://stockcharts.com/freecharts/perf.php?SPY,XLY,XLC,XLK,XLI,XLB,XLE,XLP,XLV,XLU,XLF"><strong>Sector Rotation</strong><small>Compare sector ETFs against SPY</small></a>
+  <a target="_blank" rel="noopener" href="https://finviz.com/map.ashx?t=sec"><strong>S&amp;P 500 Heat Map</strong><small>Sector and constituent breadth</small></a>
+  <a target="_blank" rel="noopener" href="https://finviz.com/screener.ashx?v=211&amp;f=sh_avgvol_o2000,sh_opt_optionshort,sh_price_o10,ta_sma200_pa,ta_sma50_pa&amp;o=-perf4w"><strong>Finviz Bullish Screener</strong><small>Reference scan · verify every candidate</small></a>
+  <a target="_blank" rel="noopener" href="https://www.marketwatch.com/economy-politics/calendar"><strong>Economic Calendar</strong><small>Check scheduled market-moving events</small></a>
+  <a target="_blank" rel="noopener" href="https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"><strong>CME FedWatch</strong><small>Interest-rate probability context</small></a>
+  <a target="_blank" rel="noopener" href="https://finance.yahoo.com/"><strong>Yahoo Finance</strong><small>Futures, headlines and market context</small></a>
+  <a target="_blank" rel="noopener" href="https://www.tradingview.com/pricing/?share_your_love=Richman29&amp;mobileapp=true"><strong>TradingView</strong><small>Charting plan and platform access</small></a>
+  <a target="_blank" rel="noopener" href="https://marketwatchgroup.circle.so/join?invitation_token=b2df14a8b788444ba1048e625bddf225d13ec6be-78234a93-c284-46f5-9f43-a9913c065fb8"><strong>Market Watch Group · Circle</strong><small>Community moved from Discord to Circle</small></a>
+ </div>
+</details>
+<details class="market-schedule" id="marketSchedule">
+ <summary>🕒 Market day schedule &amp; scan routine</summary>
+ <div class="schedule-grid">
+  <div><b>06:00–09:25 ET</b><strong>Pre-market preparation</strong><p>Check futures, economic calendar, sector posture, gaps, relative volume and the lower-priced stock watch. Build a candidate list; confirm spreads and tradability with your broker.</p></div>
+  <div><b>09:35–10:15 ET</b><strong>Opening momentum</strong><p>Run the opening scan after the first minutes. Require a clear stock-chart entry, invalidation and volume/structure confirmation.</p></div>
+  <div><b>11:30–14:00 ET</b><strong>Midday trend builder</strong><p>Look for pullbacks, coils, VWAP holds/reclaims and multi-day swing candidates.</p></div>
+  <div><b>After the close</b><strong>Review &amp; prepare</strong><p>Update stock/option logs, market posture, lessons learned and tomorrow’s watchlist.</p></div>
+ </div>
+ <p class="context-note">Times are Eastern. Pre-market trading is not available on every broker/platform, and lower-priced shares can have wider spreads, thinner liquidity and larger gap risk. A scan does not promise a trade.</p>
+</details>
 <div class="layout">
 <button id="sidebarBackdrop" class="sidebar-backdrop" type="button" aria-label="Close watchlist" hidden></button><aside id="marketSidebar" class="sidebar">
 <div class="sidehead"><div><p class="eyebrow">YOUR MARKET SIDEBAR</p><h2>Watchlist</h2></div><span class="pill">LOCAL</span></div>
 <p class="side-note">Choose a symbol to switch the chart. Your custom symbols stay in this browser.</p>
-<div class="watch-tabs"><button class="tab active" data-list="stocks">Stocks / ETFs</button><button class="tab" data-list="crypto">Crypto</button></div>
+<div class="watch-tabs"><button class="tab active" data-list="stocks">Stocks / ETFs</button><button class="tab" data-list="crypto">Crypto · 30+</button><button class="tab" data-list="sectors">Sectors</button></div>
 <div id="watchlist" class="watchlist"></div>
 <div class="watchlist-scan-tools">
   <label class="scan-preset-label" for="watchlistScanPreset">Watchlist scan</label>
@@ -51,10 +75,10 @@
 
 <section id="rolIndicatorBoard" class="indicator-board" aria-label="RO’Lyfe 14 indicator board"><div class="indicator-board-head"><div><p class="eyebrow">RO’LYFE INDICATOR LAB</p><h3>14-Indicator Confirmation Board</h3><p class="indicator-board-note">Calculated from the selected symbol’s loaded Tickerbot candles and timeframe. Green, red and neutral readings are study context, not trade instructions.</p></div><span id="indicatorBoardCount" class="pill">14 INDICATORS</span></div><div id="indicatorPrimaryCards" class="indicator-card-grid indicator-primary-grid"><p class="loading">Waiting for selected chart candles…</p></div><details id="indicatorMoreDetails" class="indicator-more"><summary>⌄ More indicators <span>Tap any card to open its visual study; optional studies remain in the selector</span></summary><div id="indicatorMoreCards" class="indicator-card-grid"><p class="loading">Waiting for candle data…</p></div></details></section>
 <div class="ma-toolbar" aria-label="Moving average overlays">
-  <strong>Moving averages</strong><label for="maType">Method</label><select id="maType"><option value="sma" selected>SMA · coach default</option><option value="ema">EMA · comparison</option></select>
-  <label><input type="checkbox" class="ma-toggle" value="20" checked> 20</label><label><input type="checkbox" class="ma-toggle" value="50" checked> 50</label><label><input type="checkbox" class="ma-toggle" value="100" checked> 100</label><label><input type="checkbox" class="ma-toggle" value="200" checked> 200</label>
-  <label><input type="checkbox" id="vwapToggle" checked> VWAP</label><span id="maReadout">SMA 20 / 50 / 100 / 200 calculate from this chart's candles.</span><strong id="vwapState" class="vwap-state">VWAP waiting for bars</strong>
-</div><div class="indicator-toolbar"><label for="indicatorSelect">Indicators</label><select id="indicatorSelect"><option value="rsi">RSI (14)</option><option value="macd">MACD (12/26/9)</option><option value="stoch">Slow Stochastic (14,3)</option><option value="cci">CCI (20)</option><option value="atr">ATR (14)</option><option value="adx">ADX / DI (14)</option><option value="bollinger">Bollinger %B (20,2)</option><option value="obv">On-Balance Volume</option><option value="ttm">TTM Squeeze</option><option value="hma">HMA (31)</option><option value="pps">PPS-style markers</option><option value="rl_pullback">RL Pullback · ATR / EMA</option><option value="ema_trigger">EMA 13 / 50 trigger</option><option value="supertrend">Supertrend (10,3)</option><option value="rvol">Relative Volume (20)</option><option value="volume">Volume</option></select><span id="indicatorReadout">Waiting for real historical bars…</span></div><div id="indicatorChart" class="indicator-chart"><div class="loading">Indicator appears when real candles load.</div></div><p class="indicator-note">Studies are calculated from the candles returned by Tickerbot. EMA and VWAP draw over price; choose a lower-panel study from the dropdown. IV in the options panel is a manual assumption until a live options-chain feed is licensed.</p><section class="option-ladder" id="option-ladder" aria-labelledby="optionLadderTitle">
+  <strong>Trend overlays</strong><label for="maType">Method</label><select id="maType"><option value="sma" selected>SMA · coach default</option><option value="ema">EMA · comparison</option></select>
+  <label><input type="checkbox" class="ma-toggle" value="5" checked> 5</label><label><input type="checkbox" class="ma-toggle" value="20" checked> 20</label><label><input type="checkbox" class="ma-toggle" value="50" checked> 50</label><label><input type="checkbox" class="ma-toggle" value="100"> 100</label><label><input type="checkbox" class="ma-toggle" value="200" checked> 200</label>
+  <label><input type="checkbox" id="ema205Toggle" checked> EMA 205 filter</label><label><input type="checkbox" id="vwapToggle" checked> VWAP</label><span id="maReadout">SMA 5 / 20 / 50 / 200 + EMA 205.</span><strong id="vwapState" class="vwap-state">VWAP waiting for bars</strong>
+</div><div class="indicator-toolbar"><label for="indicatorSelect">Indicators</label><select id="indicatorSelect"><option value="sma_cross">SMA 5 / 20 Cross</option><option value="ema205">EMA 205 Trend Filter</option><option value="sma_trend">SMA Trend Stack</option><option value="vwap">Price vs VWAP</option><option value="rsi">RSI (14)</option><option value="macd">MACD (12/26/9)</option><option value="stoch">Slow Stochastic (14,3)</option><option value="cci">CCI (20)</option><option value="atr">ATR (14) · Stop Planner</option><option value="adx">ADX / DI (14)</option><option value="bollinger">Bollinger %B (20,2)</option><option value="obv">On-Balance Volume</option><option value="ttm">TTM Squeeze</option><option value="hma">HMA (31)</option><option value="pps">RO’Lyfe PPS-style markers</option><option value="rl_pullback">RL Pullback · ATR / EMA</option><option value="ema_trigger">EMA 13 / 50 trigger</option><option value="supertrend">Supertrend (10,3)</option><option value="rvol">Relative Volume (20)</option><option value="volume">Volume</option></select><span id="indicatorReadout">Waiting for real historical bars…</span></div><div id="indicatorChart" class="indicator-chart"><div class="loading">Indicator appears when real candles load.</div></div><p class="indicator-note">Studies are calculated from the candles returned by Tickerbot. EMA and VWAP draw over price; choose a lower-panel study from the dropdown. IV in the options panel is a manual assumption until a live options-chain feed is licensed.</p><section class="option-ladder" id="option-ladder" aria-labelledby="optionLadderTitle">
   <div class="option-ladder-head"><div><p class="eyebrow">RO’LYFE TRADE LADDER™</p><h2 id="optionLadderTitle">Option Premium Ladder &amp; Bracket Planner</h2><p class="option-sub">Stock-first: read the underlying chart, then plan the option premium, stop and staged exits.</p></div><span class="pill">PLANNING TOOL</span></div>
   <div class="option-context">Underlying from chart: <strong id="optionUnderlying">AAPL</strong><span>Premium workflow guide: approximately $0.80–$2.00 (manual entry)</span></div>
   <div class="option-input-grid">
@@ -76,6 +100,63 @@
   <div class="option-table-wrap"><table class="option-target-table"><thead><tr><th>Exit level</th><th>Limit premium</th><th>Contracts to exit</th><th>Profit / contract</th><th>Planned tranche P&amp;L</th></tr></thead><tbody id="optionLadderRows"><tr><td>1R</td><td>$1.65</td><td>1</td><td>$40.00</td><td>$40.00</td></tr></tbody></table></div>
   <div class="option-bracket-box"><h3>Bracket checklist</h3><p id="optionBracketText">Long Call plan for AAPL · entry $1.25 · protective stop $0.85 · laddered limit exits at 1R, 2R, 3R and 4R runner.</p><p class="option-small">Manual planning only. This tool does not fetch a live option chain or send orders to a broker. Confirm the contract, spread, liquidity, expiration, and order type yourself. Standard contract math assumes 100 shares; adjusted contracts may differ. Stop fills can slip, so actual losses can exceed the estimate.</p></div>
 </section>
+<details id="dayOptionLadder" class="day-ladder-panel" open>
+ <summary>🪜 RO’Lyfe Day Option Ladder · Personal Execution</summary>
+ <div class="day-ladder-intro">
+  <p>Stock chart first. Mark the underlying entry and invalidation, then plan the option premium, partial exits and runner. No orders are sent from this page.</p>
+  <div class="day-ladder-flow"><span>Entry</span><b>→</b><span>Partial 1 · 50%</span><b>→</b><span>Break-even stop</span><b>→</b><span>Partial 2</span><b>→</b><span>Runner</span><b>→</b><span>Exit</span></div>
+ </div>
+ <div class="day-ladder-grid">
+  <div class="day-ladder-card">
+   <h3>Underlying stock risk first</h3>
+   <div class="day-input-grid">
+    <label>Direction<select id="dayDirection"><option value="long">Bullish / Long</option><option value="short">Bearish / Short</option></select></label>
+    <label>Stock entry ($)<input id="dayStockEntry" type="number" min="0.01" step="0.01" placeholder="Use last chart close"></label>
+    <label>ATR (14) from selected chart<input id="dayAtr" type="number" min="0" step="0.0001" readonly></label>
+    <label>Stop method<select id="dayStopMethod"><option value="tight">Tighter of 1.5× ATR or 2%</option><option value="atr1">1× ATR</option><option value="atr15">1.5× ATR</option><option value="pct2">2% of stock price</option><option value="manual">Manual structure level</option></select></label>
+    <label>Manual structure stop ($)<input id="dayManualStop" type="number" min="0" step="0.01" placeholder="Prior swing low / high"></label>
+    <label>Account size ($)<input id="dayAccount" type="number" min="0" step="1" value="10000"></label>
+    <label>Risk budget (%)<input id="dayRiskPct" type="number" min="0" max="100" step="0.1" value="1"></label>
+   </div>
+   <div id="dayUnderlyingRisk" class="day-ladder-output">Load real chart candles to calculate ATR-based underlying risk.</div>
+   <p class="day-ladder-note">The underlying stock stop and the option premium stop are separate risks. A stock price stop does not guarantee the same percentage exit on an option.</p>
+  </div>
+  <div class="day-ladder-card">
+   <h3>Option premium ladder</h3>
+   <div class="day-input-grid">
+    <label>Option side<select id="dayOptionSide"><option value="call">Long Call</option><option value="put">Long Put</option></select></label>
+    <label>Expiration profile<select id="dayExpiryProfile"><option value="day">Day trade · example 0–2 DTE</option><option value="swing">Trend swing · 19–32 DTE</option><option value="core">ATM study · 14–20 DTE</option><option value="custom">Other / custom expiration</option></select></label>
+    <label>Entry premium ($)<input id="dayOptionEntry" type="number" min="0.01" step="0.01" value="1.50"></label>
+    <label>Hard premium stop ($)<input id="dayOptionStop" type="number" min="0.01" step="0.01" value="1.00"></label>
+    <label>Partial 1 premium ($)<input id="dayTarget1" type="number" min="0.01" step="0.01" value="1.80"></label>
+    <label>Partial 2 premium ($)<input id="dayTarget2" type="number" min="0.01" step="0.01" value="1.90"></label>
+    <label>Runner trigger ($)<input id="dayRunner" type="number" min="0.01" step="0.01" value="2.10"></label>
+    <label>Contracts (#)<input id="dayContracts" type="number" min="1" step="1" value="4"></label>
+   </div>
+   <div class="day-ladder-actions"><button id="calculateDayLadder" type="button">Calculate my ladder</button><button id="useChartClose" type="button" class="secondary">Use chart close as stock entry</button></div>
+   <div id="dayLadderSummary" class="day-ladder-output" aria-live="polite">Enter the stock and option plan, then calculate. Defaults are examples, not a recommendation.</div>
+   <div class="option-table-wrap"><table class="option-target-table"><thead><tr><th>Rung</th><th>Option price</th><th>Contracts</th><th>Rule</th></tr></thead><tbody id="dayLadderRows"><tr><td>Entry</td><td>$1.50</td><td>4</td><td>Confirm the chart trigger first</td></tr></tbody></table></div>
+   <p class="day-ladder-note">The example uses a $1.50 entry, $1.00 hard stop, 50% at $1.80, next partial at $1.90 and a $2.10+ runner. Whole-contract rounding is shown; if the position is too small to scale out, the ladder says so.</p>
+  </div>
+ </div>
+ <div class="day-ladder-disclaimer">Education and planning only. Options can lose the entire premium, spreads and slippage can change exits, and stop orders do not guarantee execution prices. Verify DTE, contract multiplier, bid/ask spread, open interest and actual option quotes before any broker order.</div>
+</details>
+<section class="sector-context-panel" id="sectorContextPanel">
+ <div class="indicator-board-head"><div><p class="eyebrow">SECTOR ROTATION</p><h3>Market posture · Relative strength watch</h3><p class="indicator-board-note">Select a sector ETF to load it into the same chart. Compare the sector with SPY; the chart timeframe controls the analysis.</p></div><span class="pill">11 SECTOR / BENCHMARK SYMBOLS</span></div>
+ <div id="sectorQuickLinks" class="sector-quick-links"></div>
+ <p class="context-note">A strong sector can support a stock's trend, but relative strength is a context filter—not a trade trigger. For more complete breadth, open the StockCharts sector rotation and Finviz heat map above.</p>
+</section>
+<details class="ai-desk-panel" id="aiDeskPanel">
+ <summary>🤖 RO’Lyfe AI Trading Assistant · Talk, ask, review</summary>
+ <div class="ai-desk-layout">
+  <div><p class="ai-desk-note">Ask about the current symbol, timeframe, indicators, market posture or your ladder. The assistant receives the page's current calculations—not an independent live option chain or brokerage account.</p>
+   <div class="ai-desk-controls"><button id="aiVoiceInput" type="button" class="secondary">🎙 Talk</button><button id="aiReadAnswer" type="button" class="secondary">🔊 Read answer</button><button id="aiStopSpeaking" type="button" class="secondary">■ Stop</button></div>
+   <textarea id="aiDeskQuestion" rows="3" maxlength="1800" placeholder="Example: Explain the current VWAP and SMA alignment for this ticker."></textarea>
+   <button id="aiDeskAsk" type="button">Ask RO’Lyfe AI</button>
+  </div>
+  <div id="aiDeskAnswer" class="ai-desk-answer" aria-live="polite">Ready. Choose a symbol and timeframe, then ask for an explanation. Voice availability depends on your browser.</div>
+ </div>
+</details>
 <div class="chart-foot"><span>Chart powered by Tickerbot OHLCV + Lightweight Charts</span><span>Not an order-entry or brokerage connection</span></div>
 <details class="data-disclosure"><summary>Data & premium access notes</summary><ul><li>Candles are loaded through the RO’Lyfe Supabase market-data function using Tickerbot OHLCV.</li><li>Real-time versus delayed quotes, intraday history, and exchange-specific premium data depend on TradingView, the exchange and any subscription you hold.</li><li>The quote card uses the existing RO’Lyfe Supabase Edge Function: CoinGecko for supported crypto quotes and Finnhub for stock quote requests. Provider access may be delayed, limited or unavailable.</li><li>This initial chart build focuses on candlesticks and volume. It does not send orders to a broker.</li></ul></details>
 </section>
