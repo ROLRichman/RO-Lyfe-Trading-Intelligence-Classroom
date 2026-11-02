@@ -7,6 +7,14 @@
     const response = await fetch(API, {method:"POST",headers:{apikey:ANON,Authorization:"Bearer "+ANON,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload),cache:"no-store"});
     const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || "AI service request failed."); return data;
   }
+
+  const statusUrl="https://ykmdyfbklvuoseqdjnxy.supabase.co/functions/v1/market-data-status";
+  fetch(statusUrl,{headers:{apikey:ANON,Authorization:"Bearer "+ANON,Accept:"application/json"},cache:"no-store"}).then(r=>r.json()).then(data=>{
+    const s=data.secrets||{};
+    if(s.massiveConfigured===false&&$("optionChainStatus"))$("optionChainStatus").textContent="Massive key is not present in this Supabase project yet. Add ROLYFE_RTIC_MARKET_INTELLIGENCE under Supabase → Edge Functions → Secrets. A GitHub Actions secret is not automatically available to Supabase.";
+    else if(s.massiveConfigured===true&&$("optionChainStatus"))$("optionChainStatus").textContent="Massive key detected in Supabase secrets. Provider plan access and actual quote timestamps will be checked when you load a chain.";
+    if(s.tradingAiConfigured===false){if($("rolTradeAiStatus"))$("rolTradeAiStatus").textContent="Trading AI key is not detected. Add OPENAI_API_KEY in Supabase Edge Function Secrets to enable analysis and translation.";if($("rolTranslateStatus"))$("rolTranslateStatus").textContent="Translation service needs OPENAI_API_KEY in Supabase Edge Function Secrets.";}
+  }).catch(()=>{});
   const palette={blue:["#70a7ff","rgba(112,167,255,.13)"],green:["#65d6a0","rgba(101,214,160,.13)"],amber:["#e8bd68","rgba(232,189,104,.14)"],violet:["#b59aff","rgba(181,154,255,.14)"],teal:["#63d4d0","rgba(99,212,208,.14)"]};
   let stored="blue";try{stored=localStorage.getItem("rolyfe-classroom-accent")||"blue"}catch(_){}
   function applyTheme(key){const theme=palette[key]?key:"blue";document.documentElement.style.setProperty("--rol-accent",palette[theme][0]);document.documentElement.style.setProperty("--rol-accent-soft",palette[theme][1]);document.querySelectorAll("[data-rol-theme]").forEach(b=>b.classList.toggle("active",b.dataset.rolTheme===theme));try{localStorage.setItem("rolyfe-classroom-accent",theme)}catch(_){}}
