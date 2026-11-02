@@ -6,7 +6,7 @@
 **Default branch:** `main`  
 **Active work branch:** `feature/live-desk-timeframes-quotes-snapshot`  
 **Active pull request:** [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)  
-**Latest known PR head:** `61008d2b61126da5e633819c3fb0faa8d60a188a`  
+**Latest known PR head:** `ea5f39584e1b96c0067e7a988536bc1dc2daebaf`  
 **Merge status:** NOT MERGED. The user authorized commits and merge review. Merge only after the latest required checks pass and the newly added confluence/option-stop controls receive final visual review.
 
 ---
@@ -27,7 +27,7 @@ The active feature branch adds the following work:
 
 - Five-timeframe technical confluence panel: 6M/1D, 4H, 1H, 15M, and 5M. Each timeframe is requested and calculated separately; unavailable provider coverage must be shown as unavailable.
 - Adds HMA 32 as a selectable lower-panel study and a chart overlay with direction coloring; EMA/RSI/MACD/Stochastic rows display directional readings.
-- Adds option premium stop comparisons for 5%, 7%, 10%, 15%, and 20%; selected presets apply a premium-based stop and recalculate risk/contract, total risk, and budget status. 10% is labeled as the standard planning ceiling; 15%/20% are labeled aggressive.
+- Adds option premium stop comparisons for 5%, 7%, 10%, 15%, and 20%; selected presets apply a premium-based stop and recalculate risk/contract, total risk, and budget status. Stop premiums are shown to four decimals; 10% is labeled as the standard planning ceiling; 15%/20% are labeled aggressive.
 - Scanner uses the Supabase `market-data` `tickerbot-scan` route. Selecting a watchlist/scanner symbol loads its chart/quote and chart-derived indicators; whole-list scanning remains a manual action.
 - Playwright covers scanner expansion, five timeframe cards, HMA controls, and the 10% / 15% option stop calculations.
 
@@ -42,8 +42,8 @@ The active feature branch adds the following work:
 - Confirmed failure: the test expected `#scanWatchlist` to be visible while its parent `details#symbol-scanner` was still collapsed.
 - Corrective change: Playwright now opens the scanner panel before asserting its button is visible. The UI collapse behavior is preserved.
 - Additional assertion coverage: the 5 timeframe posture cards, HMA 32 overlay/control, and 10% / 15% option premium stop application and risk totals.
-- Latest branch head when this handoff was updated: `61008d2b61126da5e633819c3fb0faa8d60a188a`.
-- Latest workflow runs on that commit: push run [#41517239275](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41517239275) and pull-request run [#41517248629](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41517248629). Both were still running at the time of this update.
+- Latest branch head when this handoff was updated: `ea5f39584e1b96c0067e7a988536bc1dc2daebaf`.
+- Latest workflow runs on that commit: push run [#41517537748](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41517537748) and pull-request run [#41517546310](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41517546310). Both were still running at the time of this update.
 - Do not report the suite as passing until one latest run for the current head completes successfully.
 
 **Required next action:** confirm the latest Playwright run(s), fix any real failures without weakening coverage, then obtain final visual review of the new confluence and option stop components. Do not merge until the current head is green.
