@@ -145,17 +145,15 @@ function movingAverage(values,period,method){
  if(method==="ema"){
   const k=2/(period+1);let seed=0,count=0,prev=null;
   values.forEach((value,i)=>{
-   if(!Number.isFinite(value))return;
+   if(!Number.isFinite(value)){seed=0;count=0;prev=null;return;}
    if(prev===null){seed+=value;count++;if(count===period){prev=seed/period;out[i]=prev;}}
    else{prev=value*k+prev*(1-k);out[i]=prev;}
   });
  }else{
-  let sum=0;
-  values.forEach((value,i)=>{
-   sum+=Number(value)||0;
-   if(i>=period)sum-=Number(values[i-period])||0;
-   if(i>=period-1)out[i]=sum/period;
-  });
+  for(let i=period-1;i<values.length;i++){
+   const window=values.slice(i-period+1,i+1);
+   if(window.every(Number.isFinite))out[i]=window.reduce((sum,value)=>sum+value,0)/period;
+  }
  }
  return out;
 }
@@ -206,15 +204,15 @@ function calculateIndicatorSnapshot(bars){
  }
  const fast=movingAverage(close,12,"ema"),slow=movingAverage(close,26,"ema");
  const macd=close.map((_,i)=>Number.isFinite(fast[i])&&Number.isFinite(slow[i])?fast[i]-slow[i]:null);
- const signal=movingAverage(macd.map(v=>Number.isFinite(v)?v:0),9,"ema");
+ const signal=movingAverage(macd,9,"ema");
  const macdHist=macd.map((v,i)=>Number.isFinite(v)&&Number.isFinite(signal[i])?v-signal[i]:null);
  const rawK=bars.map((b,i)=>{
   if(i<13)return null;
   const hh=Math.max(...high.slice(i-13,i+1)),ll=Math.min(...low.slice(i-13,i+1));
   return hh===ll?50:100*(b.close-ll)/(hh-ll);
  });
- const stochK=movingAverage(rawK.map(v=>Number.isFinite(v)?v:0),3,"sma");
- const stochD=movingAverage(stochK.map(v=>Number.isFinite(v)?v:0),3,"sma");
+ const stochK=movingAverage(rawK,3,"sma");
+ const stochD=movingAverage(stochK,3,"sma");
  const cci=bars.map((b,i)=>{
   if(i<19)return null;
   const typical=bars.slice(i-19,i+1).map(x=>(x.high+x.low+x.close)/3);
