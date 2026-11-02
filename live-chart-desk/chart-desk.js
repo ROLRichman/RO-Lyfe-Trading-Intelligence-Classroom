@@ -192,6 +192,7 @@ function renderOptionLadder(){
  }
  error.hidden=true;
  const riskPerShare=entry-stop,riskPerContract=riskPerShare*100,debit=entry*100*qty,risk=riskPerContract*qty,riskPct=debit?risk/debit*100:0,maxQty=riskPerContract>0?Math.floor(budget/riskPerContract):0;
+ const premiumStopPct=entry>0?(riskPerShare/entry)*100:0;
  $("#optDebit").textContent=optionMoney(debit);$("#optRisk").textContent=optionMoney(risk);$("#optRiskPct").textContent=riskPct.toFixed(1)+"%";$("#optMaxQty").textContent=String(maxQty);
  const overBudget=risk>budget;
  error.hidden=!overBudget;
@@ -202,7 +203,7 @@ function renderOptionLadder(){
  const levels=multiples.map((r,i)=>({r,qty:base+(i<remainder?1:0),premium:entry+r*riskPerShare,perContract:r*riskPerContract}));
  host.innerHTML=levels.map((v,i)=>'<tr><td><strong>'+(i===3?'4R · Runner':v.r+'R · Target '+v.r)+'</strong></td><td>'+optionMoney(v.premium)+'</td><td>'+v.qty+'</td><td>'+optionMoney(v.perContract)+'</td><td>'+optionMoney(v.perContract*v.qty)+'</td></tr>').join("");
  const optionLabel=(strike?"$"+Number(strike).toFixed(2)+" ":"")+" "+(expiry||"expiration TBD");
- $("#optionBracketText").textContent=(overBudget?"⚠ RISK BUDGET EXCEEDED · ":"")+"Underlying "+current+" · "+type+" · "+optionLabel+" | Entry premium "+optionMoney(entry)+" | Protective stop "+optionMoney(stop)+" | Estimated total debit "+optionMoney(debit)+" | Estimated stop loss "+optionMoney(risk)+" | Planned risk budget "+optionMoney(budget)+". Stage limit exits: "+levels.map(v=>v.r+"R at "+optionMoney(v.premium)+" ("+v.qty+" contract"+(v.qty===1?"":"s")+")").join("; ")+".";
+ $("#optionBracketText").textContent=(overBudget?"⚠ RISK BUDGET EXCEEDED · ":"")+"Underlying "+current+" · "+type+" · "+optionLabel+" | Entry premium "+optionMoney(entry)+" | Protective stop "+optionMoney(stop)+" ("+premiumStopPct.toFixed(1)+"% premium risk) | Estimated total debit "+optionMoney(debit)+" | Estimated stop loss "+optionMoney(risk)+" | Planned risk budget "+optionMoney(budget)+". Stage limit exits: "+levels.map(v=>v.r+"R at "+optionMoney(v.premium)+" ("+v.qty+" contract"+(v.qty===1?"":"s")+")").join("; ")+".";
 }
 
 function renderTechnicalPosture(loading){
