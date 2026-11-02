@@ -202,10 +202,16 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await expect(page.locator('[data-list="futures"]')).toBeAttached();
   await expect(page.locator('#symbol-scanner')).toBeAttached();
   await page.locator('#symbol-scanner > summary').click();
-  await page.locator('#symbol-scanner > summary').click();
   await expect(page.locator('#scanWatchlist')).toBeVisible();
   await expect(page.locator('#stock-ladder')).toBeAttached();
   await expect(page.locator('#option-ladder')).toBeAttached();
+  await expect(page.locator('#optionStopPresetRows tr')).toHaveCount(5);
+  await page.locator('[data-apply-option-stop="10"]').click();
+  await expect(page.locator('#optStop')).toHaveValue('1.1250');
+  await expect(page.locator('#optRisk')).toHaveText('$50.00');
+  await page.locator('[data-apply-option-stop="15"]').click();
+  await expect(page.locator('#optStop')).toHaveValue('1.0625');
+  await expect(page.locator('#optRisk')).toHaveText('$75.00');
   await expect(page.locator('#loadOptionChain')).toBeVisible();
   await expect(page.locator('#rolTradeAiForm')).toBeAttached();
   await expect(page.locator('#rolSidekickMode option')).toHaveCount(3);
