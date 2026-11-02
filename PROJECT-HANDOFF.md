@@ -4,10 +4,10 @@
 **Live site:** https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/  
 **Handoff updated:** 2026-11-02  
 **Default branch:** `main`  
-**Active work branch:** `feature/live-desk-timeframes-quotes-snapshot`  
-**Active pull request:** [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)  
+**Current release branch:** `main`    
+**Merged pull request:** [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)    
 **Latest tested feature head:** `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`  
-**Merge status:** NOT MERGED. The user authorized commits and merge. Desktop and mobile Playwright checks pass on the current feature head. Final visual review of the new controls can be completed against the deployed page after merge; retain educational and no-brokerage boundaries.
+**Merge status:** MERGED into `main` on 2026-11-02. Merge commit: `5edde8e2c9a2c4d058d51543db6b5cdc490f03df`. Post-merge desktop/mobile tests and GitHub Pages deployment both succeeded.
 
 ---
 
@@ -15,7 +15,7 @@
 
 ### Live Desk media + AI sidekick upgrade
 
-The active feature branch adds the following work:
+The merged Live Desk release adds the following work:
 
 - Two featured media players in the Live Desk.
 - Expandable channels for Real Estate Intelligence, Weather Intelligence, Trading Education, and RO’Lyfe Learning Network.
@@ -34,14 +34,17 @@ The active feature branch adds the following work:
 
 ### User review state
 
-**The user reviewed the Live Desk page and explicitly liked its layout and workflow.** The multi-timeframe posture/HMA upgrades, option premium stop presets, and mobile drawer close control were added afterward and are covered by the passing desktop/mobile browser suite. The user authorized merge; allow them to inspect the deployed refinements after Pages publishes.
+**The user reviewed the Live Desk page and explicitly liked its layout and workflow, then authorized the commit and merge.** The additional multi-timeframe posture/HMA upgrades, option premium stop presets, and mobile drawer close control are covered by the passing desktop/mobile browser suite. GitHub Pages deployed the merged release successfully; the user can now review those refinements on the live site.
 
 ### Automated test state — PASSED
 
 - Workflow: **Classroom browser tests**
-- Latest tested branch head: `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`
-- Push run [#122](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519211343): **passed**
-- Pull-request run [#123](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519225902): **passed**
+- Feature code head tested before documentation-only follow-ups: `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`.
+- Push run [#122](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519211343): **passed**.
+- Pull-request run [#123](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519225902): **passed**.
+- Documentation-updated branch head `4e05c0467c90fd2cd5a2b9e3fa8b53f5cb0c7bf6`: push run [#126](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519596689) and PR run [#127](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519610134) both **passed**.
+- Post-merge `main` head `5edde8e2c9a2c4d058d51543db6b5cdc490f03df`: browser run [#128](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519829942) **passed**.
+- GitHub Pages build/deploy run [#81](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519829081): **passed**.
 - Test coverage includes desktop and mobile Chromium, Live Desk structure, AI role payload, media hub, embedded Sports Center, scanner panel visibility, five timeframe posture cards, HMA overlay/study controls, and all five option premium stop presets.
 - The 10% preset is verified to set a $1.1250 stop from a $1.25 premium and recalculate $50 total risk for four standard contracts; 15% is verified at $1.0625 / $75 total risk. The 5%, 7%, and 20% stop preset values are also covered.
 - Mobile layout now exposes an in-drawer `×` close button so the Watchlist can be closed without relying on the top navigation or tapping outside the drawer.
@@ -50,7 +53,7 @@ The active feature branch adds the following work:
   2. Browser script had an accidental duplicated trailing fragment; removed, and JavaScript syntax checks passed.
   3. Mobile scanner test left the off-canvas Watchlist open, then tried to interact behind its overlay. Added an explicit close button and made the test use it before interacting with the chart/option planner.
 
-**Release checkpoint:** The currently recorded code head is green on both push and PR Actions runs. If documentation is committed afterward, check the newly triggered runs for that documentation commit before merging PR #10.
+**Release checkpoint:** PR #10 is merged into `main`. Post-merge browser tests and GitHub Pages deployment succeeded.
 ---
 
 ## 2. Current implementation map
@@ -133,6 +136,7 @@ The Live Desk and media hub are additions. Preserve existing features unless the
 - A video embed is not proof of a continuous live broadcast.
 - A Sports Center iframe loading does not prove its upstream live-data provider is operational.
 - The AI sidekick is educational/advisory. It must not execute trades or imply autonomous brokerage access.
+- Live option-chain premiums, IV, Greeks and open interest depend on the Massive subscription entitlement. The option premium stop presets work from the actual returned or user-entered entry premium; they are calculations only, not live stops or transmitted orders.
 - Supabase `rol-trading-ai` currently reports the AI integration as disconnected when `OPENAI_API_KEY` is absent; add the key through Supabase Edge Function Secrets (never commit it). The five-language text translator uses this same AI function and will also remain unavailable until that key is configured.
 - Whole-page translation, Chinese (Simplified/Traditional), and a Google Cloud Translation API integration are future work; do not describe them as implemented.
 - Never expose API keys or service-role secrets in browser JavaScript.
@@ -159,8 +163,8 @@ The Live Desk and media hub are additions. Preserve existing features unless the
 - [ ] Check narrow mobile layout, horizontal overflow, iframe height, and navigation.
 - [ ] Check browser console for uncaught errors.
 
-### Release gate
-**Do not merge PR #10 until automated checks pass, manual review is complete, and the user approves.**
+### Release status
+**PR #10 is merged and the Pages deployment is successful.** The next visual spot-check should confirm the deployed multi-timeframe posture, HMA visual, option stop cards and mobile drawer close control. Preserve educational-only/no-brokerage disclosures.
 
 ---
 
@@ -169,10 +173,10 @@ The Live Desk and media hub are additions. Preserve existing features unless the
 Start with this file, then inspect the live GitHub state rather than assuming the recorded checkpoint is still current.
 
 1. Read this handoff.
-2. Check PR #10 and its latest head commit.
-3. Check the latest Actions run for that exact commit.
-4. Inspect the failed artifact/report before editing.
-5. Continue on `feature/live-desk-timeframes-quotes-snapshot`.
+2. Check `main` and the merged PR #10 release commit.
+3. Check the latest Actions and Pages deployment for the main commit.
+4. Inspect the live page on desktop and mobile.
+5. For the next feature, create a fresh branch from current `main`.
 6. Update this file after every meaningful implementation, test, integration, or deployment change.
 
 ## 8. Prior Stage 1 baseline

@@ -26,7 +26,7 @@ If the project does not yet have a handoff file, create one using the standard s
 
 | Project | Repository | Live / deployed destination | Known relationship / status |
 |---|---|---|---|
-| Trading Intelligence Classroom | [RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom) | [Live Classroom](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/) | Active trading education hub. Live Desk media/AI, multi-timeframe posture, HMA, mobile Watchlist close control, and option premium risk presets are on the active feature branch in open PR #10; code-level desktop/mobile Playwright passed on the tested implementation commit. Verify documentation-only follow-up checks before merge. |
+| Trading Intelligence Classroom | [RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom) | [Live Classroom](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/) | Active trading education hub. PR #10 (Live Desk media/AI, multi-timeframe posture, HMA, mobile Watchlist close control, and option premium risk presets) was merged into `main` on 2026-11-02. Post-merge desktop/mobile Playwright run #128 and Pages deploy run #81 both passed. |
 | Auction Capital Machine | [RO-Lyfe-Auction-Capital-Machine](https://github.com/ROLRichman/RO-Lyfe-Auction-Capital-Machine) | [Auction Capital Machine](https://rolrichman.github.io/ro-lyfe-auction-capital-machine/) | Property auction acquisition, due diligence, underwriting, and capital workflow. Treat as a separate project; confirm its own handoff and current branch before editing. |
 | Property Research Intelligence | [rolyfe-property-research-intelligence](https://github.com/ROLRichman/rolyfe-property-research-intelligence) | Verify deployed Pages URL in repository | Property research and due diligence workspace. Related to Auction Capital Machine; do not assume code is shared or embedded without checking. |
 | Live Sports Center | [RO-Lyfe-Live-Sports-Center](https://github.com/ROLRichman/RO-Lyfe-Live-Sports-Center) | [Live Sports Center](https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/) | Separate sports project. Embedded inside the Trading Intelligence Classroom Live Desk media hub on the active PR branch. Upstream sports provider previously reported suspended; iframe loading does not prove live data works. |
@@ -51,7 +51,7 @@ If the project does not yet have a handoff file, create one using the standard s
 - Previously configured sports API provider reported account suspension. Confirm provider dashboard/status and function logs before claiming live scores or fixtures are available.
 
 ### Cross-project embed confirmed at this checkpoint
-- The Trading Intelligence Classroom's active feature branch adds an iframe to the Live Sports Center inside `live-chart-desk/media-hub.html`.
+- The Trading Intelligence Classroom's `main` branch embeds the separately deployed Live Sports Center inside `live-chart-desk/media-hub.html`.
 - This is a web embed, not a shared codebase or proof of shared backend/data.
 - The Trading Classroom Live Desk is the host; the Sports Center remains independently deployed.
 
@@ -62,14 +62,14 @@ If the project does not yet have a handoff file, create one using the standard s
 ## 4. Active workspace checkpoint — 2026-11-02
 
 ### Trading Intelligence Classroom
-- Branch: `feature/live-desk-timeframes-quotes-snapshot`
-- PR: [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)
-- Latest tested code commit: `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`
-- Code verification: push run [#122](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519211343) and pull-request run [#123](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519225902) both **PASSED** on that commit.
-- Handoff update commit: `0f2f81dbb591094604f59c3ca42eb41e6b038f5e`. Documentation-only push/PR runs were triggered for this latest branch head and must be checked before merge.
-- User has reviewed and liked the Live Desk page layout and approved commits/merge. Multi-timeframe posture/HMA, option stop, and the in-drawer mobile close refinements were added after the first page review and are covered by the passing desktop/mobile suite.
+- Release branch: `main`
+- Merged PR: [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)
+- Merge commit: `5edde8e2c9a2c4d058d51543db6b5cdc490f03df`
+- Post-merge browser test run [#128](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519829942): **PASSED**.
+- GitHub Pages deployment run [#81](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519829081): **PASSED**.
+- User reviewed the Live Desk layout and authorized merge. Multi-timeframe posture/HMA, option stop presets, and mobile drawer close refinements are included in the deployed main release.
 - AI and text translation still require `OPENAI_API_KEY` in Supabase Edge Function Secrets. Whole-page Google translation and Chinese support remain future work.
-- PR #10 is open and not merged. Preserve all existing classroom functionality and the education/no-brokerage boundaries.
+- Preserve all existing classroom functionality and the education/no-brokerage boundaries.
 - Full details: [PROJECT-HANDOFF.md](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/blob/feature/live-desk-timeframes-quotes-snapshot/PROJECT-HANDOFF.md).
 ## 5. Standard per-repository handoff requirements
 
