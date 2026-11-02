@@ -270,3 +270,9 @@ body.rol-focus-locked main{padding-top:6px}body.rol-focus-locked .layout{display
  .option-stop-table tbody td:first-child strong{font-size:13px}
  .option-stop-apply{width:100%;padding:9px 10px;font-size:10px}
 }
+
+/* Explicit in-drawer close affordance for the mobile watchlist */
+.sidehead-actions{display:flex;align-items:center;gap:7px}
+.sidebar-close{display:none;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #39536e;border-radius:8px;background:#14243a;color:#eaf3ff;font-size:21px;line-height:1;cursor:pointer}
+.sidebar-close:hover,.sidebar-close:focus-visible{outline:none;border-color:#78a9ff;box-shadow:0 0 12px rgba(120,169,255,.2)}
+@media(max-width:900px){.layout.sidebar-open .sidebar-close{display:inline-flex}}
