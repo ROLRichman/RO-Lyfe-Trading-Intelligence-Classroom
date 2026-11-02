@@ -11,7 +11,7 @@ defaults.sectors=[{symbol:"SPY",name:"S&P 500"},{symbol:"XLB",name:"Materials"},
 const additionalCrypto="MATIC SAND AXS EGLD THETA KAS RENDER".split(/\s+/);
 additionalCrypto.forEach(api=>{const symbol=api+"-USD";if(!defaults.crypto.some(x=>x.symbol===symbol))defaults.crypto.push({symbol,name:api,api});});
 const loadLists=()=>{try{const x=JSON.parse(localStorage.getItem("rolyfe-chart-watchlists"));if(x&&x.stocks&&x.crypto){for(const group of ["stocks","crypto","sectors"]){if(!Array.isArray(x[group]))x[group]=[];const seen=new Set(x[group].map(item=>item.symbol));(defaults[group]||[]).forEach(item=>{if(!seen.has(item.symbol))x[group].push({...item});});}return x;}}catch(e){}return JSON.parse(JSON.stringify(defaults));};
-let lists=loadLists(),activeList="stocks",current="AAPL",interval="1d",lookback="1y",sessionMode="all",maType="sma",candleStyle="standard",quotes={},chartObj=null,candleSeries=null,volumeSeries=null,vwapSeries=null,maSeries={},resizeObserver=null,loadSequence=0,latestBars=[],zoomMode=false,pageLocked=false,lockedScrollY=0,scanSequence=0,latestScanRows=[];
+let lists=loadLists(),activeList="stocks",current="AAPL",interval="1d",lookback="1y",sessionMode="all",maType="sma",candleStyle="standard",quotes={},chartObj=null,candleSeries=null,volumeSeries=null,vwapSeries=null,maSeries={},ema205Series=null,resizeObserver=null,loadSequence=0,latestBars=[],zoomMode=false,pageLocked=false,lockedScrollY=0,scanSequence=0,latestScanRows=[];
 const chartParams=new URLSearchParams(location.search);
 const requestedInterval=(chartParams.get("interval")||"1d").toLowerCase();
 if(["1m","5m","10m","15m","30m","1h","2h","4h","1d","1w"].includes(requestedInterval))interval=requestedInterval;
@@ -25,7 +25,7 @@ function candleSymbolForApi(symbol){const s=symbolForApi(symbol);const crypto=s.
 function setupChart(){const root=$("#tvChart");root.innerHTML="";if(!window.LightweightCharts){root.innerHTML='<div class="loading">Chart library could not load. Check your connection and reload.</div>';$("#chartStatus").textContent="CHART LIBRARY ERROR";return false;}
 chartObj=LightweightCharts.createChart(root,{width:root.clientWidth,height:root.clientHeight,layout:{background:{type:"solid",color:"#05070b"},textColor:"#b8c9dc"},grid:{vertLines:{color:"#15202d"},horzLines:{color:"#15202d"}},rightPriceScale:{borderColor:"#29384b"},timeScale:{borderColor:"#29384b",timeVisible:true,secondsVisible:false},crosshair:{mode:LightweightCharts.CrosshairMode.Normal},handleScroll:true,handleScale:true});
 candleSeries=chartObj.addCandlestickSeries({upColor:"#50e0a2",downColor:"#ff7186",borderUpColor:"#50e0a2",borderDownColor:"#ff7186",wickUpColor:"#50e0a2",wickDownColor:"#ff7186"});
-volumeSeries=chartObj.addHistogramSeries({priceFormat:{type:"volume"},priceScaleId:"volume",lastValueVisible:false,priceLineVisible:false});vwapSeries=chartObj.addLineSeries({color:"#f7d46a",lineWidth:2,title:"VWAP",priceLineVisible:false,lastValueVisible:true});const maColors={"20":"#55e0a3","50":"#6ea8fe","100":"#c1a5ff","200":"#f4c66b"};[20,50,100,200].forEach(n=>{maSeries[n]=chartObj.addLineSeries({color:maColors[n],lineWidth:n===200?3:2,title:"SMA "+n,priceLineVisible:false,lastValueVisible:true});});
+volumeSeries=chartObj.addHistogramSeries({priceFormat:{type:"volume"},priceScaleId:"volume",lastValueVisible:false,priceLineVisible:false});vwapSeries=chartObj.addLineSeries({color:"#f7d46a",lineWidth:2,title:"VWAP",priceLineVisible:false,lastValueVisible:true});const maColors={"5":"#f6c453","20":"#55e0a3","50":"#6ea8fe","100":"#c1a5ff","200":"#f4c66b"};[5,20,50,100,200].forEach(n=>{maSeries[n]=chartObj.addLineSeries({color:maColors[n],lineWidth:n===200?2.5:1.7,title:"SMA "+n,priceLineVisible:false,lastValueVisible:true});});ema205Series=chartObj.addLineSeries({color:"#ff8c69",lineWidth:2.5,title:"EMA 205 · major trend",priceLineVisible:false,lastValueVisible:true});
 chartObj.priceScale("volume").applyOptions({scaleMargins:{top:.82,bottom:0},borderVisible:false});
 chartObj.timeScale().fitContent();
 if(resizeObserver)resizeObserver.disconnect();resizeObserver=new ResizeObserver(()=>{if(chartObj)chartObj.applyOptions({width:root.clientWidth,height:root.clientHeight});});resizeObserver.observe(root);
@@ -273,7 +273,7 @@ function renderMovingAverages(){
  const host=$("#maReadout");if(!chartObj||!latestBars.length||!host)return;
  maType=$("#maType")?$("#maType").value:"sma";
  const closes=latestBars.map(b=>b.close),labels=[];
- [20,50,100,200].forEach(period=>{
+ [5,20,50,100,200].forEach(period=>{
   const values=movingAverage(closes,period,maType);
   const control=Array.from(document.querySelectorAll(".ma-toggle")).find(el=>Number(el.value)===period);
   const enabled=control?control.checked:true,series=maSeries[period];
@@ -284,22 +284,29 @@ function renderMovingAverages(){
    if(Number.isFinite(values[values.length-1]))labels.push((maType==="sma"?"SMA ":"EMA ")+period+" "+fmt(values[values.length-1]));
   }else series.setData([]);
  });
- const studies=calculateIndicatorSnapshot(latestBars),last=latestBars[latestBars.length-1];
+ const studies=calculateIndicatorSnapshot(latestBars),last=latestBars[latestBars.length-1],last205=studies.ema205[studies.ema205.length-1];
+ const ema205On=$("#ema205Toggle")?$("#ema205Toggle").checked:true;
+ if(ema205Series){
+  ema205Series.applyOptions({visible:ema205On});
+  if(ema205On&&Number.isFinite(last205)){
+   ema205Series.setData(latestBars.map((b,i)=>({time:b.time,value:studies.ema205[i]})).filter(p=>Number.isFinite(p.value)));
+   labels.push("EMA 205 "+fmt(last205));
+  }else ema205Series.setData([]);
+ }
  const vwapOn=$("#vwapToggle")?$("#vwapToggle").checked:true;
  if(vwapSeries){
   vwapSeries.applyOptions({visible:vwapOn});
   if(vwapOn){
    const points=latestBars.map((bar,i)=>({time:bar.time,value:studies.vwap[i]})).filter(p=>Number.isFinite(p.value));
    vwapSeries.setData(points);
-   if(points.length)labels.push((["1d","1w"].includes(interval)?"Rolling 20-bar VWAP ":"Session VWAP ")+fmt(points[points.length-1].value));
+   if(points.length)labels.push((["1d","1w"].includes(interval)?"Rolling 20-bar VWAP proxy ":"Session VWAP ")+fmt(points[points.length-1].value));
   }else vwapSeries.setData([]);
  }
- const lastVwap=studies.vwap[studies.vwap.length-1];
- const state=$("#vwapState");
+ const vwap=studies.vwap[studies.vwap.length-1],state=$("#vwapState");
  if(state){
-  if(!Number.isFinite(lastVwap)){state.textContent="VWAP unavailable";state.className="vwap-state state-neutral";}
+  if(!vwapOn||!Number.isFinite(vwap)){state.textContent=vwapOn?"VWAP unavailable":"VWAP hidden";state.className="vwap-state state-neutral";}
   else{
-   const delta=(last.close-lastVwap)/lastVwap*100,above=delta>=0;
+   const delta=(last.close-vwap)/vwap*100,above=delta>=0;
    state.textContent=(above?"ABOVE VWAP":"BELOW VWAP")+" · "+(above?"buyer-side":"seller-side")+" context · "+(delta>0?"+":"")+delta.toFixed(2)+"%";
    state.className="vwap-state "+(above?"state-bullish":"state-bearish");
   }
