@@ -202,6 +202,7 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await expect(page.locator('[data-list="futures"]')).toBeAttached();
   await expect(page.locator('#symbol-scanner')).toBeAttached();
   await page.locator('#symbol-scanner > summary').click();
+  await page.locator('#symbol-scanner > summary').click();
   await expect(page.locator('#scanWatchlist')).toBeVisible();
   await expect(page.locator('#stock-ladder')).toBeAttached();
   await expect(page.locator('#option-ladder')).toBeAttached();
@@ -215,6 +216,10 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await expect(media.locator('#muteAll')).toBeVisible();
   await expect(media.locator('#sports-center iframe')).toHaveAttribute('src', /RO-Lyfe-Live-Sports-Center/);
   await expect(page.locator('#translator [data-translate-target]')).toHaveCount(5);
+  await expect(page.locator('#technicalPosturePanel')).toBeAttached();
+  await expect(page.locator('#rolPostureEnhancements')).toBeAttached();
+  await expect(page.locator('#rolMtfGrid .rol-mtf-card')).toHaveCount(5);
+  await expect(page.locator('#rolIvReadout')).toBeAttached();
   await expect(page.locator('#expandChartBtn')).toBeVisible();
   await expect(page.locator('#rolZoomSlider')).toBeVisible();
   expect(pageErrors).toEqual([]);
