@@ -208,7 +208,8 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await page.locator('#symbol-scanner > summary').click();
   await expect(page.locator('#scanWatchlist')).toBeVisible();
   if ((page.viewportSize()?.width ?? 1280) <= 900) {
-    await page.locator('#toggleSidebar').click();
+    await expect(page.locator('#closeSidebar')).toBeVisible();
+    await page.locator('#closeSidebar').click();
     await expect(page.locator('.layout')).not.toHaveClass(/sidebar-open/);
   }
   await expect(page.locator('#stock-ladder')).toBeAttached();
