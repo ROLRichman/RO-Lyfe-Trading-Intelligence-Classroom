@@ -17,10 +17,16 @@
     </a>
     <button class="icon-btn menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav">☰ <span class="sr-only">Toggle menu</span></button>
     <nav id="mainNav">
-      <a href="#market-room">Market Room</a><a href="#chart-lab">Chart Lab</a><a href="#strategy">Strategy Advantage</a><a href="#trade-planner">Trade Planner</a><a href="#classroom">Classroom</a><a href="#sports-center">Sports</a><a href="#journal">Journal</a>
+      <a href="#market-room">Market Room</a><a href="#chart-lab">Chart Lab</a><a href="#strategy">Strategy Advantage</a><a href="#trade-planner">Trade Planner</a><a href="#classroom">Classroom</a><a href="#sports-center">Sports</a><a href="#journal">Journal</a><a href="#rol-classroom-translator">Translator</a><details class="rol-nav-dropdown"><summary>Funding &amp; Credit ▾</summary><div class="rol-menu-panel" data-rol-links-menu></div></details>
     </nav>
   </header>
 
+  <div class="rol-utility-bar" aria-label="Classroom display controls">
+  <button type="button" class="rol-control" id="rolFullscreenBtn">⛶ Full Screen</button>
+  <button type="button" class="rol-control" id="rolFocusBtn" aria-pressed="false">🔒 Lock Focus</button>
+  <label class="rol-zoom-control" for="rolZoomSlider">Zoom <input id="rolZoomSlider" type="range" min="75" max="125" step="5" value="100"><output id="rolZoomValue">100%</output></label>
+  <div class="rol-theme-picker" aria-label="Choose classroom highlight color"><span>Accent</span><button type="button" data-rol-theme="blue" aria-label="Blue theme" style="--swatch:#70a7ff"></button><button type="button" data-rol-theme="green" aria-label="Green theme" style="--swatch:#65d6a0"></button><button type="button" data-rol-theme="amber" aria-label="Amber theme" style="--swatch:#e8bd68"></button><button type="button" data-rol-theme="violet" aria-label="Violet theme" style="--swatch:#b59aff"></button><button type="button" data-rol-theme="teal" aria-label="Teal theme" style="--swatch:#63d4d0"></button></div>
+</div>
   <main id="top">
     <section class="hero">
       <div class="hero-copy">
@@ -53,10 +59,25 @@
       <optgroup label="Crypto"><option value="BTC-USD">BTC-USD — Bitcoin</option><option value="ETH-USD">ETH-USD — Ethereum</option><option value="SOL-USD">SOL-USD — Solana</option><option value="XRP-USD">XRP-USD — XRP</option><option value="LINK-USD">LINK-USD — Chainlink</option><option value="HYPE-USD">HYPE-USD — Hyperliquid</option><option value="BNB-USD">BNB-USD — BNB</option><option value="ADA-USD">ADA-USD — Cardano</option><option value="DOGE-USD">DOGE-USD — Dogecoin</option><option value="AVAX-USD">AVAX-USD — Avalanche</option><option value="DOT-USD">DOT-USD — Polkadot</option><option value="LTC-USD">LTC-USD — Litecoin</option><option value="BCH-USD">BCH-USD — Bitcoin Cash</option><option value="SUI-USD">SUI-USD — Sui</option><option value="TON-USD">TON-USD — Toncoin</option><option value="TRX-USD">TRX-USD — TRON</option><option value="XLM-USD">XLM-USD — Stellar</option><option value="HBAR-USD">HBAR-USD — Hedera</option><option value="SHIB-USD">SHIB-USD — Shiba Inu</option><option value="PEPE-USD">PEPE-USD — Pepe</option><option value="UNI-USD">UNI-USD — Uniswap</option><option value="AAVE-USD">AAVE-USD — Aave</option><option value="NEAR-USD">NEAR-USD — NEAR Protocol</option><option value="APT-USD">APT-USD — Aptos</option><option value="ARB-USD">ARB-USD — Arbitrum</option><option value="OP-USD">OP-USD — Optimism</option><option value="ICP-USD">ICP-USD — Internet Computer</option><option value="FIL-USD">FIL-USD — Filecoin</option><option value="ATOM-USD">ATOM-USD — Cosmos</option><option value="ETC-USD">ETC-USD — Ethereum Classic</option><option value="XMR-USD">XMR-USD — Monero</option><option value="INJ-USD">INJ-USD — Injective</option><option value="RENDER-USD">RENDER-USD — Render</option><option value="FET-USD">FET-USD — Artificial Superintelligence Alliance</option><option value="TAO-USD">TAO-USD — Bittensor</option><option value="SEI-USD">SEI-USD — Sei</option><option value="TIA-USD">TIA-USD — Celestia</option><option value="IMX-USD">IMX-USD — Immutable</option><option value="GRT-USD">GRT-USD — The Graph</option><option value="MKR-USD">MKR-USD — Maker</option><option value="PENDLE-USD">PENDLE-USD — Pendle</option><option value="ONDO-USD">ONDO-USD — Ondo</option><option value="JUP-USD">JUP-USD — Jupiter</option><option value="WIF-USD">WIF-USD — dogwifhat</option><option value="BONK-USD">BONK-USD — Bonk</option><option value="FLOKI-USD">FLOKI-USD — Floki</option><option value="ALGO-USD">ALGO-USD — Algorand</option><option value="VET-USD">VET-USD — VeChain</option><option value="RUNE-USD">RUNE-USD — THORChain</option><option value="CRV-USD">CRV-USD — Curve DAO</option></optgroup>
     </select>
     <div class="classroom-chart-status"><span>CHART · QUOTES · WATCHLIST · INDICATORS</span><span>Provider availability varies</span></div>
-    <div id="classroomChartFrameWrap"><iframe id="classroomChartFrame" title="RO’Lyfe real market chart, watchlist, quotes and indicators" loading="eager" src="live-chart-desk/?embed=classroom&amp;symbol=AAPL"></iframe></div>
+    <div id="classroomChartFrameWrap"><iframe id="classroomChartFrame" title="RO’Lyfe real market chart, watchlist, quotes and indicators" loading="eager" allow="fullscreen" src="live-chart-desk/?embed=classroom&amp;symbol=AAPL"></iframe></div>
     <p class="tiny classroom-advanced-link"><a href="live-chart-desk/">Open the advanced Live Chart Desk directly →</a></p>
   </section>
-  <script>document.addEventListener("DOMContentLoaded",()=>{const select=document.getElementById("classroomSymbol"),frame=document.getElementById("classroomChartFrame");if(!select||!frame)return;select.addEventListener("change",()=>{frame.src="live-chart-desk/?embed=classroom&symbol="+encodeURIComponent(select.value);});});</script>
+  <script>(function(){const select=document.getElementById("classroomSymbol"),frame=document.getElementById("classroomChartFrame");if(!select||!frame)return;const send=()=>{try{frame.contentWindow.postMessage({type:"rol-set-chart-symbol",symbol:select.value},location.origin)}catch(_){}};frame.addEventListener("load",send);select.addEventListener("change",send);window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.type==="rol-live-chart-symbol"){const value=String(e.data.symbol||"");let option=Array.from(select.options).find(o=>o.value===value);if(!option){option=document.createElement("option");option.value=value;option.textContent=value+" — Custom";select.add(option)}select.value=value}});setTimeout(send,800);setTimeout(send,1800)})();</script>
+
+<section class="section rol-translator" id="rol-classroom-translator">
+  <div class="section-heading"><div><p class="eyebrow">RO’LYFE CLASSROOM TOOLS</p><h2>Five-Language Translator</h2><p class="muted">Translate lessons, notes and trading explanations. Symbols, prices and formulas are preserved in the translation.</p></div></div>
+  <label for="rolTranslateInput">Text to translate</label>
+  <textarea id="rolTranslateInput" rows="3" maxlength="4000" placeholder="Paste the message, explanation or trading term here…"></textarea>
+  <div class="rol-language-buttons" aria-label="Choose translation language">
+    <button type="button" data-translate-target="English" class="lang-en">English</button>
+    <button type="button" data-translate-target="Spanish" class="lang-es">Español</button>
+    <button type="button" data-translate-target="French" class="lang-fr">Français</button>
+    <button type="button" data-translate-target="Haitian Creole" class="lang-ht">Kreyòl Ayisyen</button>
+    <button type="button" data-translate-target="Portuguese" class="lang-pt">Português</button>
+  </div>
+  <p id="rolTranslateStatus" class="tiny muted" aria-live="polite">Translation requires the classroom AI service and its server-side provider key.</p>
+  <div id="rolTranslateResult" class="rol-translator-output" aria-live="polite">Your translation will appear here.</div>
+</section>
 
     <section class="section market-room-section" id="market-room">
       <div class="section-heading"><div><p class="eyebrow">STAGE 1 / MARKET MAPPING</p><h2>RO’Lyfe Market Room</h2><p class="muted">A stock-first command desk for watchlists, trend context and disciplined risk planning.</p></div><span class="pill">PRACTICE DATA</span></div>
@@ -275,16 +296,18 @@
 
   <button class="ai-fab" id="aiFab" aria-label="Open AI classroom questions" aria-expanded="false">✦<span>Ask AI</span></button>
   <aside class="ai-panel" id="aiPanel" aria-label="AI question helper" hidden>
-    <div class="ai-head"><div><strong>RO’Lyfe Intelligence Desk</strong><small>Question builder · No live data connected</small></div><button class="icon-btn" id="aiClose" aria-label="Close assistant">×</button></div>
-    <p class="muted">Choose a topic or type a question. This helper builds a prompt you can copy into your preferred AI assistant; it does not send your information anywhere.</p>
+    <div class="ai-head"><div><strong>RO’Lyfe Intelligence Desk</strong><small>Connected AI assistant · Classroom questions and explanations</small></div><button class="icon-btn" id="aiClose" aria-label="Close assistant">×</button></div>
+    <p class="muted">Ask the classroom AI for explanations and trade-planning education. Classroom-level questions do not include live quotes; use the Live Desk AI to analyze chart and quote context.</p>
     <div class="ai-chips"><button data-prompt="Explain this Heikin-Ashi chart in educational terms.">Explain chart</button><button data-prompt="Compare this options strategy's risks and payoff.">Compare strategies</button><button data-prompt="Help me review this stock-first trade plan and identify missing risk controls.">Review trade plan</button><button data-prompt="Help me evaluate a real-estate investment's assumptions and downside risks.">Real estate</button></div>
     <label for="aiQuestion">Your question</label><textarea id="aiQuestion" rows="4" placeholder="Ask a trading, investing or real-estate question…"></textarea>
-    <div class="ai-actions"><button class="btn primary small" id="copyPrompt">Copy question</button><button class="btn ghost small" id="clearPrompt">Clear</button></div>
+    <div class="ai-actions"><button class="btn primary small" id="askAiNow">Ask Jamal</button><button class="btn ghost small" id="copyPrompt">Copy question</button><button class="btn ghost small" id="clearPrompt">Clear</button></div><div id="aiAnswer" class="rol-ai-answer" aria-live="polite"></div>
     <p id="aiStatus" class="tiny muted" aria-live="polite"></p>
   </aside>
 
 
 
+  <script src="js/rol-links.js"></script>
+  <script src="js/rol-tools.js"></script>
   <script src="js/app.js"></script>
   <script src="js/market-room.js"></script>
 
