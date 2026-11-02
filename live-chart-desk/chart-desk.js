@@ -146,9 +146,39 @@ function applySelectedOptionContract(){
  else $("#optionChainStatus").textContent="Contract selected, but no usable bid/ask midpoint or last trade was returned. Premium fields were not filled.";
 }
 
+function renderOptionStopPresets(){
+ const host=$("#optionStopPresetRows");if(!host)return;
+ const entry=Number($("#optEntry")?.value),qty=Number($("#optQty")?.value),budget=Number($("#optBudget")?.value);
+ const valid=Number.isFinite(entry)&&entry>0&&Number.isInteger(qty)&&qty>=1&&Number.isFinite(budget)&&budget>=0;
+ const presets=[
+  {pct:5,label:"Tight",tier:"tight"},
+  {pct:7,label:"Moderate",tier:"moderate"},
+  {pct:10,label:"Standard ceiling",tier:"standard"},
+  {pct:15,label:"Advanced",tier:"advanced"},
+  {pct:20,label:"High risk",tier:"high"}
+ ];
+ if(!valid){
+  host.innerHTML='<tr><td colspan="6">Enter a valid option entry premium, whole-contract quantity and risk budget to compare stop presets.</td></tr>';
+  return;
+ }
+ host.innerHTML=presets.map(p=>{
+  const stop=entry*(1-p.pct/100),perContract=(entry-stop)*100,total=perContract*qty;
+  const within=total<=budget,maxContracts=perContract>0?Math.floor(budget/perContract):0;
+  const status=within?"Within budget":"Over budget";
+  return '<tr class="option-stop-row '+p.tier+'" data-stop-tier="'+p.tier+'">'
+   +'<td><strong>'+p.pct+'%</strong><small>'+p.label+'</small></td>'
+   +'<td>'+optionMoney(stop)+'</td>'
+   +'<td>'+optionMoney(perContract)+'</td>'
+   +'<td>'+optionMoney(total)+'</td>'
+   +'<td><span class="option-stop-status '+(within?"within":"over")+'">'+status+'</span><small>Max '+maxContracts+' contract(s)</small></td>'
+   +'<td><button type="button" class="option-stop-apply" data-apply-option-stop="'+p.pct+'" aria-label="Apply '+p.pct+' percent option premium stop">Use '+p.pct+'%</button></td>'
+   +'</tr>';
+ }).join("");
+}
 function renderOptionLadder(){
  const host=$("#optionLadderRows"),error=$("#optionLadderError"),underlying=$("#optionUnderlying");
  if(!host||!error)return;
+ renderOptionStopPresets();
  if(underlying)underlying.textContent=current||"—";
  const entry=Number($("#optEntry")?.value),stop=Number($("#optStop")?.value),qty=Number($("#optQty")?.value),budget=Number($("#optBudget")?.value);
  const type=$("#optType")?.value||"Call",strike=$("#optStrike")?.value,expiry=$("#optExpiry")?.value;
