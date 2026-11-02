@@ -6,8 +6,8 @@
 **Default branch:** `main`  
 **Active work branch:** `feature/live-desk-timeframes-quotes-snapshot`  
 **Active pull request:** [#10 — RTIC Live Desk: Media Hub, Sports embed & AI Co-Pilot](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/10)  
-**Latest known PR head:** `ea5f39584e1b96c0067e7a988536bc1dc2daebaf`  
-**Merge status:** NOT MERGED. The user authorized commits and merge review. Merge only after the latest required checks pass and the newly added confluence/option-stop controls receive final visual review.
+**Latest tested feature head:** `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`  
+**Merge status:** NOT MERGED. The user authorized commits and merge. Desktop and mobile Playwright checks pass on the current feature head. Final visual review of the new controls can be completed against the deployed page after merge; retain educational and no-brokerage boundaries.
 
 ---
 
@@ -30,23 +30,27 @@ The active feature branch adds the following work:
 - Adds option premium stop comparisons for 5%, 7%, 10%, 15%, and 20%; selected presets apply a premium-based stop and recalculate risk/contract, total risk, and budget status. Stop premiums are shown to four decimals; 10% is labeled as the standard planning ceiling; 15%/20% are labeled aggressive.
 - Scanner uses the Supabase `market-data` `tickerbot-scan` route. Selecting a watchlist/scanner symbol loads its chart/quote and chart-derived indicators; whole-list scanning remains a manual action.
 - Playwright covers scanner expansion, five timeframe cards, HMA controls, and the 10% / 15% option stop calculations.
+- Adds a compact in-drawer mobile Watchlist close button; the backdrop and top-level toggle remain supported.
 
 ### User review state
 
-**The user reviewed the Live Desk page and explicitly liked the initial page layout.** The multi-timeframe posture/HMA upgrades and the new option-premium stop calculator were added after that review, so those specific additions still need visual confirmation on a reviewable deployment before merge.
+**The user reviewed the Live Desk page and explicitly liked its layout and workflow.** The multi-timeframe posture/HMA upgrades, option premium stop presets, and mobile drawer close control were added afterward and are covered by the passing desktop/mobile browser suite. The user authorized merge; allow them to inspect the deployed refinements after Pages publishes.
 
-### Automated test state — RETESTING
+### Automated test state — PASSED
 
 - Workflow: **Classroom browser tests**
-- Earlier failure run: [#41506319432](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41506319432)
-- Confirmed failure: the test expected `#scanWatchlist` to be visible while its parent `details#symbol-scanner` was still collapsed.
-- Corrective change: Playwright now opens the scanner panel before asserting its button is visible. The UI collapse behavior is preserved.
-- Additional assertion coverage: the 5 timeframe posture cards, HMA 32 overlay/control, and 10% / 15% option premium stop application and risk totals.
-- Latest branch head when this handoff was updated: `ea5f39584e1b96c0067e7a988536bc1dc2daebaf`.
-- Latest workflow runs on that commit: push run [#41517537748](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41517537748) and pull-request run [#41517546310](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41517546310). Both were still running at the time of this update.
-- Do not report the suite as passing until one latest run for the current head completes successfully.
+- Latest tested branch head: `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559`
+- Push run [#122](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519211343): **passed**
+- Pull-request run [#123](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41519225902): **passed**
+- Test coverage includes desktop and mobile Chromium, Live Desk structure, AI role payload, media hub, embedded Sports Center, scanner panel visibility, five timeframe posture cards, HMA overlay/study controls, and all five option premium stop presets.
+- The 10% preset is verified to set a $1.1250 stop from a $1.25 premium and recalculate $50 total risk for four standard contracts; 15% is verified at $1.0625 / $75 total risk. The 5%, 7%, and 20% stop preset values are also covered.
+- Mobile layout now exposes an in-drawer `×` close button so the Watchlist can be closed without relying on the top navigation or tapping outside the drawer.
+- Earlier failures were diagnosed and fixed:
+  1. Test expected scanner button visible while its parent details element was collapsed; test now opens the scanner.
+  2. Browser script had an accidental duplicated trailing fragment; removed, and JavaScript syntax checks passed.
+  3. Mobile scanner test left the off-canvas Watchlist open, then tried to interact behind its overlay. Added an explicit close button and made the test use it before interacting with the chart/option planner.
 
-**Required next action:** confirm the latest Playwright run(s), fix any real failures without weakening coverage, then obtain final visual review of the new confluence and option stop components. Do not merge until the current head is green.
+**Release checkpoint:** The currently recorded code head is green on both push and PR Actions runs. If documentation is committed afterward, check the newly triggered runs for that documentation commit before merging PR #10.
 ---
 
 ## 2. Current implementation map
@@ -138,12 +142,11 @@ The Live Desk and media hub are additions. Preserve existing features unless the
 ## 6. Verification checklist
 
 ### Automated
-- [ ] Inspect failure artifact for run #41506319432.
-- [ ] Identify exact failing test, assertion, and browser viewport.
-- [ ] Fix the underlying defect; do not weaken tests just to make CI green.
-- [ ] Rerun desktop and mobile Playwright suite.
-- [ ] Confirm all required PR checks pass on the latest commit.
-
+- [x] Inspect failure artifacts and identify root causes.
+- [x] Correct scanner collapsed-state test behavior.
+- [x] Repair the chart script syntax and verify JavaScript parsing.
+- [x] Correct mobile Watchlist open/close interaction and add a visible drawer close control.
+- [x] Pass desktop and mobile Playwright suite on branch head `1d0811f80fc08f64cb8af7e4c5d28edd4bae4559` (push run #122 and pull-request run #123).
 ### Manual user review
 - [ ] User opens the Live Desk and reviews the overall page.
 - [ ] Confirm no existing Classroom or Live Desk features disappeared.
