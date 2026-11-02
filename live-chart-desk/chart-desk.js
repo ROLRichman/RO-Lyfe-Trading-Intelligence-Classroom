@@ -190,13 +190,24 @@ function calculateSessionVwap(bars){
  }
  return out;
 }
+function wilderAverage(values,period){
+ const out=Array(values.length).fill(null);let seed=0,count=0,prev=null;
+ values.forEach((value,i)=>{
+  if(!Number.isFinite(value)){seed=0;count=0;prev=null;return;}
+  if(prev===null){
+   seed+=value;count++;
+   if(count===period){prev=seed/period;out[i]=prev;}
+  }else{prev=((prev*(period-1))+value)/period;out[i]=prev;}
+ });
+ return out;
+}
 function calculateIndicatorSnapshot(bars){
  const close=bars.map(b=>b.close),high=bars.map(b=>b.high),low=bars.map(b=>b.low),volume=bars.map(b=>Math.max(0,Number(b.volume)||0));
- const sma20=movingAverage(close,20,"sma"),sma50=movingAverage(close,50,"sma"),sma100=movingAverage(close,100,"sma"),sma200=movingAverage(close,200,"sma");
- const ema13=movingAverage(close,13,"ema"),ema20=movingAverage(close,20,"ema"),ema50=movingAverage(close,50,"ema");
+ const sma5=movingAverage(close,5,"sma"),sma20=movingAverage(close,20,"sma"),sma50=movingAverage(close,50,"sma"),sma100=movingAverage(close,100,"sma"),sma200=movingAverage(close,200,"sma");
+ const ema13=movingAverage(close,13,"ema"),ema20=movingAverage(close,20,"ema"),ema50=movingAverage(close,50,"ema"),ema205=movingAverage(close,205,"ema");
  const vwap=calculateSessionVwap(bars);
  const tr=bars.map((b,i)=>i===0?b.high-b.low:Math.max(b.high-b.low,Math.abs(b.high-bars[i-1].close),Math.abs(b.low-bars[i-1].close)));
- const atr=movingAverage(tr,14,"ema");
+ const atr=wilderAverage(tr,14),atr20=wilderAverage(tr,20);
  let avgGain=0,avgLoss=0,rsi=Array(close.length).fill(null);
  for(let i=1;i<close.length;i++){
   const change=close[i]-close[i-1],gain=Math.max(change,0),loss=Math.max(-change,0);
@@ -212,34 +223,51 @@ function calculateIndicatorSnapshot(bars){
   const hh=Math.max(...high.slice(i-13,i+1)),ll=Math.min(...low.slice(i-13,i+1));
   return hh===ll?50:100*(b.close-ll)/(hh-ll);
  });
- const stochK=movingAverage(rawK,3,"sma");
- const stochD=movingAverage(stochK,3,"sma");
+ const stochK=movingAverage(rawK,3,"sma"),stochD=movingAverage(stochK,3,"sma");
  const cci=bars.map((b,i)=>{
   if(i<19)return null;
   const typical=bars.slice(i-19,i+1).map(x=>(x.high+x.low+x.close)/3);
   const mean=typical.reduce((a,v)=>a+v,0)/20,dev=typical.reduce((a,v)=>a+Math.abs(v-mean),0)/20;
   return dev===0?0:((b.high+b.low+b.close)/3-mean)/(.015*dev);
  });
- const atrValues=movingAverage(tr,14,"ema");
- const atr20=movingAverage(tr,20,"ema"),emaForSqueeze=movingAverage(close,20,"ema");
+ const plusDM=bars.map((b,i)=>{
+  if(i===0)return 0;
+  const up=b.high-bars[i-1].high,down=bars[i-1].low-b.low;
+  return up>down&&up>0?up:0;
+ });
+ const minusDM=bars.map((b,i)=>{
+  if(i===0)return 0;
+  const up=b.high-bars[i-1].high,down=bars[i-1].low-b.low;
+  return down>up&&down>0?down:0;
+ });
+ const plusSmoothed=wilderAverage(plusDM,14),minusSmoothed=wilderAverage(minusDM,14);
+ const plusDI=atr.map((a,i)=>Number.isFinite(a)&&a>0&&Number.isFinite(plusSmoothed[i])?100*plusSmoothed[i]/a:null);
+ const minusDI=atr.map((a,i)=>Number.isFinite(a)&&a>0&&Number.isFinite(minusSmoothed[i])?100*minusSmoothed[i]/a:null);
+ const dx=plusDI.map((p,i)=>Number.isFinite(p)&&Number.isFinite(minusDI[i])&&(p+minusDI[i])>0?100*Math.abs(p-minusDI[i])/(p+minusDI[i]):null);
+ const adx=wilderAverage(dx,14);
+ const bollingerPct=bars.map((b,i)=>{
+  if(i<19)return null;
+  const values=close.slice(i-19,i+1),mean=values.reduce((a,v)=>a+v,0)/20;
+  const sd=Math.sqrt(values.reduce((a,v)=>a+(v-mean)*(v-mean),0)/20),upper=mean+2*sd,lower=mean-2*sd;
+  return upper===lower?50:100*(b.close-lower)/(upper-lower);
+ });
+ const obv=bars.map((b,i)=>{
+  if(i===0)return volume[i];
+  return (obv[i-1]||0)+(b.close>bars[i-1].close?volume[i]:b.close<bars[i-1].close?-volume[i]:0);
+ });
  const ttm=bars.map((b,i)=>{
-  if(i<19||!Number.isFinite(atr20[i])||!Number.isFinite(emaForSqueeze[i]))return null;
+  if(i<19||!Number.isFinite(atr20[i])||!Number.isFinite(ema20[i]))return null;
   const values=close.slice(i-19,i+1),mean=values.reduce((a,v)=>a+v,0)/20;
   const sd=Math.sqrt(values.reduce((a,v)=>a+(v-mean)*(v-mean),0)/20);
-  const bbUpper=mean+2*sd,bbLower=mean-2*sd,kcUpper=emaForSqueeze[i]+1.5*atr20[i],kcLower=emaForSqueeze[i]-1.5*atr20[i];
+  const bbUpper=mean+2*sd,bbLower=mean-2*sd,kcUpper=ema20[i]+1.5*atr20[i],kcLower=ema20[i]-1.5*atr20[i];
   return {squeeze:bbUpper<kcUpper&&bbLower>kcLower,momentum:b.close-mean};
  });
  const half=Math.max(1,Math.floor(31/2)),root=Math.max(1,Math.round(Math.sqrt(31)));
  const halfW=weightedMovingAverage(close,half),fullW=weightedMovingAverage(close,31);
  const rawHma=close.map((_,i)=>Number.isFinite(halfW[i])&&Number.isFinite(fullW[i])?2*halfW[i]-fullW[i]:null);
- const hma=weightedMovingAverage(rawHma.map(v=>Number.isFinite(v)?v:0),root);
- const volAvg=movingAverage(volume,20,"sma"),relativeVolume=volume.map((v,i)=>i>0&&volAvg[i-1]>0?v/volAvg[i-1]:null);
- const adxDirection=bars.map((b,i)=>{
-  if(i===0)return null;
-  const up=b.high-bars[i-1].high,down=bars[i-1].low-b.low;
-  return up>down&&up>0?1:down>up&&down>0?-1:0;
- });
- return {close,high,low,volume,sma20,sma50,sma100,sma200,ema13,ema20,ema50,vwap,tr,atr:atrValues,rsi,macd,macdHist,stochK,stochD,cci,ttm,hma,relativeVolume,adxDirection};
+ const hma=weightedMovingAverage(rawHma,root);
+ const volAvg=movingAverage(volume,20,"sma"),relativeVolume=volume.map((v,i)=>i>0&&Number.isFinite(volAvg[i-1])&&volAvg[i-1]>0?v/volAvg[i-1]:null);
+ return {close,high,low,volume,sma5,sma20,sma50,sma100,sma200,ema13,ema20,ema50,ema205,vwap,tr,atr,atr20,rsi,macd,macdHist,stochK,stochD,cci,plusDI,minusDI,adx,bollingerPct,obv,ttm,hma,relativeVolume};
 }
 function renderMovingAverages(){
  const host=$("#maReadout");if(!chartObj||!latestBars.length||!host)return;
