@@ -48,8 +48,8 @@ const closes=latestBars.map(b=>b.close),labels=[];
 });
 const wma=(values,period)=>values.map((_,i)=>{if(i<period-1)return null;let total=0,weight=0;for(let j=0;j<period;j++){const v=values[i-period+1+j];if(!Number.isFinite(v))return null;total+=v*(j+1);weight+=j+1;}return total/weight;});
 const fastWma=wma(closes,16),slowWma=wma(closes,32),hmaDiff=closes.map((_,i)=>Number.isFinite(fastWma[i])&&Number.isFinite(slowWma[i])?2*fastWma[i]-slowWma[i]:null),hmaValues=wma(hmaDiff,6);
-const hmaOn=$("#hmaToggle")?$("#hmaToggle").checked:true;
-if(hmaSeries){if(hmaOn){hmaSeries.applyOptions({visible:true});hmaSeries.setData(latestBars.map((b,i)=>({time:b.time,value:hmaValues[i]})).filter(x=>Number.isFinite(x.value)));if(Number.isFinite(hmaValues.at(-1)))labels.push("HMA 32 "+fmt(hmaValues.at(-1)));}else{hmaSeries.setData([]);hmaSeries.applyOptions({visible:false});}}
+const hmaOn=$("#hmaToggle")?$("#hmaToggle").checked:true,hmaLast=hmaValues.at(-1),hmaPrior=hmaValues.at(-2),hmaBull=Number.isFinite(hmaLast)&&Number.isFinite(hmaPrior)&&closes.at(-1)>hmaLast&&hmaLast>hmaPrior,hmaBear=Number.isFinite(hmaLast)&&Number.isFinite(hmaPrior)&&closes.at(-1)<hmaLast&&hmaLast<hmaPrior;
+if(hmaSeries){if(hmaOn){hmaSeries.applyOptions({visible:true,color:hmaBull?"#50e0a2":hmaBear?"#ff7186":"#f0c36b"});hmaSeries.setData(latestBars.map((b,i)=>({time:b.time,value:hmaValues[i]})).filter(x=>Number.isFinite(x.value)));if(Number.isFinite(hmaLast))labels.push("HMA 32 "+fmt(hmaLast));}else{hmaSeries.setData([]);hmaSeries.applyOptions({visible:false});}}
 const on=$("#vwapToggle")?$("#vwapToggle").checked:true,intraday=!["1d","1w","1mo"].includes(interval);
 if(vwapSeries){
  if(on&&intraday){
