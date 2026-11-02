@@ -13,6 +13,24 @@
 
 ## 1. Current checkpoint — read this first
 
+### New additive request — awaiting review, not merged
+
+**Branch:** `feature/live-desk-sector-scanner-timeframes-rewards`
+
+This branch is a separate additive change after PR #10. It must not be treated as deployed until its pull request is reviewed, merged and the Pages workflow succeeds.
+
+- Adds four additional Live Desk timeframes supported by the existing Tickerbot function: 30m, 2h, 1w and 1mo. The user’s requested study ladder stays 6M/1D → 4H → 1H → 15m → 5m; no 1m or 1s controls were added.
+- Adds a second top-level **Sector Scanner + Chart Lab** dropdown by embedding the existing Market Lab from the Sports Center project. The drawer also has a compact shortcut that opens this top-level dropdown. The original Live Desk scanner and Watchlist remain in place.
+- Adds an estimated projected gross profit summary across the four staged option exits, reward/risk ratio, and return on option debit. Example test case: $1.25 entry, $1.1250 stop, four standard contracts produces $125 projected gross profit, 2.50:1 projected reward/risk and 25.0% projected gross return on debit. Results assume every planned exit fills and exclude trading costs, spread, slippage and taxes.
+- Adds projected profit to each stock risk ladder target and small fixed Back-to-Top / mid-page controls.
+- Adds a Select Language dropdown for the existing five-language translator without removing the five language buttons. It still depends on the server-side AI key.
+- Changes the Classroom theme picker from accent-only to five actual background palettes (Ocean Blue, Lyfe Green, Amber, Violet, Crimson). Previous stored `teal` selections map to Crimson for backward compatibility.
+- Changes the embedded Sports Center URL to the wider `?embed=classroom` view and adds same-origin iframe height communication to reduce the narrow/tall embedded presentation.
+
+**Verification status:** source and browser tests have been updated on this branch; the new branch has not yet been reviewed or deployed. The Live Desk reward calculation remains a planning estimate, not a broker order. Live/delayed option premium availability still depends on Massive subscription entitlements. No brokerage execution has been added.
+
+### Live Desk media + AI sidekick upgrade
+
 ### Live Desk media + AI sidekick upgrade
 
 The merged Live Desk release adds the following work:
@@ -53,7 +71,7 @@ The merged Live Desk release adds the following work:
   2. Browser script had an accidental duplicated trailing fragment; removed, and JavaScript syntax checks passed.
   3. Mobile scanner test left the off-canvas Watchlist open, then tried to interact behind its overlay. Added an explicit close button and made the test use it before interacting with the chart/option planner.
 
-**Release checkpoint:** PR #10 is merged into `main`. Post-merge browser tests and GitHub Pages deployment succeeded.
+**Release checkpoint:** PR #10 is merged into `main`. Post-merge browser tests and GitHub Pages deployment succeeded. The newer additive branch above is separate and remains awaiting review.
 ---
 
 ## 2. Current implementation map
