@@ -201,7 +201,7 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await expect(page.locator('[data-list="discovery"]')).toBeAttached();
   await expect(page.locator('[data-list="futures"]')).toBeAttached();
   await expect(page.locator('#symbol-scanner')).toBeAttached();
-  if (!(await page.locator('#marketSidebar').isVisible())) {
+  if ((page.viewportSize()?.width ?? 1280) <= 900) {
     await page.locator('#toggleSidebar').click();
   }
   await expect(page.locator('#marketSidebar')).toBeVisible();
