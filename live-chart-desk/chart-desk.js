@@ -167,7 +167,7 @@ function renderOptionStopPresets(){
   const status=within?"Within budget":"Over budget";
   return '<tr class="option-stop-row '+p.tier+'" data-stop-tier="'+p.tier+'">'
    +'<td><strong>'+p.pct+'%</strong><small>'+p.label+'</small></td>'
-   +'<td>
+   +'<td>$'+stop.toFixed(4)+'</td>'
    +'<td>'+optionMoney(perContract)+'</td>'
    +'<td>'+optionMoney(total)+'</td>'
    +'<td><span class="option-stop-status '+(within?"within":"over")+'">'+status+'</span><small>Max '+maxContracts+' contract(s)</small></td>'
