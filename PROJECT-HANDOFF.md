@@ -32,7 +32,8 @@ This branch is a separate additive change after PR #10. It must not be treated a
 - Pull request: [#11 — Add Sector Scanner, projected rewards, more timeframes and classroom themes](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/11).
 - Workflow **Classroom browser tests**, run [#138](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41540119711): **passed** on branch head `04c707a5923390a202b4d4233d84bbd2aea91ad3`.
 - The test suite covers reward outputs, 1w/1mo programmatic interval acceptance, the Sector Scanner dropdown, all five background palettes and the five-language select.
-- Not merged and not deployed. Review the PR and perform a live visual check after any later merge. The Live Desk reward calculation remains a planning estimate, not a broker order. Live/delayed option premium availability still depends on Massive subscription entitlements. No brokerage execution has been added.
+- Not merged and not deployed. Review the PR and perform a live visual check after any later merge.
+- **Merge dependency:** Merge Sports Center PR #1 first and confirm its GitHub Pages deployment. The new Sector Scanner iframe URL `?embed=market-lab` depends on that Sports Center view. Only then merge Classroom PR #11 and verify its Pages deployment. The Live Desk reward calculation remains a planning estimate, not a broker order. Live/delayed option premium availability still depends on Massive subscription entitlements. No brokerage execution has been added.
 
 ### Live Desk media + AI sidekick upgrade
 
