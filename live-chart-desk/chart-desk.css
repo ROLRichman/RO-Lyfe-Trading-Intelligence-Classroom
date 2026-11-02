@@ -192,3 +192,37 @@ body.rol-focus-locked main{padding-top:6px}body.rol-focus-locked .layout{display
 
 /* RO’Lyfe Media Hub + Co-Pilot role selector */
 .rol-media-hub-shell{margin:18px 0;padding:16px;border:1px solid var(--line,#243246);border-radius:18px;background:linear-gradient(145deg,rgba(17,31,47,.96),rgba(7,12,20,.98));box-shadow:0 16px 42px rgba(0,0,0,.22)}.rol-media-hub-frame{display:block;width:100%;height:1480px;border:0;border-radius:12px;background:#070b12;overflow:hidden}.rol-live-ai .ai-choice-row select{min-width:0;max-width:100%}@media(max-width:700px){.rol-media-hub-shell{padding:10px;margin:12px 0}.rol-media-hub-frame{height:1780px;border-radius:9px}}
+
+
+/* RO’Lyfe Technical Posture — confluence glow, HMA visual and timeframe ladder */
+.technical-posture{box-shadow:0 0 0 1px rgba(120,169,255,.08),0 0 22px rgba(120,169,255,.09),0 14px 36px rgba(0,0,0,.18);transition:border-color .2s ease,box-shadow .2s ease}
+.technical-posture.bullish{box-shadow:0 0 0 1px rgba(80,224,162,.18),0 0 26px rgba(80,224,162,.16),0 14px 38px rgba(0,0,0,.2)}
+.technical-posture.bearish{box-shadow:0 0 0 1px rgba(255,113,134,.18),0 0 26px rgba(255,113,134,.14),0 14px 38px rgba(0,0,0,.2)}
+.rol-posture-enhancements{margin-top:10px;padding-top:10px;border-top:1px solid rgba(120,169,255,.17)}
+.rol-posture-subtitle{margin:0 0 8px;color:#9eb3ca;font-size:9px;font-weight:900;letter-spacing:.14em}
+.technical-posture-metrics span{line-height:1.5}
+.technical-posture-metrics .posture-bullish{border-color:rgba(80,224,162,.45);background:rgba(16,41,30,.6);color:#8cf0b8;box-shadow:0 0 12px rgba(80,224,162,.08)}
+.technical-posture-metrics .posture-bearish{border-color:rgba(255,113,134,.45);background:rgba(48,25,25,.58);color:#ffabb6;box-shadow:0 0 12px rgba(255,113,134,.07)}
+.technical-posture-metrics .posture-neutral{border-color:rgba(240,195,107,.32);background:rgba(43,36,21,.34);color:#e6d2a2}
+.rol-hma-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:7px 0 12px;padding:8px 10px;border:1px solid #2a3d53;border-radius:9px;background:linear-gradient(100deg,rgba(17,34,49,.85),rgba(8,14,22,.88))}
+.rol-hma-copy{font-size:10px;font-weight:850;color:#d7e5f5;min-width:145px}
+.rol-hma-row[data-signal="bullish"]{border-color:rgba(80,224,162,.45);box-shadow:0 0 16px rgba(80,224,162,.1)}
+.rol-hma-row[data-signal="bearish"]{border-color:rgba(255,113,134,.42);box-shadow:0 0 16px rgba(255,113,134,.08)}
+.rol-hma-spark{width:min(48%,240px);height:48px;overflow:visible}
+.rol-mtf-wrap{margin-top:10px}
+.rol-mtf-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.rol-mtf-card{min-width:0;padding:8px 7px;border:1px solid #293b50;border-radius:8px;background:rgba(8,14,22,.8);display:flex;flex-direction:column;gap:4px}
+.rol-mtf-card.active{outline:1px solid #78a9ff;outline-offset:1px}
+.rol-mtf-label{font-size:9px;letter-spacing:.07em;color:#c7d7e9}
+.rol-mtf-state{font-size:10px;font-weight:950;white-space:nowrap}
+.rol-mtf-detail{font-size:8px;line-height:1.35;color:#98aabd;overflow-wrap:anywhere}
+.rol-mtf-card.is-bullish .rol-mtf-state{color:#72e5a4}
+.rol-mtf-card.is-bearish .rol-mtf-state{color:#ff9292}
+.rol-mtf-card.is-neutral .rol-mtf-state{color:#f0d18e}
+.rol-mtf-card.is-unavailable .rol-mtf-state{color:#93a0b1}
+.rol-mtf-note{margin:7px 0 0!important;color:#8195aa!important;font-size:8px!important;line-height:1.4!important}
+.rol-iv-readout{margin-top:9px;padding:8px 10px;border:1px solid #33475f;border-radius:8px;background:rgba(9,17,27,.92);font-size:10px;font-weight:850;color:#cbd9e9}
+.rol-iv-readout[data-signal="low"]{border-color:rgba(80,224,162,.42);color:#8cf0b8;background:rgba(16,41,30,.38)}
+.rol-iv-readout[data-signal="high"]{border-color:rgba(255,113,134,.42);color:#ffabb6;background:rgba(48,25,25,.38)}
+.rol-iv-readout[data-signal="mid"]{border-color:rgba(240,195,107,.38);color:#f0d18e;background:rgba(43,36,21,.32)}
+@media(max-width:700px){.rol-mtf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rol-hma-row{align-items:flex-start;flex-direction:column;gap:6px}.rol-hma-spark{width:100%}}
