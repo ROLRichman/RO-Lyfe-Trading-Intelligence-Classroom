@@ -95,8 +95,9 @@ function sendCurrentToStock(){
 }
 function sendCurrentToOption(){
  $("#optionUnderlying").textContent=current;
- $("#optionChainStatus").textContent="Underlying "+current+" selected. Its stock price is not an option premium. Load an actual option chain and select a contract to fill premium data.";
+ $("#optionChainStatus").textContent="Underlying "+current+" selected. Loading the selected call/put chain so you can review ATM, ITM and OTM contracts. The stock price is not an option premium.";
  $("#option-ladder").scrollIntoView({behavior:"smooth",block:"start"});
+ loadMassiveOptionChain();
 }
 function optionMoneyness(contract,spot,side){
  if(!Number.isFinite(spot)||spot<=0)return "UNKNOWN";const pct=Math.abs(contract.strike-spot)/spot;
