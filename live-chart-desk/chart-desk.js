@@ -444,6 +444,15 @@ document.querySelectorAll("[data-symbol]").forEach(b=>b.addEventListener("click"
 document.querySelectorAll("[data-list]").forEach(b=>b.addEventListener("click",()=>{activeList=b.dataset.list;document.querySelectorAll("[data-list]").forEach(x=>x.classList.toggle("active",x===b));renderList();}));
 document.querySelectorAll("[data-interval]").forEach(b=>b.addEventListener("click",()=>{interval=b.dataset.interval;document.querySelectorAll("[data-interval]").forEach(x=>x.classList.toggle("active",x===b));saveDeskView();loadBars();}));
 $("#refreshBars").addEventListener("click",loadBars);$("#vwapToggle")?.addEventListener("change",()=>{renderMovingAverages();saveDeskView();});$("#hmaToggle")?.addEventListener("change",()=>{renderMovingAverages();saveDeskView();});$("#candleStyle").addEventListener("change",e=>{candleStyle=e.target.value;renderCandles();saveDeskView();});$("#indicatorSelect").addEventListener("change",()=>{renderIndicator();saveDeskView();});document.querySelectorAll(".ma-toggle").forEach(el=>el.addEventListener("change",()=>{renderMovingAverages();saveDeskView();}));document.querySelectorAll("#option-ladder input,#option-ladder select").forEach(el=>{el.addEventListener("input",renderOptionLadder);el.addEventListener("change",renderOptionLadder);});
+$("#optionStopPresetRows")?.addEventListener("click",event=>{
+ const trigger=event.target.closest("[data-apply-option-stop]");if(!trigger)return;
+ const pct=Number(trigger.dataset.applyOptionStop),entry=Number($("#optEntry")?.value);
+ if(!Number.isFinite(pct)||pct<=0||!Number.isFinite(entry)||entry<=0)return;
+ const stop=entry*(1-pct/100);
+ $("#optStop").value=stop.toFixed(4);
+ $("#optionChainStatus").textContent="Applied "+pct+"% premium stop · "+optionMoney(entry)+" entry → "+optionMoney(stop)+" stop. Review the resulting contract risk and budget.";
+ renderOptionLadder();
+});
 $("#addForm").addEventListener("submit",e=>{e.preventDefault();addSymbol($("#addSymbol").value);$("#addSymbol").value="";});
 $("#closeQuotePopup").addEventListener("click",closeQuotePopup);
 $("#openChartQuote")?.addEventListener("click",()=>{const item=findItem(current)||{symbol:current,name:current};openQuotePopup(item);});$("#quotePopupBackdrop").addEventListener("click",closeQuotePopup);document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuotePopup();});["popupStrike","popupDte","popupIv","popupRate","popupSide"].forEach(id=>$("#"+id).addEventListener("input",updatePopupGreeks));
