@@ -98,3 +98,24 @@ npm test
 The suite covers navigation and section loading, Market Room asset/symbol/timeframe controls, sample-chart rendering, long/short 1R/2R/3R calculations and invalid stop placement, Chart Lab indicator canvases and candle controls, strategy tabs, the stock-first planner, local journal persistence/deletion/JSON export, the AI prompt helper, and mobile viewport overflow/menu behavior. It runs Chromium with desktop and mobile device settings.
 
 A source-level syntax/selector check has been performed. A green GitHub Actions result is still required to confirm the browser-driven suite passes in CI; no test result should be inferred from the presence of the workflow alone.
+
+
+## RO'Lyfe RTIC Live Desk — integrated tools
+
+The existing Live Desk remains embedded in the Classroom and is also available at `/live-chart-desk/`. Existing stock/ETF and crypto watchlists are preserved; browser-saved custom symbols are retained. The additive `Future & Discovery` list contains 145 research tickers across AI infrastructure, robotics, space, quantum, nuclear, energy storage, cybersecurity, defense, biotech, advanced materials, mobility and cloud/software. The additive `Futures` reference list contains 28 contracts/benchmarks.
+
+The Live Desk scanner uses the same watchlist arrays as the chart. Tickerbot scanner requests are wired for stocks/ETFs, Future & Discovery stocks and crypto. Futures symbols are visible but this release does not claim verified live futures quotes or scanner coverage until a futures provider entitlement is connected.
+
+The Stock Ladder calculates direction-aware entry/stop distance, risk per share, share quantity against the selected risk budget, position value, stop-risk estimate and 1R/2R/3R levels. ATR-based stop suggestions require at least 15 valid chart bars. The Option Ladder can request Massive's options-chain snapshot, classify ITM/ATM/OTM contracts, and use a bid/ask midpoint when returned; a last-trade-only value is labeled as such. Missing premiums, Greeks, IV, spread or open interest are never fabricated.
+
+### Server-side secrets and entitlements
+
+Add the actual values in **Supabase → Project → Edge Functions → Secrets** for project `ykmdyfbklvuoseqdjnxy`:
+
+- `ROLYFE_RTIC_MARKET_INTELLIGENCE`: the Massive API key. A GitHub Actions secret with the same name is not automatically visible to Supabase Edge Functions.
+- `OPENAI_API_KEY`: required by the new `rol-trading-ai` function for AI analysis and the five-language translator.
+- Existing `TICKERBOT_API_KEY`: required for Tickerbot OHLCV candles and stock/crypto scanner data.
+
+The market-data status endpoint reports whether the required secrets are present; it does not reveal secret values or confirm provider plan entitlements. Massive stock snapshots and option-chain snapshots can be delayed or unavailable depending on subscription tier. The UI must retain source and timestamps.
+
+This project does not have a brokerage connection. The AI may analyze supplied data and the Stock/Option Ladders may prepare editable order drafts, but no real order is placed, modified or cancelled.
