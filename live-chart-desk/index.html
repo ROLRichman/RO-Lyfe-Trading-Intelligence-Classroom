@@ -78,6 +78,25 @@
     <label>Contracts (#)<input id="optQty" type="number" min="1" max="100000" step="1" value="4" inputmode="numeric" required></label>
     <label>Maximum planned risk ($)<input id="optBudget" type="number" min="0" step="1" value="160" inputmode="decimal"></label>
   </div>
+  <section class="option-stop-planner" aria-labelledby="optionStopPlannerTitle">
+    <div class="option-stop-planner-head">
+      <div><p class="eyebrow">PREMIUM RISK CONTROL</p><h3 id="optionStopPlannerTitle">Option Premium Stop Calculator</h3><p class="option-small">Compare stop distances from the option entry premium. Choose a row to apply its calculated stop.</p></div>
+      <span class="option-stop-tag">5 PRESETS</span>
+    </div>
+    <div class="option-stop-table-wrap">
+      <table class="option-stop-table">
+        <thead><tr><th>Stop distance</th><th>Stop premium</th><th>Risk / contract</th><th>Total risk</th><th>Budget check</th><th>Action</th></tr></thead>
+        <tbody id="optionStopPresetRows">
+          <tr><td>5% · Tight</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>7% · Moderate</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>10% · Standard ceiling</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>15% · Advanced</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>20% · High risk</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="option-stop-disclaimer">The 10% row is the standard planning ceiling in this tool. 15% and 20% are aggressive settings for advanced review, not recommendations. Premium stops can slip or fill worse than planned; this calculator does not place or monitor orders.</p>
+  </section>
   <div id="optionLadderError" class="option-error" role="status" aria-live="polite" hidden></div>
   <div class="option-summary-grid" id="optionSummary">
     <div><span>Total debit at entry</span><strong id="optDebit">$500.00</strong></div>
