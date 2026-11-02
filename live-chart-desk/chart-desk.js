@@ -31,16 +31,114 @@ if(resizeObserver)resizeObserver.disconnect();resizeObserver=new ResizeObserver(
 return true;}
 function toHeikinAshi(bars){let previousOpen=null,previousClose=null;return bars.map((b)=>{const close=(b.open+b.high+b.low+b.close)/4;const open=previousOpen===null?(b.open+b.close)/2:(previousOpen+previousClose)/2;const high=Math.max(b.high,open,close);const low=Math.min(b.low,open,close);previousOpen=open;previousClose=close;return {time:b.time,open,high,low,close};});}
 function renderCandles(){if(!candleSeries||!latestBars.length)return;const data=candleStyle==="heikinashi"?toHeikinAshi(latestBars):latestBars.map(({time,open,high,low,close})=>({time,open,high,low,close}));candleSeries.setData(data);const note=$("#candleStyleNote");if(note)note.textContent=candleStyle==="heikinashi"?"Heikin-Ashi smooths candles for trend reading; displayed OHLC values are synthetic, not executable prices.":"Standard candles show actual open, high, low and close.";const meta=$("#chartMeta");if(meta&&latestBars.length){const last=latestBars[latestBars.length-1];meta.textContent="Tickerbot · "+latestBars.length+" candles · "+interval+" · "+(candleStyle==="heikinashi"?"Heikin-Ashi view · actual last close ":"Standard candles · last close ")+fmt(last.close)+" · "+new Date(last.time*1000).toLocaleString();}}
-async function loadBars(){const seq=++loadSequence;$("#chartStatus").textContent="LOADING CANDLES";$("#chartMeta").textContent="Requesting "+interval+" bars from Tickerbot…";renderTechnicalPosture(true);
-if(!chartObj&&!setupChart())return;
-const ticker=candleSymbolForApi(current);
-try{const url=API+"?provider=tickerbot&symbol="+encodeURIComponent(ticker)+"&interval="+encodeURIComponent(interval)+"&limit=300";const r=await fetch(url,{headers:{apikey:ANON,Authorization:"Bearer "+ANON,Accept:"application/json"},cache:"no-store"});const d=await r.json();if(seq!==loadSequence)return;if(!r.ok)throw Error(d.error||d.message||("HTTP "+r.status));if(!Array.isArray(d.bars)||!d.bars.length)throw Error("No candles returned for this symbol and timeframe.");
-const bars=d.bars.map(b=>({time:Math.floor(Number(b.t)/1000),open:Number(b.o),high:Number(b.h),low:Number(b.l),close:Number(b.c),volume:Number(b.v)||0})).filter(b=>Number.isFinite(b.time)&&Number.isFinite(b.open)&&Number.isFinite(b.high)&&Number.isFinite(b.low)&&Number.isFinite(b.close)).sort((a,b)=>a.time-b.time);
-if(!bars.length)throw Error("Provider returned no valid OHLCV bars.");
-latestBars=bars;renderCandles();
-volumeSeries.setData(bars.map(b=>({time:b.time,value:b.volume,color:b.close>=b.open?"rgba(80,224,162,.38)":"rgba(255,113,134,.38)"})));
-chartObj.timeScale().fitContent();renderMovingAverages();renderIndicator();renderTechnicalPosture(false);$("#chartStatus").textContent="CANDLES LOADED";const last=bars[bars.length-1];renderCandles();$("#chartMeta").textContent+=" · "+(d.coverage||"coverage not supplied");
-}catch(e){if(seq!==loadSequence)return;latestBars=[];renderIndicator();renderTechnicalPosture(false);$("#chartStatus").textContent="DATA UNAVAILABLE";$("#chartMeta").textContent="Tickerbot candle request failed: "+e.message;$("#tvChart").dataset.error=e.message;}}
+function dateKeyET(timestamp){
+ const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date(timestamp*1000));
+ const values={};parts.forEach(p=>{values[p.type]=p.value;});
+ return values.year+"-"+values.month+"-"+values.day;
+}
+function lookbackWindow(){
+ const now=new Date(),to=now.toISOString().slice(0,10);
+ const days=lookback==="1m"?30:lookback==="3m"?92:lookback==="6m"?183:lookback==="1y"?365:(/-USD$/.test(current)?5:10);
+ const fromDate=new Date(now.getTime()-days*86400000);
+ return {from:fromDate.toISOString().slice(0,10),to};
+}
+function aggregateTenMinuteBars(bars){
+ const grouped=new Map();
+ bars.forEach(bar=>{
+  const bucket=Math.floor(bar.time/600)*600;
+  const currentBar=grouped.get(bucket);
+  if(!currentBar)grouped.set(bucket,{time:bucket,open:bar.open,high:bar.high,low:bar.low,close:bar.close,volume:bar.volume||0});
+  else{currentBar.high=Math.max(currentBar.high,bar.high);currentBar.low=Math.min(currentBar.low,bar.low);currentBar.close=bar.close;currentBar.volume+=(bar.volume||0);}
+ });
+ return [...grouped.values()].sort((a,b)=>a.time-b.time);
+}
+function updateMarketSessionStatus(bars){
+ const host=$("#marketSessionStatus");if(!host)return;
+ const now=new Date(),parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",weekday:"short",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(now);
+ const val={};parts.forEach(p=>{val[p.type]=p.value;});
+ const mins=Number(val.hour)*60+Number(val.minute),weekday=val.weekday;
+ let label=["Sat","Sun"].includes(weekday)?"WEEKEND · MARKET CLOSED":mins<240?"PRE-MARKET NOT OPEN":mins<570?"PRE-MARKET · 04:00–09:30 ET":mins<960?"REGULAR SESSION · 09:30–16:00 ET":mins<1200?"AFTER-HOURS · 16:00–20:00 ET":"EXTENDED SESSION CLOSED";
+ const dates=[...new Set((bars||[]).map(b=>dateKeyET(b.time)))];
+ host.textContent=label+" · "+(sessionMode==="all"?"extended bars requested":"regular-hours filter")+
+  (dates.length?" · "+dates.length+" trading dates loaded":"");
+}
+function selectFiveSessions(bars){
+ if(!bars.length||/-USD$/.test(current))return bars;
+ const sessions=[...new Set(bars.map(b=>dateKeyET(b.time)))];
+ if(sessions.length<=5)return bars;
+ const keep=new Set(sessions.slice(-5));
+ return bars.filter(b=>keep.has(dateKeyET(b.time)));
+}
+async function loadBars(){
+ const seq=++loadSequence;
+ $("#chartStatus").textContent="LOADING "+String(interval).toUpperCase()+" · "+lookback.toUpperCase();
+ $("#chartMeta").textContent="Requesting "+lookback+" of "+interval+" candles from Tickerbot…";
+ renderTechnicalPosture(true);
+ if(!chartObj&&!setupChart())return;
+ const ticker=candleSymbolForApi(current);
+ const providerInterval=interval==="10m"?"1m":interval;
+ const windowRange=lookbackWindow();
+ const subHour=["1s","1m","5m","15m","30m"].includes(providerInterval);
+ try{
+  const allBars=[],seenCursors=new Set();
+  let cursor=null,page=0,lastResponse=null;
+  do{
+   const params=new URLSearchParams({
+    provider:"tickerbot",symbol:ticker,interval:providerInterval,limit:"1000",
+    from:windowRange.from,to:windowRange.to
+   });
+   if(subHour)params.set("session",sessionMode);
+   if(cursor)params.set("cursor",cursor);
+   const response=await fetch(API+"?"+params.toString(),{
+    headers:{apikey:ANON,Authorization:"Bearer "+ANON,Accept:"application/json"},
+    cache:"no-store"
+   });
+   const data=await response.json();
+   if(seq!==loadSequence)return;
+   if(!response.ok)throw Error(data.error||data.message||("HTTP "+response.status));
+   if(!Array.isArray(data.bars))throw Error("Tickerbot did not return a candle array.");
+   data.bars.forEach(b=>{
+    const bar={time:Math.floor(Number(b.t)/1000),open:Number(b.o),high:Number(b.h),low:Number(b.l),close:Number(b.c),volume:Number(b.v)||0};
+    if(Number.isFinite(bar.time)&&Number.isFinite(bar.open)&&Number.isFinite(bar.high)&&Number.isFinite(bar.low)&&Number.isFinite(bar.close))allBars.push(bar);
+   });
+   lastResponse=data;
+   cursor=data.nextCursor||null;
+   page++;
+   if(cursor){if(seenCursors.has(cursor))throw Error("Tickerbot returned a repeated page cursor; history loading stopped safely.");seenCursors.add(cursor);}
+  }while(cursor&&page<12);
+
+  let bars=[...new Map(allBars.sort((a,b)=>a.time-b.time).map(b=>[b.time,b])).values()];
+  if(lookback==="5d")bars=selectFiveSessions(bars);
+  if(interval==="10m")bars=aggregateTenMinuteBars(bars);
+  if(!bars.length)throw Error("No candles returned for this symbol, session and lookback window.");
+  if(!candleSeries||!volumeSeries)throw Error("Chart series are not ready.");
+  latestBars=bars;
+  renderCandles();
+  volumeSeries.setData(bars.map(b=>({time:b.time,value:b.volume,color:b.close>=b.open?"rgba(80,224,162,.38)":"rgba(255,113,134,.38)"})));
+  chartObj.timeScale().fitContent();
+  renderMovingAverages();
+  renderIndicator();
+  renderIndicatorBoard();
+  renderTechnicalPosture(false);
+  updateMarketSessionStatus(bars);
+  $("#chartStatus").textContent="CANDLES LOADED · "+bars.length;
+  const last=bars[bars.length-1];
+  const rangeNote=cursor?" · more history available beyond the loaded page cap":"";
+  $("#chartMeta").textContent="Tickerbot · "+bars.length+" candles · "+interval+" · "+lookback+
+   " · "+(sessionMode==="all"?"extended session requested":"regular session only")+
+   " · last close "+fmt(last.close)+" · "+new Date(last.time*1000).toLocaleString()+
+   " · provider "+(lastResponse&&lastResponse.asOf?lastResponse.asOf:"timestamp unavailable")+rangeNote;
+ }catch(error){
+  if(seq!==loadSequence)return;
+  latestBars=[];
+  renderIndicator();
+  renderIndicatorBoard();
+  renderTechnicalPosture(false);
+  $("#chartStatus").textContent="DATA UNAVAILABLE";
+  $("#chartMeta").textContent="Tickerbot candle request failed: "+error.message;
+  $("#tvChart").dataset.error=error.message;
+ }
+}
 
 function renderMovingAverages(){
 const host=$("#maReadout");if(!chartObj||!latestBars.length||!host)return;
