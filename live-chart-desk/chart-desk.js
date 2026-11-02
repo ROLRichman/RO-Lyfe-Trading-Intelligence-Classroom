@@ -24,7 +24,7 @@ function candleSymbolForApi(symbol){const s=symbolForApi(symbol);const crypto=s.
 function setupChart(){const root=$("#tvChart");root.innerHTML="";if(!window.LightweightCharts){root.innerHTML='<div class="loading">Chart library could not load. Check your connection and reload.</div>';$("#chartStatus").textContent="CHART LIBRARY ERROR";return false;}
 chartObj=LightweightCharts.createChart(root,{width:root.clientWidth,height:root.clientHeight,layout:{background:{type:"solid",color:"#05070b"},textColor:"#b8c9dc"},grid:{vertLines:{color:"#15202d"},horzLines:{color:"#15202d"}},rightPriceScale:{borderColor:"#29384b"},timeScale:{borderColor:"#29384b",timeVisible:true,secondsVisible:false},crosshair:{mode:LightweightCharts.CrosshairMode.Normal},handleScroll:true,handleScale:true});
 candleSeries=chartObj.addCandlestickSeries({upColor:"#50e0a2",downColor:"#ff7186",borderUpColor:"#50e0a2",borderDownColor:"#ff7186",wickUpColor:"#50e0a2",wickDownColor:"#ff7186"});
-volumeSeries=chartObj.addHistogramSeries({priceFormat:{type:"volume"},priceScaleId:"volume",lastValueVisible:false,priceLineVisible:false});vwapSeries=chartObj.addLineSeries({color:"#f7d46a",lineWidth:2,title:"VWAP",priceLineVisible:false,lastValueVisible:true});const maColors={"5":"#f6c453","10":"#55d6be","20":"#6ea8fe","40":"#4fd1c5","50":"#c1a5ff","200":"#ff8c69"};[5,10,20,40,50,200].forEach(n=>{maSeries[n]=chartObj.addLineSeries({color:maColors[n],lineWidth:n===200?3:2,title:"EMA "+n,priceLineVisible:false,lastValueVisible:true});});
+volumeSeries=chartObj.addHistogramSeries({priceFormat:{type:"volume"},priceScaleId:"volume",lastValueVisible:false,priceLineVisible:false});vwapSeries=chartObj.addLineSeries({color:"#f7d46a",lineWidth:2,title:"VWAP",priceLineVisible:false,lastValueVisible:true});const maColors={"20":"#55e0a3","50":"#6ea8fe","100":"#c1a5ff","200":"#f4c66b"};[20,50,100,200].forEach(n=>{maSeries[n]=chartObj.addLineSeries({color:maColors[n],lineWidth:n===200?3:2,title:"SMA "+n,priceLineVisible:false,lastValueVisible:true});});
 chartObj.priceScale("volume").applyOptions({scaleMargins:{top:.82,bottom:0},borderVisible:false});
 chartObj.timeScale().fitContent();
 if(resizeObserver)resizeObserver.disconnect();resizeObserver=new ResizeObserver(()=>{if(chartObj)chartObj.applyOptions({width:root.clientWidth,height:root.clientHeight});});resizeObserver.observe(root);
@@ -140,25 +140,146 @@ async function loadBars(){
  }
 }
 
+function movingAverage(values,period,method){
+ const out=Array(values.length).fill(null);
+ if(method==="ema"){
+  const k=2/(period+1);let seed=0,count=0,prev=null;
+  values.forEach((value,i)=>{
+   if(!Number.isFinite(value))return;
+   if(prev===null){seed+=value;count++;if(count===period){prev=seed/period;out[i]=prev;}}
+   else{prev=value*k+prev*(1-k);out[i]=prev;}
+  });
+ }else{
+  let sum=0;
+  values.forEach((value,i)=>{
+   sum+=Number(value)||0;
+   if(i>=period)sum-=Number(values[i-period])||0;
+   if(i>=period-1)out[i]=sum/period;
+  });
+ }
+ return out;
+}
+function weightedMovingAverage(values,period){
+ const out=Array(values.length).fill(null),denominator=period*(period+1)/2;
+ for(let i=period-1;i<values.length;i++){
+  let sum=0,valid=true;
+  for(let k=0;k<period;k++){const value=values[i-period+1+k];if(!Number.isFinite(value)){valid=false;break;}sum+=value*(k+1);}
+  if(valid)out[i]=sum/denominator;
+ }
+ return out;
+}
+function calculateSessionVwap(bars){
+ const out=Array(bars.length).fill(null);
+ const intraday=["1m","5m","10m","15m","30m","1h","2h","4h"].includes(interval);
+ if(intraday){
+  let pv=0,vv=0,lastSession="";
+  const crypto=/-USD$/.test(current);
+  bars.forEach((bar,i)=>{
+   const key=new Date(bar.time*1000).toLocaleDateString("en-US",{timeZone:crypto?"UTC":"America/New_York"});
+   if(key!==lastSession){pv=0;vv=0;lastSession=key;}
+   const typical=(bar.high+bar.low+bar.close)/3,volume=Math.max(0,Number(bar.volume)||0);
+   pv+=typical*volume;vv+=volume;out[i]=vv>0?pv/vv:null;
+  });
+ }else{
+  // Daily/weekly VWAP is shown as a rolling 20-bar volume-weighted proxy,
+  // not mislabelled as a live intraday session VWAP.
+  for(let i=0;i<bars.length;i++){
+   const from=Math.max(0,i-19);let pv=0,vv=0;
+   for(let j=from;j<=i;j++){const b=bars[j],volume=Math.max(0,Number(b.volume)||0);pv+=((b.high+b.low+b.close)/3)*volume;vv+=volume;}
+   out[i]=vv>0?pv/vv:null;
+  }
+ }
+ return out;
+}
+function calculateIndicatorSnapshot(bars){
+ const close=bars.map(b=>b.close),high=bars.map(b=>b.high),low=bars.map(b=>b.low),volume=bars.map(b=>Math.max(0,Number(b.volume)||0));
+ const sma20=movingAverage(close,20,"sma"),sma50=movingAverage(close,50,"sma"),sma100=movingAverage(close,100,"sma"),sma200=movingAverage(close,200,"sma");
+ const ema13=movingAverage(close,13,"ema"),ema20=movingAverage(close,20,"ema"),ema50=movingAverage(close,50,"ema");
+ const vwap=calculateSessionVwap(bars);
+ const tr=bars.map((b,i)=>i===0?b.high-b.low:Math.max(b.high-b.low,Math.abs(b.high-bars[i-1].close),Math.abs(b.low-bars[i-1].close)));
+ const atr=movingAverage(tr,14,"ema");
+ let avgGain=0,avgLoss=0,rsi=Array(close.length).fill(null);
+ for(let i=1;i<close.length;i++){
+  const change=close[i]-close[i-1],gain=Math.max(change,0),loss=Math.max(-change,0);
+  if(i<=14){avgGain+=gain/14;avgLoss+=loss/14;if(i===14)rsi[i]=avgLoss===0?100:100-100/(1+avgGain/avgLoss);}
+  else{avgGain=(avgGain*13+gain)/14;avgLoss=(avgLoss*13+loss)/14;rsi[i]=avgLoss===0?100:100-100/(1+avgGain/avgLoss);}
+ }
+ const fast=movingAverage(close,12,"ema"),slow=movingAverage(close,26,"ema");
+ const macd=close.map((_,i)=>Number.isFinite(fast[i])&&Number.isFinite(slow[i])?fast[i]-slow[i]:null);
+ const signal=movingAverage(macd.map(v=>Number.isFinite(v)?v:0),9,"ema");
+ const macdHist=macd.map((v,i)=>Number.isFinite(v)&&Number.isFinite(signal[i])?v-signal[i]:null);
+ const rawK=bars.map((b,i)=>{
+  if(i<13)return null;
+  const hh=Math.max(...high.slice(i-13,i+1)),ll=Math.min(...low.slice(i-13,i+1));
+  return hh===ll?50:100*(b.close-ll)/(hh-ll);
+ });
+ const stochK=movingAverage(rawK.map(v=>Number.isFinite(v)?v:0),3,"sma");
+ const stochD=movingAverage(stochK.map(v=>Number.isFinite(v)?v:0),3,"sma");
+ const cci=bars.map((b,i)=>{
+  if(i<19)return null;
+  const typical=bars.slice(i-19,i+1).map(x=>(x.high+x.low+x.close)/3);
+  const mean=typical.reduce((a,v)=>a+v,0)/20,dev=typical.reduce((a,v)=>a+Math.abs(v-mean),0)/20;
+  return dev===0?0:((b.high+b.low+b.close)/3-mean)/(.015*dev);
+ });
+ const atrValues=movingAverage(tr,14,"ema");
+ const atr20=movingAverage(tr,20,"ema"),emaForSqueeze=movingAverage(close,20,"ema");
+ const ttm=bars.map((b,i)=>{
+  if(i<19||!Number.isFinite(atr20[i])||!Number.isFinite(emaForSqueeze[i]))return null;
+  const values=close.slice(i-19,i+1),mean=values.reduce((a,v)=>a+v,0)/20;
+  const sd=Math.sqrt(values.reduce((a,v)=>a+(v-mean)*(v-mean),0)/20);
+  const bbUpper=mean+2*sd,bbLower=mean-2*sd,kcUpper=emaForSqueeze[i]+1.5*atr20[i],kcLower=emaForSqueeze[i]-1.5*atr20[i];
+  return {squeeze:bbUpper<kcUpper&&bbLower>kcLower,momentum:b.close-mean};
+ });
+ const half=Math.max(1,Math.floor(31/2)),root=Math.max(1,Math.round(Math.sqrt(31)));
+ const halfW=weightedMovingAverage(close,half),fullW=weightedMovingAverage(close,31);
+ const rawHma=close.map((_,i)=>Number.isFinite(halfW[i])&&Number.isFinite(fullW[i])?2*halfW[i]-fullW[i]:null);
+ const hma=weightedMovingAverage(rawHma.map(v=>Number.isFinite(v)?v:0),root);
+ const volAvg=movingAverage(volume,20,"sma"),relativeVolume=volume.map((v,i)=>i>0&&volAvg[i-1]>0?v/volAvg[i-1]:null);
+ const adxDirection=bars.map((b,i)=>{
+  if(i===0)return null;
+  const up=b.high-bars[i-1].high,down=bars[i-1].low-b.low;
+  return up>down&&up>0?1:down>up&&down>0?-1:0;
+ });
+ return {close,high,low,volume,sma20,sma50,sma100,sma200,ema13,ema20,ema50,vwap,tr,atr:atrValues,rsi,macd,macdHist,stochK,stochD,cci,ttm,hma,relativeVolume,adxDirection};
+}
 function renderMovingAverages(){
-const host=$("#maReadout");if(!chartObj||!latestBars.length||!host)return;
-const closes=latestBars.map(b=>b.close),labels=[];
-[5,10,20,40,50,200].forEach(n=>{
- let p=null,k=2/(n+1);const values=closes.map((v,i)=>{p=p===null?v:v*k+p*(1-k);return i<n-1?null:p;});
- const control=Array.from(document.querySelectorAll(".ma-toggle")).find(el=>Number(el.value)===n),enabled=control?control.checked:n!==200,s=maSeries[n];
- if(!s)return;if(enabled){s.applyOptions({visible:true});s.setData(latestBars.map((b,i)=>({time:b.time,value:values[i]})).filter(x=>Number.isFinite(x.value)));if(values[values.length-1]!=null)labels.push("EMA "+n+" "+fmt(values[values.length-1]));}
- else{s.setData([]);s.applyOptions({visible:false});}
-});
-const on=$("#vwapToggle")?$("#vwapToggle").checked:true,intraday=!["1d","1w","1mo"].includes(interval);
-if(vwapSeries){
- if(on&&intraday){
-  let pv=0,vv=0,session="";const crypto=/-USD$/.test(current);
-  const points=latestBars.map(b=>{const key=new Date(b.time*1000).toLocaleDateString("en-US",{timeZone:crypto?"UTC":"America/New_York"});if(key!==session){pv=0;vv=0;session=key;}const tp=(b.high+b.low+b.close)/3,volume=Math.max(0,Number(b.volume)||0);pv+=tp*volume;vv+=volume;return {time:b.time,value:vv?pv/vv:null};}).filter(p=>Number.isFinite(p.value));
-  vwapSeries.applyOptions({visible:true});vwapSeries.setData(points);if(points.length)labels.push("VWAP "+fmt(points[points.length-1].value));
- }else{vwapSeries.setData([]);vwapSeries.applyOptions({visible:false});if(on&&!intraday)labels.push("VWAP needs intraday bars (4H/1H/15m/5m)");}
+ const host=$("#maReadout");if(!chartObj||!latestBars.length||!host)return;
+ maType=$("#maType")?$("#maType").value:"sma";
+ const closes=latestBars.map(b=>b.close),labels=[];
+ [20,50,100,200].forEach(period=>{
+  const values=movingAverage(closes,period,maType);
+  const control=Array.from(document.querySelectorAll(".ma-toggle")).find(el=>Number(el.value)===period);
+  const enabled=control?control.checked:true,series=maSeries[period];
+  if(!series)return;
+  series.applyOptions({visible:enabled,title:(maType==="sma"?"SMA ":"EMA ")+period});
+  if(enabled){
+   series.setData(latestBars.map((b,i)=>({time:b.time,value:values[i]})).filter(point=>Number.isFinite(point.value)));
+   if(Number.isFinite(values[values.length-1]))labels.push((maType==="sma"?"SMA ":"EMA ")+period+" "+fmt(values[values.length-1]));
+  }else series.setData([]);
+ });
+ const studies=calculateIndicatorSnapshot(latestBars),last=latestBars[latestBars.length-1];
+ const vwapOn=$("#vwapToggle")?$("#vwapToggle").checked:true;
+ if(vwapSeries){
+  vwapSeries.applyOptions({visible:vwapOn});
+  if(vwapOn){
+   const points=latestBars.map((bar,i)=>({time:bar.time,value:studies.vwap[i]})).filter(p=>Number.isFinite(p.value));
+   vwapSeries.setData(points);
+   if(points.length)labels.push((["1d","1w"].includes(interval)?"Rolling 20-bar VWAP ":"Session VWAP ")+fmt(points[points.length-1].value));
+  }else vwapSeries.setData([]);
+ }
+ const lastVwap=studies.vwap[studies.vwap.length-1];
+ const state=$("#vwapState");
+ if(state){
+  if(!Number.isFinite(lastVwap)){state.textContent="VWAP unavailable";state.className="vwap-state state-neutral";}
+  else{
+   const delta=(last.close-lastVwap)/lastVwap*100,above=delta>=0;
+   state.textContent=(above?"ABOVE VWAP":"BELOW VWAP")+" · "+(above?"buyer-side":"seller-side")+" context · "+(delta>0?"+":"")+delta.toFixed(2)+"%";
+   state.className="vwap-state "+(above?"state-bullish":"state-bearish");
+  }
+ }
+ host.textContent=labels.length?labels.join(" · "):"Enable an SMA/EMA or VWAP overlay to plot it over price.";
 }
-host.textContent=labels.length?labels.join(" · "):"Turn on an EMA or VWAP overlay to show it over price.";
-}
+
 function optionMoney(value){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2}).format(value);}
 function renderOptionLadder(){
  const host=$("#optionLadderRows"),error=$("#optionLadderError"),underlying=$("#optionUnderlying");
@@ -192,44 +313,31 @@ function renderOptionLadder(){
 function renderTechnicalPosture(loading){
  const panel=$("#technicalPosturePanel"),badge=$("#technicalPostureBadge"),copy=$("#technicalPostureCopy"),metrics=$("#technicalPostureMetrics"),tf=$("#technicalPostureTimeframe");
  if(!panel||!badge||!copy||!metrics)return;
- tf.textContent="Selected chart · "+String(interval||"").toUpperCase();
+ tf.textContent=current+" · "+String(interval||"").toUpperCase()+" · "+lookback.toUpperCase();
  panel.classList.remove("bullish","bearish");panel.classList.add("neutral");
- if(loading){badge.textContent="◌ UPDATING";copy.textContent="Loading the selected ticker and timeframe. The previous reading is being replaced.";metrics.textContent="Waiting for fresh candle data…";return;}
- if(!latestBars.length){badge.textContent="⏸ NEUTRAL / WAITING";copy.textContent="No usable candles returned. Check the selected symbol, timeframe, provider coverage, and refresh.";metrics.textContent="EMA 20 / 50 · —   |   RSI 14 · —   |   MACD · —   |   Stoch · —";return;}
- const bars=latestBars,closes=bars.map(b=>b.close),highs=bars.map(b=>b.high),lows=bars.map(b=>b.low);
- if(bars.length<50){badge.textContent="⏸ NEUTRAL / WAITING";copy.textContent="Need at least 50 valid candles on this timeframe before assigning a directional posture. Current: "+bars.length+".";metrics.textContent="EMA 20 / 50 · building   |   RSI 14 · building   |   MACD · building   |   Stoch · building";return;}
- const emaSeries=(values,period)=>{
-  const out=Array(values.length).fill(null),k=2/(period+1);let seed=0,prev=null,count=0;
-  values.forEach((v,i)=>{if(!Number.isFinite(v))return;if(prev===null){seed+=v;count++;if(count===period){prev=seed/period;out[i]=prev;}}else{prev=v*k+prev*(1-k);out[i]=prev;}});
-  return out;
- };
- const ema20=emaSeries(closes,20),ema50=emaSeries(closes,50);
- const e20=ema20[ema20.length-1],e50=ema50[ema50.length-1],last=closes[closes.length-1];
- let avgGain=0,avgLoss=0,rsi=NaN;
- for(let i=1;i<=14;i++){const d=closes[i]-closes[i-1];avgGain+=Math.max(d,0)/14;avgLoss+=Math.max(-d,0)/14;}
- for(let i=15;i<closes.length;i++){const d=closes[i]-closes[i-1];avgGain=(avgGain*13+Math.max(d,0))/14;avgLoss=(avgLoss*13+Math.max(-d,0))/14;}
- rsi=avgLoss===0?100:100-100/(1+avgGain/avgLoss);
- const fast=emaSeries(closes,12),slow=emaSeries(closes,26);
- const macdLine=fast.map((v,i)=>v===null||slow[i]===null?null:v-slow[i]);
- const signal=emaSeries(macdLine.map(v=>v===null?NaN:v),9);
- const macdHist=macdLine[macdLine.length-1]-signal[signal.length-1];
- const rawK=bars.map((b,i)=>{if(i<13)return null;const hi=Math.max(...highs.slice(i-13,i+1)),lo=Math.min(...lows.slice(i-13,i+1));return hi===lo?50:100*(b.close-lo)/(hi-lo);});
- const validK=rawK.filter(Number.isFinite),stochK=validK[validK.length-1],stochD=validK.slice(-3).reduce((a,v)=>a+v,0)/Math.min(3,validK.length);
- const ready=[e20,e50,rsi,macdHist,stochK,stochD,last].every(Number.isFinite);
- if(!ready){badge.textContent="⏸ NEUTRAL / WAITING";copy.textContent="Some required studies are incomplete for this provider response. No directional posture assigned.";metrics.textContent="EMA / RSI / MACD / Stoch · incomplete";return;}
+ if(loading){badge.textContent="◌ UPDATING";copy.textContent="Refreshing the selected symbol and timeframe. The prior reading is not carried forward.";metrics.textContent="Waiting for fresh candle data…";return;}
+ if(!latestBars.length){badge.textContent="⏸ NEUTRAL / WAITING";copy.textContent="No usable candles returned. Check symbol, session, timeframe and provider coverage.";metrics.textContent="SMA / VWAP / RSI / MACD / Stoch · unavailable";return;}
+ const studies=calculateIndicatorSnapshot(latestBars),last=latestBars[latestBars.length-1].close,idx=latestBars.length-1;
+ const s20=studies.sma20[idx],s50=studies.sma50[idx],s100=studies.sma100[idx],s200=studies.sma200[idx],vwap=studies.vwap[idx];
+ const rsi=studies.rsi[idx],macd=studies.macdHist[idx],k=studies.stochK[idx],d=studies.stochD[idx];
+ const ready=[s20,s50,rsi,macd,k,d,last].every(Number.isFinite);
+ if(!ready){badge.textContent="⏸ NEUTRAL / BUILDING";copy.textContent="This selected timeframe does not yet contain enough candles for the full trend and momentum stack. The missing studies are not guessed.";metrics.textContent="Loaded "+latestBars.length+" bars · longer trend averages may need more history";return;}
  let score=0;
- const alignedUp=last>e20&&e20>e50,alignedDown=last<e20&&e20<e50;
+ const alignedUp=last>s20&&s20>s50,alignedDown=last<s20&&s20<s50;
  if(alignedUp)score+=2;else if(alignedDown)score-=2;
+ if(Number.isFinite(s100)){if(last>s100)score++;else if(last<s100)score--;}
+ if(Number.isFinite(s200)){if(last>s200)score++;else if(last<s200)score--;}
+ if(Number.isFinite(vwap)){if(last>vwap)score++;else if(last<vwap)score--;}
  if(rsi>=55)score++;else if(rsi<=45)score--;
- if(macdHist>0)score++;else if(macdHist<0)score--;
- if(stochK>stochD)score++;else if(stochK<stochD)score--;
- let posture="neutral",label="⏸ NEUTRAL / WAITING",explain="Signals are mixed or lack enough alignment. Wait for price, trend and momentum to agree.";
- if(score>=3&&alignedUp){posture="bullish";label="🏹 ↑ BULLISH";explain="Price is above rising EMA 20 / EMA 50 alignment, with momentum confirmation on this timeframe.";}
- else if(score<=-3&&alignedDown){posture="bearish";label="🏹 ↓ BEARISH";explain="Price is below falling EMA 20 / EMA 50 alignment, with downside momentum confirmation on this timeframe.";}
+ if(macd>0)score++;else if(macd<0)score--;
+ if(k>d)score++;else if(k<d)score--;
+ let posture="neutral",label="⏸ NEUTRAL / MIXED",explain="Trend and momentum are not aligned. Wait for price structure and confirmation; a VWAP reading alone is not an entry.";
+ if(score>=3&&alignedUp&&(!Number.isFinite(vwap)||last>vwap)){posture="bullish";label="🏹 ↑ BULLISH BIAS";explain="The selected chart has bullish trend/momentum alignment. Price is above the short/intermediate SMA structure"+(Number.isFinite(vwap)?" and VWAP":"")+". Wait for your entry trigger and define invalidation.";}
+ else if(score<=-3&&alignedDown&&(!Number.isFinite(vwap)||last<vwap)){posture="bearish";label="🏹 ↓ BEARISH BIAS";explain="The selected chart has bearish trend/momentum alignment. Price is below the short/intermediate SMA structure"+(Number.isFinite(vwap)?" and VWAP":"")+". Wait for your entry trigger and define invalidation.";}
  panel.classList.remove("bullish","bearish","neutral");panel.classList.add(posture);
- badge.textContent=label;copy.textContent=explain+" Score "+(score>0?"+":"")+score+" · "+bars.length+" candles.";
- const signed=n=>(n>0?"+":"")+Number(n).toFixed(4);
- metrics.innerHTML="<span>EMA 20 / 50 · "+fmt(e20)+" / "+fmt(e50)+"</span><span>RSI 14 · "+rsi.toFixed(1)+"</span><span>MACD hist · "+signed(macdHist)+"</span><span>Stoch K / D · "+stochK.toFixed(1)+" / "+stochD.toFixed(1)+"</span>";
+ badge.textContent=label;copy.textContent=explain+" Score "+(score>0?"+":"")+score+" · "+latestBars.length+" bars.";
+ const vwapLabel=Number.isFinite(vwap)?(last>=vwap?"Above VWAP":"Below VWAP"):"VWAP n/a";
+ metrics.innerHTML="<span>SMA 20 / 50 · "+fmt(s20)+" / "+fmt(s50)+"</span><span>SMA 100 / 200 · "+fmt(s100)+" / "+fmt(s200)+"</span><span>"+vwapLabel+"</span><span>RSI 14 · "+rsi.toFixed(1)+"</span><span>MACD hist · "+(macd>0?"+":"")+macd.toFixed(4)+"</span><span>Stoch K / D · "+k.toFixed(1)+" / "+d.toFixed(1)+"</span>";
 }
 function renderIndicator(){
 const host=$("#indicatorChart"),readout=$("#indicatorReadout"),mode=$("#indicatorSelect")?.value||"rsi";
