@@ -250,3 +250,23 @@ body.rol-focus-locked main{padding-top:6px}body.rol-focus-locked .layout{display
 .option-stop-apply{border:1px solid #426487;border-radius:7px;background:#14283d;color:#e7f2ff;padding:6px 8px;font-size:9px;font-weight:850;cursor:pointer}
 .option-stop-apply:hover,.option-stop-apply:focus-visible{outline:none;border-color:#72b9ff;background:#203f5d;box-shadow:0 0 12px rgba(114,185,255,.18)}
 .option-stop-disclaimer{margin:8px 1px 0;color:#91a5ba;font-size:9px;line-height:1.45}
+
+
+/* Phone layout: render each option-stop preset as a compact card, avoiding a wide table */
+@media(max-width:700px){
+ .option-stop-table-wrap{overflow:visible}
+ .option-stop-table{display:block;min-width:0;width:100%}
+ .option-stop-table thead{display:none}
+ .option-stop-table tbody{display:grid;gap:8px;padding:8px}
+ .option-stop-table tbody tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:8px;border:1px solid #2a3e55;border-radius:9px;background:#0b1522}
+ .option-stop-table tbody td{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0;padding:5px;border:0;white-space:normal;font-size:10px}
+ .option-stop-table tbody td:first-child{grid-column:1/-1;padding-bottom:7px;border-bottom:1px solid #263a50}
+ .option-stop-table tbody td:last-child{grid-column:1/-1}
+ .option-stop-table tbody td:nth-child(2)::before{content:"Stop premium";color:#8fa5bb;font-size:8px;font-weight:800}
+ .option-stop-table tbody td:nth-child(3)::before{content:"Risk / contract";color:#8fa5bb;font-size:8px;font-weight:800}
+ .option-stop-table tbody td:nth-child(4)::before{content:"Total risk";color:#8fa5bb;font-size:8px;font-weight:800}
+ .option-stop-table tbody td:nth-child(5)::before{content:"Budget check";color:#8fa5bb;font-size:8px;font-weight:800}
+ .option-stop-table tbody td:nth-child(6)::before{content:"Apply this stop";color:#8fa5bb;font-size:8px;font-weight:800}
+ .option-stop-table tbody td:first-child strong{font-size:13px}
+ .option-stop-apply{width:100%;padding:9px 10px;font-size:10px}
+}
