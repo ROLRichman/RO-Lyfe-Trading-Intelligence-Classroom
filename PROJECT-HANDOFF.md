@@ -1,3 +1,13 @@
+## November 2, 2026 — scanner directory + Tactical RTIC embed (pending merge)
+
+- Added a Scanner Desk dropdown to the Classroom navigation. It routes to the existing Classroom practice Market Room, Live Desk Watchlist Scanner, Sports Center Sector Scanner & Chart Lab, Tactical RTIC scanner and main Tactical Center, Market Terminal scanner, and Trading Calculator Pro's scanner-module status page.
+- Added a scanner directory below the Live Chart Desk symbol search so it remains visible in the Classroom's embedded chart view. Its local action opens the existing Watchlist Scanner in the mobile drawer.
+- Added a separate collapsible Tactical Intelligence RTIC scanner iframe beside (not in place of) the existing 17-sector Market Lab iframe. It loads the original standalone page from the Tactical Center repo and uses a same-origin resize message. Existing Watchlist Scanner, Market Lab, Option Ladder, charts, indicators, media hub, themes, language selector and user-owned links remain.
+- Trading Calculator Pro's Scanner Hub subfolders currently contain empty placeholder files; the dropdown labels that destination as module status/roadmap rather than claiming those scanners are operational.
+- Branch: `feature/live-desk-sector-scanner-timeframes-rewards`. These additions are not merged or deployed until PR #11 is reviewed, browser CI passes, and the user authorizes merge.
+
+---
+
 # RO’Lyfe Trading Intelligence Classroom — Project Handoff
 
 **Repository:** [ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom)  
@@ -12,6 +22,30 @@
 ---
 
 ## 1. Current checkpoint — read this first
+
+### New additive request — awaiting review, not merged
+
+**Branch:** `feature/live-desk-sector-scanner-timeframes-rewards`
+
+This branch is a separate additive change after PR #10. It must not be treated as deployed until its pull request is reviewed, merged and the Pages workflow succeeds.
+
+- Adds four additional Live Desk timeframes supported by the existing Tickerbot function: 30m, 2h, 1w and 1mo. The user’s requested study ladder stays 6M/1D → 4H → 1H → 15m → 5m; no 1m or 1s controls were added.
+- Adds a second top-level **Sector Scanner + Chart Lab** dropdown by embedding the existing Market Lab from the Sports Center project. The drawer also has a compact shortcut that opens this top-level dropdown. The original Live Desk scanner and Watchlist remain in place.
+- Adds an estimated projected gross profit summary across the four staged option exits, reward/risk ratio, and return on option debit. Example test case: $1.25 entry, $1.1250 stop, four standard contracts produces $125 projected gross profit, 2.50:1 projected reward/risk and 25.0% projected gross return on debit. Results assume every planned exit fills and exclude trading costs, spread, slippage and taxes.
+- Adds projected profit to each stock risk ladder target and small fixed Back-to-Top / mid-page controls.
+- Adds a Select Language dropdown for the existing five-language translator without removing the five language buttons. It still depends on the server-side AI key.
+- Changes the Classroom theme picker from accent-only to five actual background palettes (Ocean Blue, Lyfe Green, Amber, Violet, Crimson). Previous stored `teal` selections map to Crimson for backward compatibility.
+- Changes the embedded Sports Center URL to the wider `?embed=classroom` view and adds same-origin iframe height communication to reduce the narrow/tall embedded presentation.
+
+**Verification status:** source and browser tests have been updated on this branch; the new branch has not yet been reviewed or deployed.
+
+- Pull request: [#11 — Add Sector Scanner, projected rewards, more timeframes and classroom themes](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/pull/11).
+- Workflow **Classroom browser tests**, run [#138](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom/actions/runs/41540119711): **passed** on branch head `04c707a5923390a202b4d4233d84bbd2aea91ad3`.
+- The test suite covers reward outputs, 1w/1mo programmatic interval acceptance, the Sector Scanner dropdown, all five background palettes and the five-language select.
+- Not merged and not deployed. Review the PR and perform a live visual check after any later merge.
+- **Merge dependency:** Merge Sports Center PR #1 first and confirm its GitHub Pages deployment. The new Sector Scanner iframe URL `?embed=market-lab` depends on that Sports Center view. Only then merge Classroom PR #11 and verify its Pages deployment. The Live Desk reward calculation remains a planning estimate, not a broker order. Live/delayed option premium availability still depends on Massive subscription entitlements. No brokerage execution has been added.
+
+### Live Desk media + AI sidekick upgrade
 
 ### Live Desk media + AI sidekick upgrade
 
@@ -53,7 +87,7 @@ The merged Live Desk release adds the following work:
   2. Browser script had an accidental duplicated trailing fragment; removed, and JavaScript syntax checks passed.
   3. Mobile scanner test left the off-canvas Watchlist open, then tried to interact behind its overlay. Added an explicit close button and made the test use it before interacting with the chart/option planner.
 
-**Release checkpoint:** PR #10 is merged into `main`. Post-merge browser tests and GitHub Pages deployment succeeded.
+**Release checkpoint:** PR #10 is merged into `main`. Post-merge browser tests and GitHub Pages deployment succeeded. The newer additive branch above is separate and remains awaiting review.
 ---
 
 ## 2. Current implementation map

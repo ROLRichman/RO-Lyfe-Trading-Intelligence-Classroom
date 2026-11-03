@@ -26,10 +26,10 @@ If the project does not yet have a handoff file, create one using the standard s
 
 | Project | Repository | Live / deployed destination | Known relationship / status |
 |---|---|---|---|
-| Trading Intelligence Classroom | [RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom) | [Live Classroom](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/) | Active trading education hub. PR #10 (Live Desk media/AI, multi-timeframe posture, HMA, mobile Watchlist close control, and option premium risk presets) was merged into `main` on 2026-11-02. Post-merge desktop/mobile Playwright run #128 and Pages deploy run #81 both passed. |
+| Trading Intelligence Classroom | [RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom) | [Live Classroom](https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/) | PR #10 is merged into `main` and its deployment/tests passed. New unmerged branch `feature/live-desk-sector-scanner-timeframes-rewards` adds a Sector Scanner embed, 30m/2h/1w/1mo timeframes, projected stock/option profit summaries, compact scroll controls, Select Language, five true background themes and a wider Sports embed. PR #11 is open and Classroom browser test run #138 passed on 2026-11-02. Awaiting review/merge; not yet on the live site. |
 | Auction Capital Machine | [RO-Lyfe-Auction-Capital-Machine](https://github.com/ROLRichman/RO-Lyfe-Auction-Capital-Machine) | [Auction Capital Machine](https://rolrichman.github.io/ro-lyfe-auction-capital-machine/) | Property auction acquisition, due diligence, underwriting, and capital workflow. Treat as a separate project; confirm its own handoff and current branch before editing. |
 | Property Research Intelligence | [rolyfe-property-research-intelligence](https://github.com/ROLRichman/rolyfe-property-research-intelligence) | Verify deployed Pages URL in repository | Property research and due diligence workspace. Related to Auction Capital Machine; do not assume code is shared or embedded without checking. |
-| Live Sports Center | [RO-Lyfe-Live-Sports-Center](https://github.com/ROLRichman/RO-Lyfe-Live-Sports-Center) | [Live Sports Center](https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/) | Separate sports project. Embedded inside the Trading Intelligence Classroom Live Desk media hub on the active PR branch. Upstream sports provider previously reported suspended; iframe loading does not prove live data works. |
+| Live Sports Center | [RO-Lyfe-Live-Sports-Center](https://github.com/ROLRichman/RO-Lyfe-Live-Sports-Center) | [Live Sports Center](https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/) | Separate sports project. New unmerged branch `feature/sports-mixed-feed-embed-fix` repairs soccer/NFL card auto-load, adds a labeled ESPN multi-league fallback for API-Sports errors/empty responses, expands Market Lab timeframes, adds wider `?embed=classroom` and scanner-only `?embed=market-lab` modes. API-Sports returned 502 in a recent live log; Sports Center browser test run #10 passed against mocked fallback fixtures. ESPN fallback is public/undocumented and still needs live browser verification. |
 | Family Wealth Academy | [Family-Wealth-Academy](https://github.com/ROLRichman/Family-Wealth-Academy) | Verify deployed Pages URL in repository | Family investing education and virtual practice simulator. Keep educational simulator boundaries and no-brokerage claims accurate. |
 | Tactical Intelligence Center | [RO-Lyfe-Tactical-Intelligence-Center](https://github.com/ROLRichman/RO-Lyfe-Tactical-Intelligence-Center) | Verify deployed Pages URL in repository | Related RO’Lyfe intelligence/learning project. Confirm actual integrations from source before describing it as connected. |
 
@@ -47,6 +47,12 @@ If the project does not yet have a handoff file, create one using the standard s
 - Never put secrets, API keys, or service-role credentials in this file or browser code.
 
 ### Sports Center
+
+- Supabase project ID: `nzduinxmsmmdbonefifi`
+- Primary Edge Functions: `sports-live-scores` and `sports-nfl-scores`.
+- A recent soccer request reached `sports-live-scores` and returned HTTP 502 from the function. This is an upstream/provider issue rather than a broken card anchor.
+- The new branch adds a primary-then-fallback workflow. The ESPN public scoreboard endpoints are undocumented; their long-term stability and browser availability are not guaranteed.
+- The standalone scanner embed reuses the existing Sector Scanner and the Trading Classroom Live Desk points to that same page. It does not duplicate sector scanning code.
 - Separate GitHub repository and GitHub Pages deployment (links above).
 - Previously configured sports API provider reported account suspension. Confirm provider dashboard/status and function logs before claiming live scores or fixtures are available.
 
@@ -110,3 +116,17 @@ For multi-repository work:
 - Never merge a failed or unreviewed change just to clear a task.
 - Do not publish credentials, tokens, private keys, personal data, or secret values in repository documentation.
 - Clearly distinguish a page that loads from an integration that actually works.
+
+
+## November 2, 2026 — scanner directory audit
+
+| Existing scanner / workspace | Link | Status / role |
+|---|---|---|
+| Classroom Market Room | https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/#market-room | Educational practice chart and risk worksheet; not a live market scanner |
+| Live Chart Desk Watchlist Scanner | https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/live-chart-desk/#symbol-scanner | Existing provider-backed watchlist scan feeding the selected chart |
+| Sports Center Sector Scanner & Chart Lab | https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/?embed=market-lab | Existing 17-sector scanner and 14 RTIC indicator panels |
+| Tactical Intelligence RTIC Live Scanner | https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/rtic-scanner.js/ | Existing independent stock/crypto scanner, chart, risk and ladder |
+| Market Terminal | https://rolrichman.github.io/rolyfe-market-terminal/ | Existing multi-asset scanner, watchlist and chart workflow; provider verification remains required |
+| Trading Calculator Pro Scanner Hub | https://rolrichman.github.io/ROlyfe-Trading-Calculator-Pro/ | Module directory/roadmap; scanner subfolders are currently empty placeholders |
+
+The new Classroom scanner dropdown is navigation only. It does not clone scanner calculations or guarantee provider access. The feature remains in PR #11 until explicitly approved for merge.

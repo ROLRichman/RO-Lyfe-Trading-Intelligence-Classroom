@@ -276,3 +276,47 @@ body.rol-focus-locked main{padding-top:6px}body.rol-focus-locked .layout{display
 .sidebar-close{display:none;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #39536e;border-radius:8px;background:#14243a;color:#eaf3ff;font-size:21px;line-height:1;cursor:pointer}
 .sidebar-close:hover,.sidebar-close:focus-visible{outline:none;border-color:#78a9ff;box-shadow:0 0 12px rgba(120,169,255,.2)}
 @media(max-width:900px){.layout.sidebar-open .sidebar-close{display:inline-flex}}
+
+
+/* Additional Sector Scanner: shared Sports Center scanner, no duplicated engine */
+.sector-scanner-launch{margin:14px 0 18px;border:1px solid rgba(115,183,255,.42);border-radius:13px;background:linear-gradient(135deg,rgba(52,112,173,.12),rgba(9,18,30,.96));overflow:hidden;scroll-margin-top:16px}
+.sector-scanner-launch>summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;list-style:none;cursor:pointer;padding:13px 15px;color:#edf5ff;font-weight:850}
+.sector-scanner-launch>summary::-webkit-details-marker{display:none}
+.sector-scanner-launch>summary:before{content:"+";display:grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border:1px solid #537ba7;border-radius:7px;color:#9ecaff;font-size:18px}
+.sector-scanner-launch[open]>summary:before{content:"−"}
+.sector-scanner-launch>summary span{color:#9ecaff;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.sector-scanner-launch>summary strong{font-size:13px}
+.sector-scanner-launch>summary small{color:#98abc1;font-size:10px;font-weight:500}
+.sector-scanner-body{padding:0 12px 12px}
+.sector-scanner-intro,.sector-scanner-footnote{font-size:11px;color:#a9bbcf;line-height:1.5;margin:4px 0 10px}
+#sectorScannerFrame{display:block;width:100%;height:1100px;min-height:800px;border:1px solid #29445d;border-radius:10px;background:#07111f}
+.scanner-secondary-launch{display:block;width:100%;margin:10px 0 12px;padding:9px 10px;text-align:left;border:1px solid #345879;border-radius:8px;background:#0c1d30;color:#b9dcff;font-size:11px;font-weight:800;cursor:pointer}
+.scanner-secondary-launch:hover{border-color:#80baff;background:#102945}
+.option-reward-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0 7px}
+.option-reward-grid>div{min-width:0;padding:13px;border:1px solid rgba(81,204,154,.35);border-radius:10px;background:linear-gradient(145deg,rgba(38,107,82,.18),rgba(8,18,29,.95))}
+.option-reward-grid span{display:block;color:#a9bdc9;font-size:10px;line-height:1.4}
+.option-reward-grid strong{display:block;margin-top:6px;color:#9af0c2;font-size:clamp(16px,2.5vw,22px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.option-reward-note{font-size:10px;color:#9aafc2;line-height:1.5;margin:6px 0 13px}
+.desk-scroll-controls{position:fixed;right:12px;bottom:18px;z-index:45;display:flex;flex-direction:column;gap:6px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .18s ease,transform .18s ease}
+.desk-scroll-controls.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+.desk-scroll-controls button{width:32px;height:32px;border:1px solid #486481;border-radius:9px;background:rgba(9,20,34,.92);color:#e7f2ff;font-size:17px;font-weight:900;box-shadow:0 4px 16px #0008;cursor:pointer;backdrop-filter:blur(8px)}
+.desk-scroll-controls button:hover{border-color:#86baff;background:#142b45}
+@media(max-width:640px){
+ .sector-scanner-launch>summary{gap:7px;padding:11px}
+ .sector-scanner-launch>summary small{width:100%;padding-left:33px}
+ .sector-scanner-body{padding:0 7px 8px}
+ #sectorScannerFrame{height:1400px;min-height:1000px}
+ .option-reward-grid{grid-template-columns:1fr}
+ .option-reward-grid>div{display:flex;align-items:center;justify-content:space-between;gap:12px}
+ .option-reward-grid strong{margin:0;text-align:right}
+ .desk-scroll-controls{right:8px;bottom:12px}
+}
+
+/* Additive scanner directory and embedded Tactical RTIC scanner */
+.desk-scanner-switcher{display:block;margin:10px 0 14px;max-width:100%}
+.desk-scanner-switcher>summary{padding:11px 14px;background:linear-gradient(105deg,rgba(36,157,119,.13),rgba(29,61,95,.18));border-color:rgba(89,225,170,.48)}
+.desk-scanner-switcher .rol-scanner-switcher-links{left:0;right:auto;width:min(440px,calc(100vw - 32px))}
+.tactical-scanner-launch{border-color:rgba(89,225,170,.42);background:linear-gradient(135deg,rgba(31,126,89,.10),rgba(9,18,30,.96))}
+.tactical-scanner-launch>summary:before{border-color:#4bba8a;color:#7be6b7}
+#tacticalScannerFrame{display:block;width:100%;height:980px;min-height:760px;border:1px solid var(--line);border-radius:12px;background:#050b09}
+@media(max-width:700px){#tacticalScannerFrame{height:1080px;min-height:900px}.desk-scanner-switcher .rol-scanner-switcher-links{width:100%}}

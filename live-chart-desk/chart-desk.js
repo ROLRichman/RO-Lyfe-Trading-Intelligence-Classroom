@@ -8,9 +8,9 @@ const defaults={"stocks":[{"symbol":"AAPL","name":"Apple"},{"symbol":"NVDA","nam
 const loadLists=()=>{try{const x=JSON.parse(localStorage.getItem("rolyfe-chart-watchlists"));if(x&&Array.isArray(x.stocks)&&Array.isArray(x.crypto)){for(const group of ["stocks","crypto","discovery","futures"]){if(!Array.isArray(x[group]))x[group]=[];const seen=new Set(x[group].map(item=>item.symbol));(defaults[group]||[]).forEach(item=>{if(!seen.has(item.symbol))x[group].push({...item});});}return x;}}catch(e){}return JSON.parse(JSON.stringify(defaults));};
 let lists=loadLists(),activeList="stocks",current="AAPL",interval="1d",candleStyle="standard",quotes={},chartObj=null,candleSeries=null,volumeSeries=null,vwapSeries=null,hmaSeries=null,maSeries={},resizeObserver=null,loadSequence=0,latestBars=[];
 const urlParams=new URLSearchParams(location.search);
-const requestedInterval=(urlParams.get("interval")||"1d").toLowerCase();if(["1d","4h","1h","15m","5m"].includes(requestedInterval))interval=requestedInterval;
+const requestedInterval=(urlParams.get("interval")||"1d").toLowerCase();if(["1mo","1w","1d","4h","2h","1h","30m","15m","5m"].includes(requestedInterval))interval=requestedInterval;
 let savedView={};try{savedView=JSON.parse(localStorage.getItem("rolyfe-live-desk-view")||"{}");}catch(e){savedView={};}
-if(!urlParams.has("interval")&&["1d","4h","1h","15m","5m"].includes(savedView.interval))interval=savedView.interval;
+if(!urlParams.has("interval")&&["1mo","1w","1d","4h","2h","1h","30m","15m","5m"].includes(savedView.interval))interval=savedView.interval;
 if(!urlParams.has("symbol")){try{const savedSymbol=localStorage.getItem("rolyfe-live-desk-current");if(savedSymbol)current=symbolForApi(savedSymbol);}catch(e){}}
 const fmt=n=>Number.isFinite(n)?n.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:n<1?5:2}):"—";
 const saveLists=()=>{try{localStorage.setItem("rolyfe-chart-watchlists",JSON.stringify(lists));}catch(e){}};
@@ -73,7 +73,7 @@ function calculateStockLadder(){
  if(!Number.isInteger(shares)||shares<1){out.textContent="The risk budget is too small for one share at this stop distance, or the share quantity is invalid.";return null;}
  const risk=distance*shares,position=entry*shares,targets=[1,2,3].map(r=>({r,price:entry+(isLong?1:-1)*distance*r}));
  const plan={symbol:current,side:isLong?"BUY / LONG":"SELL / SHORT",orderType,entry,stop,shares,maxShares,risk,budget,position,targets,riskPerShare:distance,withinBudget:risk<=budget};
- out.innerHTML='<div class="result-grid"><div><small>Underlying</small><strong>'+plan.symbol+'</strong></div><div><small>Entry type</small><strong>'+plan.orderType.replace(/-/g," ").toUpperCase()+'</strong></div><div><small>Planned entry</small><strong>'+ladderMoney(entry)+'</strong></div><div><small>Protective stop</small><strong>'+ladderMoney(stop)+'</strong></div><div><small>Risk per share</small><strong>'+ladderMoney(distance)+'</strong></div><div><small>Shares</small><strong>'+shares+' / '+maxShares+' max</strong></div><div><small>Position value</small><strong>'+ladderMoney(position)+'</strong></div><div><small>Planned dollar risk</small><strong>'+ladderMoney(risk)+'</strong></div><div><small>Risk budget status</small><strong>'+(plan.withinBudget?"Within budget":"OVER BUDGET")+'</strong></div>'+targets.map(t=>'<div><small>'+t.r+'R target</small><strong>'+ladderMoney(t.price)+'</strong></div>').join("")+'</div><p class="stock-explain">'+(plan.withinBudget?"Position risk is within the selected budget.":"Risk exceeds the selected budget; reduce shares or adjust the plan before reviewing.")+' Targets use the entry-to-stop distance multiplied by R. These are planned levels, not predictions.</p>';
+ out.innerHTML='<div class="result-grid"><div><small>Underlying</small><strong>'+plan.symbol+'</strong></div><div><small>Entry type</small><strong>'+plan.orderType.replace(/-/g," ").toUpperCase()+'</strong></div><div><small>Planned entry</small><strong>'+ladderMoney(entry)+'</strong></div><div><small>Protective stop</small><strong>'+ladderMoney(stop)+'</strong></div><div><small>Risk per share</small><strong>'+ladderMoney(distance)+'</strong></div><div><small>Shares</small><strong>'+shares+' / '+maxShares+' max</strong></div><div><small>Position value</small><strong>'+ladderMoney(position)+'</strong></div><div><small>Planned dollar risk</small><strong>'+ladderMoney(risk)+'</strong></div><div><small>Risk budget status</small><strong>'+(plan.withinBudget?"Within budget":"OVER BUDGET")+'</strong></div>'+targets.map(t=>'<div><small>'+t.r+'R target price</small><strong>'+ladderMoney(t.price)+'</strong><small>Projected profit</small><strong>'+ladderMoney(distance*t.r*shares)+'</strong></div>').join("")+'</div><p class="stock-explain">'+(plan.withinBudget?"Position risk is within the selected budget.":"Risk exceeds the selected budget; reduce shares or adjust the plan before reviewing.")+' Targets use the entry-to-stop distance multiplied by R. These are planned levels, not predictions.</p>';
  return plan;
 }
 function stockAtr14(){
@@ -185,7 +185,7 @@ function renderOptionLadder(){
  const valid=Number.isFinite(entry)&&entry>0&&Number.isFinite(stop)&&stop>0&&stop<entry&&Number.isInteger(qty)&&qty>=1&&Number.isFinite(budget)&&budget>=0;
  if(!valid){
   error.hidden=false;error.textContent="Enter a positive entry premium, a stop premium below entry, at least 1 whole contract, and a non-negative risk budget.";
-  ["optDebit","optRisk","optRiskPct","optMaxQty"].forEach(id=>{const el=$("#"+id);if(el)el.textContent="—";});
+  ["optDebit","optRisk","optRiskPct","optMaxQty","optionProjectedReward","optionRewardRisk","optionRewardPct"].forEach(id=>{const el=$("#"+id);if(el)el.textContent="—";});
   host.innerHTML='<tr><td colspan="5">Correct the premium, stop, contract quantity and risk budget to calculate the bracket ladder.</td></tr>';
   $("#optionBracketText").textContent="No valid bracket plan yet.";
   return;
@@ -201,6 +201,8 @@ function renderOptionLadder(){
   :"";
  const multiples=[1,2,3,4],base=Math.floor(qty/4),remainder=qty%4;
  const levels=multiples.map((r,i)=>({r,qty:base+(i<remainder?1:0),premium:entry+r*riskPerShare,perContract:r*riskPerContract}));
+ const projectedReward=levels.reduce((sum,v)=>sum+(v.perContract*v.qty),0),rewardRisk=risk>0?projectedReward/risk:0,rewardPct=debit>0?projectedReward/debit*100:0;
+ $("#optionProjectedReward").textContent=optionMoney(projectedReward);$("#optionRewardRisk").textContent=rewardRisk.toFixed(2)+":1";$("#optionRewardPct").textContent=rewardPct.toFixed(1)+"%";
  host.innerHTML=levels.map((v,i)=>'<tr><td><strong>'+(i===3?'4R · Runner':v.r+'R · Target '+v.r)+'</strong></td><td>'+optionMoney(v.premium)+'</td><td>'+v.qty+'</td><td>'+optionMoney(v.perContract)+'</td><td>'+optionMoney(v.perContract*v.qty)+'</td></tr>').join("");
  const optionLabel=(strike?"$"+Number(strike).toFixed(2)+" ":"")+" "+(expiry||"expiration TBD");
  $("#optionBracketText").textContent=(overBudget?"⚠ RISK BUDGET EXCEEDED · ":"")+"Underlying "+current+" · "+type+" · "+optionLabel+" | Entry premium "+optionMoney(entry)+" | Protective stop "+optionMoney(stop)+" ("+premiumStopPct.toFixed(1)+"% premium risk) | Estimated total debit "+optionMoney(debit)+" | Estimated stop loss "+optionMoney(risk)+" | Planned risk budget "+optionMoney(budget)+". Stage limit exits: "+levels.map(v=>v.r+"R at "+optionMoney(v.premium)+" ("+v.qty+" contract"+(v.qty===1?"":"s")+")").join("; ")+".";
@@ -473,12 +475,20 @@ const requested=new URLSearchParams(location.search).get("symbol");if(requested)
 function saveDeskView(){try{localStorage.setItem("rolyfe-live-desk-view",JSON.stringify({interval,candleStyle,indicator:$("#indicatorSelect")?.value,vwap:$("#vwapToggle")?.checked,hma:$("#hmaToggle")?.checked,ma:Object.fromEntries([...document.querySelectorAll(".ma-toggle")].map(el=>[el.value,el.checked]))}));}catch(e){}}
 window.ROLyfeChartDesk={
  setSymbol:(symbol)=>{chart(symbol,false);return current;},
- setInterval:(value)=>{const v=String(value||"").toLowerCase();if(!["1d","4h","1h","15m","5m"].includes(v))return false;interval=v;document.querySelectorAll("[data-interval]").forEach(b=>b.classList.toggle("active",b.dataset.interval===interval));loadBars();return true;},
+ setInterval:(value)=>{const v=String(value||"").toLowerCase();if(!["1mo","1w","1d","4h","2h","1h","30m","15m","5m"].includes(v))return false;interval=v;document.querySelectorAll("[data-interval]").forEach(b=>b.classList.toggle("active",b.dataset.interval===interval));loadBars();return true;},
  refresh:loadBars,
  setChartHeight:(height)=>{const h=Math.max(300,Math.min(760,Number(height)||500)),root=$("#tvChart");if(root)root.style.height=h+"px";if(chartObj&&root)chartObj.applyOptions({width:root.clientWidth,height:h});return h;},
  getState:()=>({symbol:current,interval,candles:latestBars.length,lastClose:latestBars.length?latestBars[latestBars.length-1].close:null,quote:quotes[current]||null,chartSource:"Tickerbot OHLCV",quoteSource:quotes[current]?.provider||"unavailable",quoteTimestamp:quotes[current]?.stamp||null,atr14:stockAtr14()})
 };
 window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.type==="rol-set-chart-symbol")chart(e.data.symbol,false);});
+const sectorPanel=$("#sector-scanner-launch"),sectorFrame=$("#sectorScannerFrame");
+$("[data-open-sector-scanner]")?.addEventListener("click",()=>{if(layout.classList.contains("sidebar-open"))setSidebar(false);if(sectorPanel){sectorPanel.open=true;sectorPanel.scrollIntoView({behavior:"smooth",block:"start"});}});
+window.addEventListener("message",e=>{if(e.origin!==location.origin||!sectorFrame||e.source!==sectorFrame.contentWindow||!e.data||e.data.type!=="rol-sports-embed-height")return;const h=Number(e.data.height);if(Number.isFinite(h)&&h>400&&h<9000)sectorFrame.style.height=Math.ceil(h)+"px";});
+const scrollTop=$("#deskScrollTop"),scrollMid=$("#deskScrollMid"),scrollControls=$(".desk-scroll-controls");
+function updateScrollControls(){if(scrollControls)scrollControls.classList.toggle("visible",window.scrollY>380);}
+scrollTop?.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+scrollMid?.addEventListener("click",()=>window.scrollTo({top:Math.max(0,Math.round((document.documentElement.scrollHeight-window.innerHeight)/2)),behavior:"smooth"}));
+window.addEventListener("scroll",updateScrollControls,{passive:true});updateScrollControls();
 if(savedView.candleStyle&&["standard","heikin"].includes(savedView.candleStyle)){$("#candleStyle").value=savedView.candleStyle;candleStyle=savedView.candleStyle;}
 if(savedView.indicator)$("#indicatorSelect").value=savedView.indicator;
 if(typeof savedView.vwap==="boolean"&&$("#vwapToggle"))$("#vwapToggle").checked=savedView.vwap;

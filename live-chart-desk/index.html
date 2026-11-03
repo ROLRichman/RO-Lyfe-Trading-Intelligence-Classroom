@@ -17,6 +17,21 @@
 <main>
 <section class="intro"><div><p class="eyebrow">RO’LYFE TRADING INTELLIGENCE CLASSROOM</p><h1>Live Chart Desk</h1><p class="sub">Search a ticker, load its chart, and keep your watchlist beside the price action.</p></div><div class="market-label"><span>CHART FEED</span><strong>Tickerbot OHLCV</strong><small>Historical candles; refresh and coverage depend on provider.</small></div></section>
 <section class="searchbar"><label for="symbolSearch">Search ticker / symbol</label><div class="searchline"><input id="symbolSearch" value="NASDAQ:AAPL" placeholder="e.g. NASDAQ:NVDA, BTCUSD, NYSE:SPY" autocomplete="off"><button id="loadSymbol">Load chart</button></div><div class="quick"><button data-symbol="NASDAQ:AAPL">AAPL</button><button data-symbol="NASDAQ:NVDA">NVDA</button><button data-symbol="NASDAQ:TSLA">TSLA</button><button data-symbol="AMEX:SPY">SPY</button><button data-symbol="BTC-USD">BTC</button><button data-symbol="ETH-USD">ETH</button><button data-symbol="SOL-USD">SOL</button></div><p class="hint">Use a stock ticker such as NVDA or SPY. Crypto candles use Tickerbot's X:BASEUSD format; quote symbols remain BASE-USD.</p></section>
+<details class="rol-scanner-switcher desk-scanner-switcher" id="rolScannerDirectory"><summary>🔎 SCANNER DIRECTORY · Choose a workspace</summary><div class="rol-scanner-switcher-links"><a href="#symbol-scanner" data-open-live-scanner>Live Desk Watchlist Scanner · open in this page</a><a href="#market-room">Classroom Market Room · practice workspace</a><a href="#sector-scanner-launch">Sector Scanner + Chart Lab · 17 sectors</a><a href="#tactical-scanner-launch">Tactical Intelligence RTIC Scanner · embedded below</a><a href="https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/" target="_blank" rel="noopener">Open Tactical Intelligence Center ↗</a><a href="https://rolrichman.github.io/rolyfe-market-terminal/" target="_blank" rel="noopener">Market Terminal Scanner ↗</a><a href="https://rolrichman.github.io/ROlyfe-Trading-Calculator-Pro/" target="_blank" rel="noopener">Trading Calculator Pro · module status ↗</a></div></details>
+<details class="sector-scanner-launch" id="sector-scanner-launch">
+ <summary><span>⚡ Optional Market Room</span><strong>Sector Scanner + Chart Lab</strong><small>Standard / Sniper · 17 sectors · full RTIC indicator lab</small></summary>
+ <div class="sector-scanner-body"><p class="sector-scanner-intro">A second scanner for sector-wide discovery. It reuses the working Sector Scanner from the RO’Lyfe Sports Center and its existing Tickerbot / RTIC data connection; it does not replace the Live Watchlist Scanner.</p>
+  <iframe id="sectorScannerFrame" title="RO’Lyfe Sector Scanner and RTIC Chart Lab" loading="lazy" allow="fullscreen" src="https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/?embed=market-lab"></iframe>
+  <p class="sector-scanner-footnote">Provider timing, ticker coverage, TradingView availability and account entitlements can vary. Scan results are filters, not probabilities or trade instructions.</p>
+ </div>
+</details>
+<details class="sector-scanner-launch tactical-scanner-launch" id="tactical-scanner-launch">
+ <summary><span>🎯 Optional Tactical RTIC</span><strong>Tactical Intelligence Live Scanner</strong><small>Stock / crypto scan · multi-timeframe chart · risk map + ladder</small></summary>
+ <div class="sector-scanner-body"><p class="sector-scanner-intro">This opens the existing Tactical Intelligence RTIC scanner inside the Live Desk. It is the original scanner engine, not a second copy. You can also open the full Tactical Center in a separate tab.</p>
+  <iframe id="tacticalScannerFrame" title="RO’Lyfe Tactical Intelligence RTIC Live Scanner" loading="lazy" allow="fullscreen" src="https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/rtic-scanner.js/?embed=desk"></iframe>
+  <p class="sector-scanner-footnote"><a href="https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/rtic-scanner.js/" target="_blank" rel="noopener">Open the standalone Tactical RTIC scanner ↗</a> · Provider support, data keys and symbol coverage determine live results.</p>
+ </div>
+</details>
 <div class="layout">
 <button id="sidebarBackdrop" class="sidebar-backdrop" type="button" aria-label="Close watchlist" hidden></button><aside id="marketSidebar" class="sidebar">
 <div class="sidehead"><div><p class="eyebrow">YOUR MARKET SIDEBAR</p><h2>Watchlist</h2></div><div class="sidehead-actions"><span class="pill">LOCAL</span><button type="button" id="closeSidebar" class="sidebar-close" aria-label="Close watchlist">×</button></div></div>
@@ -30,10 +45,11 @@
   <p id="scannerStatus" class="scanner-status" aria-live="polite">Scanner uses the same symbols as the Live Desk watchlists. Provider coverage and cadence vary.</p>
   <div id="scannerResults" class="scanner-results"><p>Run a scan to view provider-returned symbols and signals.</p></div>
 </details>
+<button type="button" class="scanner-secondary-launch" data-open-sector-scanner>⚡ Open Sector Scanner + Chart Lab ↑</button>
 <form id="addForm" class="add-form"><label for="addSymbol">Add ticker</label><div><input id="addSymbol" placeholder="e.g. NYSE:KO" required><button aria-label="Add ticker">+</button></div></form>
 <div class="quote-card"><p class="eyebrow">CONNECTED QUOTE PANEL</p><h3 id="quoteName">AAPL · Apple</h3><strong id="quotePrice">Loading quote…</strong><p id="quoteChange" class="change">Fetching provider response</p><p id="quoteMeta" class="meta">Quotes are informational; timestamps and access vary by provider.</p></div>
 </aside>
-<section class="chart-panel"><div class="chart-head"><div><p class="eyebrow">PRICE ACTION</p><h2 id="chartHeading">NASDAQ:AAPL</h2></div><div class="chart-head-actions"><span class="pill" id="chartStatus">CHART LOADING</span><button type="button" id="openChartQuote" class="quote-open">Quote / Greeks</button><button type="button" id="expandChartBtn" class="quote-open">↗ Expand Chart</button><button type="button" id="sendToStockLadder" class="quote-open">Stock Ladder ↓</button><button type="button" id="sendToOptionLadder" class="quote-open">Option Ladder ↓</button></div></div><div class="timeframes" aria-label="Chart timeframe"><button data-interval="1d" class="active">1D</button><button data-interval="4h">4H</button><button data-interval="1h">1H</button><button data-interval="15m">15m</button><button data-interval="5m">5m</button><button id="refreshBars">↻ Refresh</button></div><section id="technicalPosturePanel" class="technical-posture neutral" aria-live="polite" aria-label="Chart-derived technical posture">
+<section class="chart-panel"><div class="chart-head"><div><p class="eyebrow">PRICE ACTION</p><h2 id="chartHeading">NASDAQ:AAPL</h2></div><div class="chart-head-actions"><span class="pill" id="chartStatus">CHART LOADING</span><button type="button" id="openChartQuote" class="quote-open">Quote / Greeks</button><button type="button" id="expandChartBtn" class="quote-open">↗ Expand Chart</button><button type="button" id="sendToStockLadder" class="quote-open">Stock Ladder ↓</button><button type="button" id="sendToOptionLadder" class="quote-open">Option Ladder ↓</button></div></div><div class="timeframes" aria-label="Chart timeframe"><button data-interval="1mo">1M</button><button data-interval="1w">1W</button><button data-interval="1d" class="active">1D</button><button data-interval="4h">4H</button><button data-interval="2h">2H</button><button data-interval="1h">1H</button><button data-interval="30m">30m</button><button data-interval="15m">15m</button><button data-interval="5m">5m</button><button id="refreshBars">↻ Refresh</button></div><section id="technicalPosturePanel" class="technical-posture neutral" aria-live="polite" aria-label="Chart-derived technical posture">
   <div class="technical-posture-head"><div><span class="technical-posture-kicker">RO’LYFE TECHNICAL POSTURE</span><small id="technicalPostureTimeframe">Selected chart · 1D</small></div><strong id="technicalPostureBadge">⏸ NEUTRAL / WAITING</strong></div>
   <p id="technicalPostureCopy">Waiting for the selected ticker and timeframe candles.</p>
   <div class="technical-posture-metrics" id="technicalPostureMetrics"><span>EMA 20 / 50 · —</span><span>RSI 14 · —</span><span>MACD · —</span><span>Stoch · —</span></div>
@@ -105,6 +121,12 @@
     <div><span>Contracts within risk budget</span><strong id="optMaxQty">4</strong></div>
   </div>
   <div class="option-table-wrap"><table class="option-target-table"><thead><tr><th>Exit level</th><th>Limit premium</th><th>Contracts to exit</th><th>Profit / contract</th><th>Planned tranche P&amp;L</th></tr></thead><tbody id="optionLadderRows"><tr><td>1R</td><td>$1.65</td><td>1</td><td>$40.00</td><td>$40.00</td></tr></tbody></table></div>
+  <div class="option-reward-grid" aria-live="polite" aria-label="Projected option rewards and profits">
+    <div><span>Projected gross profit · all planned exits</span><strong id="optionProjectedReward">—</strong></div>
+    <div><span>Projected reward / risk</span><strong id="optionRewardRisk">—</strong></div>
+    <div><span>Projected return on debit</span><strong id="optionRewardPct">—</strong></div>
+  </div>
+  <p class="option-reward-note">Reward estimates assume every staged limit exit fills at its planned premium. Values are gross before spreads, fees, commissions, taxes and slippage; they are not forecasts or guaranteed returns.</p>
   <div class="option-bracket-box"><h3>Bracket checklist</h3><p id="optionBracketText">Long Call plan for AAPL · entry $1.25 · protective stop $0.85 · laddered limit exits at 1R, 2R, 3R and 4R runner.</p><p class="option-small">Manual planning only. This tool does not fetch a live option chain or send orders to a broker. Confirm the contract, spread, liquidity, expiration, and order type yourself. Standard contract math assumes 100 shares; adjusted contracts may differ. Stop fills can slip, so actual losses can exceed the estimate.</p></div>
 </section>
 <section class="rol-live-ai" id="rol-trading-ai">
@@ -135,4 +157,5 @@
 <script src="../js/rol-tools.js"></script>
 <script src="chart-desk.js"></script>
 <script src="posture-extension.js"></script>
+<div class="desk-scroll-controls" aria-label="Page navigation"><button type="button" id="deskScrollMid" title="Jump to middle of page" aria-label="Jump to middle of page">↕</button><button type="button" id="deskScrollTop" title="Back to top" aria-label="Back to top">↑</button></div>
 </body></html>

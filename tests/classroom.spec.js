@@ -218,6 +218,9 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await page.locator('[data-apply-option-stop="10"]').click();
   await expect(page.locator('#optStop')).toHaveValue('1.1250');
   await expect(page.locator('#optRisk')).toHaveText('$50.00');
+  await expect(page.locator('#optionProjectedReward')).toHaveText('$125.00');
+  await expect(page.locator('#optionRewardRisk')).toHaveText('2.50:1');
+  await expect(page.locator('#optionRewardPct')).toHaveText('25.0%');
   await page.locator('[data-apply-option-stop="15"]').click();
   await expect(page.locator('#optStop')).toHaveValue('1.0625');
   await expect(page.locator('#optRisk')).toHaveText('$75.00');
@@ -248,3 +251,66 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   expect(pageErrors).toEqual([]);
 });
 
+
+test('Live Desk exposes provider-backed higher timeframes and the Sector Scanner dropdown', async ({ page }) => {
+  await page.goto('/live-chart-desk/?embed=classroom');
+  for (const interval of ['1mo', '1w', '2h', '30m']) {
+    await expect(page.locator('[data-interval="' + interval + '"]')).toBeVisible();
+  }
+  await expect(page.locator('#sector-scanner-launch summary')).toContainText('Sector Scanner + Chart Lab');
+  await expect(page.locator('#sectorScannerFrame')).toHaveAttribute('src', /RO-Lyfe-Live-Sports-Center\/\?embed=market-lab/);
+  await page.locator('#sector-scanner-launch > summary').click();
+  await expect(page.locator('#sectorScannerFrame')).toBeVisible();
+  await page.waitForFunction(() => !!window.ROLyfeChartDesk);
+  const weeklyAccepted = await page.evaluate(() => window.ROLyfeChartDesk.setInterval('1w'));
+  const monthlyAccepted = await page.evaluate(() => window.ROLyfeChartDesk.setInterval('1mo'));
+  expect(weeklyAccepted).toBe(true);
+  expect(monthlyAccepted).toBe(true);
+});
+
+test('Classroom themes change five background palettes and language selector stays in translator', async ({ page }) => {
+  await page.goto('/');
+  const themes = [
+    ['blue', '#07101d', '#70a7ff'],
+    ['green', '#061711', '#65d6a0'],
+    ['amber', '#181307', '#e8bd68'],
+    ['violet', '#100b1c', '#b59aff'],
+    ['crimson', '#1b090d', '#ef7187']
+  ];
+  for (const [name, background, accent] of themes) {
+    await page.locator('.rol-theme-picker button[data-rol-theme="' + name + '"]').click();
+    await expect(page.locator('.rol-theme-picker button[data-rol-theme="' + name + '"]')).toHaveClass(/active/);
+    const actual = await page.locator('html').evaluate(el => ({
+      background: getComputedStyle(el).getPropertyValue('--bg').trim(),
+      accent: getComputedStyle(el).getPropertyValue('--rol-accent').trim()
+    }));
+    expect(actual.background).toBe(background);
+    expect(actual.accent).toBe(accent);
+  }
+  const language = page.locator('#rolTranslateLanguageSelect');
+  await expect(language).toBeVisible();
+  await expect(language.locator('option')).toHaveCount(5);
+  await language.selectOption('Haitian Creole');
+  await expect(language).toHaveValue('Haitian Creole');
+  await expect(page.locator('#rolTranslateSelected')).toBeVisible();
+  await expect(page.locator('#rol-classroom-translator')).toBeVisible();
+});
+
+test('scanner directory links the existing RO’Lyfe scanner engines without replacing them', async ({ page }) => {
+  await page.goto('/');
+  const menu=page.locator('#rolScannerSwitcher');
+  await expect(menu.locator('summary')).toContainText('Scanner Desk');
+  await expect(menu.locator('a[href="https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/#market-room"]')).toContainText('Classroom Market Room');
+  await expect(menu.locator('a[href="live-chart-desk/#symbol-scanner"]')).toHaveCount(1);
+  await expect(menu.locator('a[href*="RO-Lyfe-Tactical-Intelligence-Center-/rtic-scanner.js"]')).toHaveCount(1);
+  await expect(menu.locator('a[href*="RO-Lyfe-Live-Sports-Center/?embed=market-lab"]')).toHaveCount(1);
+  await expect(menu.locator('a[href*="rolyfe-market-terminal"]')).toHaveCount(1);
+  await expect(menu.locator('a[href*="ROlyfe-Trading-Calculator-Pro"]')).toHaveCount(1);
+
+  await page.goto('/live-chart-desk/?embed=classroom');
+  await expect(page.locator('#rolScannerDirectory')).toBeAttached();
+  await expect(page.locator('#symbol-scanner')).toBeAttached();
+  await expect(page.locator('#sector-scanner-launch')).toBeAttached();
+  await expect(page.locator('#tactical-scanner-launch')).toBeAttached();
+  await expect(page.locator('#tacticalScannerFrame')).toHaveAttribute('src', /rtic-scanner\.js\/\?embed=desk/);
+});
