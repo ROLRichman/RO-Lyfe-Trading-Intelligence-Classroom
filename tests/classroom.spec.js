@@ -295,3 +295,22 @@ test('Classroom themes change five background palettes and language selector sta
   await expect(page.locator('#rolTranslateSelected')).toBeVisible();
   await expect(page.locator('#rol-classroom-translator')).toBeVisible();
 });
+
+test('scanner directory links the existing RO’Lyfe scanner engines without replacing them', async ({ page }) => {
+  await page.goto('/');
+  const menu=page.locator('#rolScannerSwitcher');
+  await expect(menu.locator('summary')).toContainText('Scanner Desk');
+  await expect(menu.locator('a[href="#market-room"]')).toContainText('Classroom Market Room');
+  await expect(menu.locator('a[href="live-chart-desk/#symbol-scanner"]')).toHaveCount(1);
+  await expect(menu.locator('a[href*="RO-Lyfe-Tactical-Intelligence-Center-/rtic-scanner.js"]')).toHaveCount(1);
+  await expect(menu.locator('a[href*="RO-Lyfe-Live-Sports-Center/?embed=market-lab"]')).toHaveCount(1);
+  await expect(menu.locator('a[href*="rolyfe-market-terminal"]')).toHaveCount(1);
+  await expect(menu.locator('a[href*="ROlyfe-Trading-Calculator-Pro"]')).toHaveCount(1);
+
+  await page.goto('/live-chart-desk/?embed=classroom');
+  await expect(page.locator('#rolScannerDirectory')).toBeAttached();
+  await expect(page.locator('#symbol-scanner')).toBeAttached();
+  await expect(page.locator('#sector-scanner-launch')).toBeAttached();
+  await expect(page.locator('#tactical-scanner-launch')).toBeAttached();
+  await expect(page.locator('#tacticalScannerFrame')).toHaveAttribute('src', /rtic-scanner\.js\/\?embed=desk/);
+});

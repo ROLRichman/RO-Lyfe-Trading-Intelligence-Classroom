@@ -311,3 +311,12 @@ body.rol-focus-locked main{padding-top:6px}body.rol-focus-locked .layout{display
  .option-reward-grid strong{margin:0;text-align:right}
  .desk-scroll-controls{right:8px;bottom:12px}
 }
+
+/* Additive scanner directory and embedded Tactical RTIC scanner */
+.desk-scanner-switcher{display:block;margin:10px 0 14px;max-width:100%}
+.desk-scanner-switcher>summary{padding:11px 14px;background:linear-gradient(105deg,rgba(36,157,119,.13),rgba(29,61,95,.18));border-color:rgba(89,225,170,.48)}
+.desk-scanner-switcher .rol-scanner-switcher-links{left:0;right:auto;width:min(440px,calc(100vw - 32px))}
+.tactical-scanner-launch{border-color:rgba(89,225,170,.42);background:linear-gradient(135deg,rgba(31,126,89,.10),rgba(9,18,30,.96))}
+.tactical-scanner-launch>summary:before{border-color:#4bba8a;color:#7be6b7}
+#tacticalScannerFrame{display:block;width:100%;height:980px;min-height:760px;border:1px solid var(--line);border-radius:12px;background:#050b09}
+@media(max-width:700px){#tacticalScannerFrame{height:1080px;min-height:900px}.desk-scanner-switcher .rol-scanner-switcher-links{width:100%}}

@@ -116,3 +116,17 @@ For multi-repository work:
 - Never merge a failed or unreviewed change just to clear a task.
 - Do not publish credentials, tokens, private keys, personal data, or secret values in repository documentation.
 - Clearly distinguish a page that loads from an integration that actually works.
+
+
+## November 2, 2026 — scanner directory audit
+
+| Existing scanner / workspace | Link | Status / role |
+|---|---|---|
+| Classroom Market Room | https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/#market-room | Educational practice chart and risk worksheet; not a live market scanner |
+| Live Chart Desk Watchlist Scanner | https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/live-chart-desk/#symbol-scanner | Existing provider-backed watchlist scan feeding the selected chart |
+| Sports Center Sector Scanner & Chart Lab | https://rolrichman.github.io/RO-Lyfe-Live-Sports-Center/?embed=market-lab | Existing 17-sector scanner and 14 RTIC indicator panels |
+| Tactical Intelligence RTIC Live Scanner | https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/rtic-scanner.js/ | Existing independent stock/crypto scanner, chart, risk and ladder |
+| Market Terminal | https://rolrichman.github.io/rolyfe-market-terminal/ | Existing multi-asset scanner, watchlist and chart workflow; provider verification remains required |
+| Trading Calculator Pro Scanner Hub | https://rolrichman.github.io/ROlyfe-Trading-Calculator-Pro/ | Module directory/roadmap; scanner subfolders are currently empty placeholders |
+
+The new Classroom scanner dropdown is navigation only. It does not clone scanner calculations or guarantee provider access. The feature remains in PR #11 until explicitly approved for merge.

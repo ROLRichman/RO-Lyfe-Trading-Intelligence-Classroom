@@ -1,3 +1,13 @@
+## November 2, 2026 — scanner directory + Tactical RTIC embed (pending merge)
+
+- Added a Scanner Desk dropdown to the Classroom navigation. It routes to the existing Classroom practice Market Room, Live Desk Watchlist Scanner, Sports Center Sector Scanner & Chart Lab, Tactical RTIC scanner and main Tactical Center, Market Terminal scanner, and Trading Calculator Pro's scanner-module status page.
+- Added a scanner directory below the Live Chart Desk symbol search so it remains visible in the Classroom's embedded chart view. Its local action opens the existing Watchlist Scanner in the mobile drawer.
+- Added a separate collapsible Tactical Intelligence RTIC scanner iframe beside (not in place of) the existing 17-sector Market Lab iframe. It loads the original standalone page from the Tactical Center repo and uses a same-origin resize message. Existing Watchlist Scanner, Market Lab, Option Ladder, charts, indicators, media hub, themes, language selector and user-owned links remain.
+- Trading Calculator Pro's Scanner Hub subfolders currently contain empty placeholder files; the dropdown labels that destination as module status/roadmap rather than claiming those scanners are operational.
+- Branch: `feature/live-desk-sector-scanner-timeframes-rewards`. These additions are not merged or deployed until PR #11 is reviewed, browser CI passes, and the user authorizes merge.
+
+---
+
 # RO’Lyfe Trading Intelligence Classroom — Project Handoff
 
 **Repository:** [ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom](https://github.com/ROLRichman/RO-Lyfe-Trading-Intelligence-Classroom)  
