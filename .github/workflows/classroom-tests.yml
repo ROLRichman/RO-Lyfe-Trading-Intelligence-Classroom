@@ -49,8 +49,12 @@ jobs:
             -H "apikey: $SUPABASE_ANON_KEY" \
             -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
             -H "Accept: application/json")"
-          echo "$status" | jq -e '.secrets.tradingAiConfigured == true' >/dev/null
-          echo "Supabase status endpoint is responding and OPENAI_API_KEY is configured."
+          configured="$(echo "$status" | jq -r '.secrets.tradingAiConfigured // false')"
+          echo "Supabase status endpoint responded. OPENAI_API_KEY configured: $configured"
+          if [[ "$configured" != "true" ]]; then
+            echo "::error::OPENAI_API_KEY is missing from Supabase Edge Function Secrets for ROLyfe-Trading-Intelligence-Classroom."
+            exit 1
+          fi
       - name: Test a live page-translation batch
         env:
           SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
