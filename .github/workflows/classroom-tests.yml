@@ -39,7 +39,8 @@ jobs:
   page-language-backend-smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify Supabase status endpoint and OpenAI secret
+      - name: Read Supabase backend configuration
+        id: status
         env:
           SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
           SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
@@ -49,13 +50,31 @@ jobs:
             -H "apikey: $SUPABASE_ANON_KEY" \
             -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
             -H "Accept: application/json")"
-          configured="$(echo "$status" | jq -r '.secrets.tradingAiConfigured // false')"
-          echo "Supabase status endpoint responded. OPENAI_API_KEY configured: $configured"
-          if [[ "$configured" != "true" ]]; then
-            echo "::error::OPENAI_API_KEY is missing from Supabase Edge Function Secrets for ROLyfe-Trading-Intelligence-Classroom."
-            exit 1
-          fi
-      - name: Test a live page-translation batch
+          echo "$status" | jq -e '.secrets != null' >/dev/null
+          echo "massive_configured=$(echo "$status" | jq -r '.secrets.massiveConfigured // false')" >> "$GITHUB_OUTPUT"
+          echo "openai_configured=$(echo "$status" | jq -r '.secrets.tradingAiConfigured // false')" >> "$GITHUB_OUTPUT"
+          echo "Configured provider flags:"
+          echo "$status" | jq -c '.secrets'
+      - name: Test live Massive AAPL snapshot
+        if: steps.status.outputs.massive_configured == 'true'
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          snapshot="$(curl --fail-with-body --silent --show-error "$SUPABASE_URL/functions/v1/market-data?provider=massive-stock-snapshot&symbol=AAPL" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Accept: application/json")"
+          echo "$snapshot" | jq -e '.provider == "massive" and .symbol == "AAPL" and (.price | type == "number" and . > 0)' >/dev/null
+          echo "Massive returned a positive AAPL snapshot."
+      - name: Flag missing Massive secret
+        if: steps.status.outputs.massive_configured != 'true'
+        run: |
+          echo "::error::ROLYFE_RTIC_MARKET_INTELLIGENCE is missing in the Classroom Supabase Edge Function Secrets."
+          exit 1
+      - name: Test live page translation
+        if: steps.status.outputs.openai_configured == 'true'
         env:
           SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
           SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
@@ -70,3 +89,8 @@ jobs:
             --data "$payload")"
           echo "$result" | jq -e '.language == "Spanish" and (.translations | length == 2) and all(.translations[]; type == "string" and length > 0)' >/dev/null
           echo "Live translation Edge Function returned a complete Spanish batch."
+      - name: Flag missing OpenAI secret
+        if: steps.status.outputs.openai_configured != 'true'
+        run: |
+          echo "::error::OPENAI_API_KEY is missing from Supabase Edge Function Secrets for ROLyfe-Trading-Intelligence-Classroom."
+          exit 1
