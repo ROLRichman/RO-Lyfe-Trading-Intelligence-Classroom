@@ -18,7 +18,7 @@ const ALLOWED_FORMS: Record<string, string> = {
   "253154859148062": "RO'Lyfe Quick Dropbox (Contracts, Docs etc)",
 };
 
-const SENSITIVE_LABEL = /ssn|social security|date of birth|\bdob\b|birth date|driver.?s license|passport|bank|routing|account number|account #|tax id|\bein\b|credit report|tax return|password|signature|proof of funds upload|upload.*(document|id|tax|bank|credit)|(?:document|id|tax|bank|credit).*upload/i;
+const SENSITIVE_LABEL = /ssn|social security|date of birth|\bdob\b|birth date|driver.?s license|passport|bank|routing|account number|account #|tax id|\bEIN\b|credit report|tax return|password|signature|proof of funds upload|upload.*(document|id|tax|bank|credit)|(?:document|id|tax|bank|credit).*upload/i;
 const FILE_TYPES = /fileupload|signature|payment|captcha/i;
 
 function json(data: unknown, status = 200) {
@@ -227,7 +227,8 @@ Deno.serve(async (req: Request) => {
       const limit = Math.max(1, Math.min(1000, Math.floor(rawLimit ?? 100)));
       const offset = Math.max(0, Math.floor(rawOffset ?? 0));
 
-      const results = [];
+      const results: Array<{ formId: string; formTitle: string; offset: number; limit: number; returned: number; hasMore: boolean; nextOffset: number | null; submissions: ReturnType<typeof normalizeSubmission>[] }> = [];
+      let apiCallsRemaining: number | null = null;
       for (const formId of requestedIds) {
         const query = new URLSearchParams({
           limit: String(limit),
@@ -235,21 +236,17 @@ Deno.serve(async (req: Request) => {
           orderby: "created_at",
         });
         const payload = await jotformRequest(`/form/${formId}/submissions?${query.toString()}`, apiKey);
+        apiCallsRemaining = asNumber(payload["limit-left"]);
         const rawSubmissions = Array.isArray(payload.content) ? payload.content : [];
         const submissions = rawSubmissions.map((item: Record<string, unknown>) => normalizeSubmission(item));
-        const total = asNumber(payload.resultSet?.count) ?? rawSubmissions.length;
-
         results.push({
           formId,
           formTitle: ALLOWED_FORMS[formId],
           offset,
           limit,
           returned: submissions.length,
-          totalReportedByApi: total,
-          hasMore: submissions.length === limit && (offset + submissions.length < total),
-          nextOffset: submissions.length === limit && (offset + submissions.length < total)
-            ? offset + submissions.length
-            : null,
+          hasMore: submissions.length === limit,
+          nextOffset: submissions.length === limit ? offset + submissions.length : null,
           submissions,
         });
       }
@@ -267,7 +264,7 @@ Deno.serve(async (req: Request) => {
         formsProcessed: results.length,
         totalSubmissionsReturned: results.reduce((sum, item) => sum + item.returned, 0),
         results,
-        apiCallsRemaining: asNumber(results.length ? undefined : null),
+        apiCallsRemaining,
         privacyNote: "High-risk identifiers and file-upload fields are redacted. No submission, form, or application is created, edited, flagged, or deleted.",
       });
     }
