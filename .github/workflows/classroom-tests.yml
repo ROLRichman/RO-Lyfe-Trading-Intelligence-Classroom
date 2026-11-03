@@ -35,3 +35,78 @@ jobs:
             test-results/
             playwright-report/
           if-no-files-found: ignore
+
+  market-data-backend-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Supabase provider configuration
+        id: status
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          status="$(curl --fail-with-body --silent --show-error "$SUPABASE_URL/functions/v1/market-data-status" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Accept: application/json")"
+          echo "$status" | jq -e '.secrets != null' >/dev/null
+          echo "Configured provider flags:"
+          echo "$status" | jq -c '.secrets'
+          massive="$(echo "$status" | jq -r '.secrets.massiveConfigured // false')"
+          if [[ "$massive" != "true" ]]; then
+            echo "::error::ROLYFE_RTIC_MARKET_INTELLIGENCE is missing in Classroom Supabase Edge Function Secrets."
+            exit 1
+          fi
+      - name: Request a live Massive AAPL snapshot
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          http_code="$(curl --silent --show-error --output /tmp/massive-response.json --write-out '%{http_code}' "$SUPABASE_URL/functions/v1/market-data?provider=massive-stock-snapshot&symbol=AAPL" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Accept: application/json")"
+          echo "Massive snapshot HTTP status: $http_code"
+          cat /tmp/massive-response.json | jq -c .
+          if [[ "$http_code" != "200" ]]; then
+            echo "::error::Massive snapshot provider returned HTTP $http_code through the Classroom market-data function."
+            exit 1
+          fi
+          cat /tmp/massive-response.json | jq -e '.provider == "massive" and .symbol == "AAPL" and (.price | type == "number" and . > 0)' >/dev/null
+
+  page-translation-backend-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify the page translation AI secret
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          status="$(curl --fail-with-body --silent --show-error "$SUPABASE_URL/functions/v1/market-data-status" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Accept: application/json")"
+          configured="$(echo "$status" | jq -r '.secrets.tradingAiConfigured // false')"
+          echo "OPENAI_API_KEY configured: $configured"
+          if [[ "$configured" != "true" ]]; then
+            echo "::error::OPENAI_API_KEY is missing from Classroom Supabase Edge Function Secrets."
+            exit 1
+          fi
+      - name: Send a live Spanish translation batch
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          payload='{"language":"Spanish","segments":["Page language","Scan status"]}'
+          result="$(curl --fail-with-body --silent --show-error --request POST "$SUPABASE_URL/functions/v1/rol-page-translate" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            --data "$payload")"
+          echo "$result" | jq -e '.language == "Spanish" and (.translations | length == 2) and all(.translations[]; type == "string" and length > 0)' >/dev/null
+          echo "Live page translation returned a complete Spanish batch."

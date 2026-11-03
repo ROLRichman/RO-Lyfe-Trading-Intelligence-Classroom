@@ -268,7 +268,12 @@ test('Live Desk exposes provider-backed higher timeframes and the Sector Scanner
   expect(monthlyAccepted).toBe(true);
 });
 
-test('Classroom themes change five background palettes and language selector stays in translator', async ({ page }) => {
+test('Classroom themes change five palettes and both language selectors stay synchronized', async ({ page }) => {
+  await page.route('**/functions/v1/rol-page-translate', async route => {
+    const payload = route.request().postDataJSON();
+    const translations = payload.segments.map(value => 'HT · ' + value);
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ language: payload.language, translations, count: translations.length }) });
+  });
   await page.goto('/');
   const themes = [
     ['blue', '#07101d', '#70a7ff'],
@@ -292,6 +297,7 @@ test('Classroom themes change five background palettes and language selector sta
   await expect(language.locator('option')).toHaveCount(5);
   await language.selectOption('Haitian Creole');
   await expect(language).toHaveValue('Haitian Creole');
+  await expect(page.locator('#rolPageLanguageSelect')).toHaveValue('Haitian Creole');
   await expect(page.locator('#rolTranslateSelected')).toBeVisible();
   await expect(page.locator('#rol-classroom-translator')).toBeVisible();
 });
@@ -313,4 +319,29 @@ test('scanner directory links the existing RO’Lyfe scanner engines without rep
   await expect(page.locator('#sector-scanner-launch')).toBeAttached();
   await expect(page.locator('#tactical-scanner-launch')).toBeAttached();
   await expect(page.locator('#tacticalScannerFrame')).toHaveAttribute('src', /rtic-scanner\.js\/\?embed=desk/);
+});
+
+
+test('global page-language selector translates Classroom and Live Chart Desk and remembers the choice', async ({ page }) => {
+  let requests = 0;
+  await page.route('**/functions/v1/rol-page-translate', async route => {
+    requests++;
+    const payload = route.request().postDataJSON();
+    const prefix = payload.language === 'French' ? 'FR · ' : 'TR · ';
+    const translations = payload.segments.map(value => prefix + value);
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ language: payload.language, translations, count: translations.length }) });
+  });
+  await page.goto('/');
+  const selector = page.locator('#rolPageLanguageSelect');
+  await expect(selector).toBeVisible();
+  await expect(selector.locator('option')).toHaveCount(5);
+  await selector.selectOption('French');
+  await expect.poll(async () => (await page.locator('h1').first().textContent()) || '').toContain('FR ·');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('rolyfe-translate-language'))).toBe('French');
+
+  await page.goto('/live-chart-desk/');
+  const deskSelector = page.locator('#rolPageLanguageSelect');
+  await expect(deskSelector).toHaveValue('French');
+  await expect.poll(async () => (await page.locator('h1').first().textContent()) || '').toContain('FR ·');
+  expect(requests).toBeGreaterThan(0);
 });
