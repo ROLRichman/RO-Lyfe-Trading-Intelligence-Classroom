@@ -185,7 +185,8 @@
   function start(){
     createControl();const select=document.getElementById("rolPageLanguageSelect"),status=document.getElementById("rolPageLanguageStatus");if(!select || !status)return;
     let saved="English";try{const value=localStorage.getItem(PREF);if(LANGS.some(x=>x[0]===value))saved=value;}catch(_){}
-    select.value=saved;select.addEventListener("change",()=>{const language=select.value;try{localStorage.setItem(PREF,language);}catch(_){}setLanguage(language,status);});
+    select.value=saved;select.addEventListener("change",()=>{const language=select.value;try{localStorage.setItem(PREF,language);}catch(_){}window.dispatchEvent(new CustomEvent("rol-page-language-change",{detail:{language}}));setLanguage(language,status);});
+    window.addEventListener("rol-page-language-change",event=>{const language=event.detail && event.detail.language;if(!LANGS.some(x=>x[0]===language))return;if(select.value!==language){select.value=language;try{localStorage.setItem(PREF,language);}catch(_){}setLanguage(language,status);}});
     window.addEventListener("storage",event=>{if(event.key!==PREF || !LANGS.some(x=>x[0]===event.newValue))return;select.value=event.newValue;setLanguage(event.newValue,status);});
     watchPage(status);if(saved!=="English")setTimeout(()=>setLanguage(saved,status),450);
   }
