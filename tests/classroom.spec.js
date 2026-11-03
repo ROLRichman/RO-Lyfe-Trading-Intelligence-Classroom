@@ -300,7 +300,7 @@ test('scanner directory links the existing RO’Lyfe scanner engines without rep
   await page.goto('/');
   const menu=page.locator('#rolScannerSwitcher');
   await expect(menu.locator('summary')).toContainText('Scanner Desk');
-  await expect(menu.locator('a[href="#market-room"]')).toContainText('Classroom Market Room');
+  await expect(menu.locator('a[href="https://rolrichman.github.io/RO-Lyfe-Trading-Intelligence-Classroom/#market-room"]')).toContainText('Classroom Market Room');
   await expect(menu.locator('a[href="live-chart-desk/#symbol-scanner"]')).toHaveCount(1);
   await expect(menu.locator('a[href*="RO-Lyfe-Tactical-Intelligence-Center-/rtic-scanner.js"]')).toHaveCount(1);
   await expect(menu.locator('a[href*="RO-Lyfe-Live-Sports-Center/?embed=market-lab"]')).toHaveCount(1);
