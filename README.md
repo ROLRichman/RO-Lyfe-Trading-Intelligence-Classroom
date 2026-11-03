@@ -98,3 +98,18 @@ npm test
 The suite covers navigation and section loading, Market Room asset/symbol/timeframe controls, sample-chart rendering, long/short 1R/2R/3R calculations and invalid stop placement, Chart Lab indicator canvases and candle controls, strategy tabs, the stock-first planner, local journal persistence/deletion/JSON export, the AI prompt helper, and mobile viewport overflow/menu behavior. It runs Chromium with desktop and mobile device settings.
 
 A source-level syntax/selector check has been performed. A green GitHub Actions result is still required to confirm the browser-driven suite passes in CI; no test result should be inferred from the presence of the workflow alone.
+
+
+## Jotform API connector (read-only first release)
+
+The Supabase project `ROLyfe-Trading-Intelligence-Classroom` now includes the separately deployed Edge Function `jotform-connector`.
+
+- Source: `supabase/functions/jotform-connector/index.ts`
+- Required Supabase Edge Function secret: `JOTFORM_API_KEY`
+- Function URL: `https://ykmdyfbklvuoseqdjnxy.supabase.co/functions/v1/jotform-connector`
+- JWT verification is enabled; callers must pass the project's accepted Supabase JWT.
+- POST action `{"action":"status"}` checks the Jotform account connection and returns limited account status/plan/API-call information.
+- POST action `{"action":"forms","limit":25,"offset":0}` returns form metadata and public form URLs, with a maximum page size of 50.
+- The connector does **not** fetch submission answers, documents, SSNs, bank details, or other borrower records. It does not create, edit, or delete forms or submissions.
+
+The Jotform API key is read only inside the Edge Function through `Deno.env.get("JOTFORM_API_KEY")`. Never place that value in this repository, browser JavaScript, a public HTML page, or a client-side environment variable. Before enabling any submission-reading workflow, design a separate authenticated, purpose-limited access policy and review sensitive-data handling.
