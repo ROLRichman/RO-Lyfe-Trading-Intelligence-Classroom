@@ -46,8 +46,12 @@ These are saved feature branches and open pull requests. Do not assume they are 
 - Sports Supabase project status: ACTIVE_HEALTHY.
 - `rol-page-translate`: deployed and ACTIVE.
 - Live `market-data-status` request authenticated successfully after refreshing the public anon JWT in the shared browser code.
-- The status response reports `tradingAiConfigured: false`. Add the secret `OPENAI_API_KEY` in Supabase Dashboard → Project Settings / Edge Function Secrets for `ROLyfe-Trading-Intelligence-Classroom` before expecting live translations. Never place the OpenAI secret in GitHub page code.
-- A GitHub Actions backend smoke test checks the configured secret and submits a small live translation batch once setup is complete.
+- The status response reports `tradingAiConfigured: false`. Add the secret `OPENAI_API_KEY` in Supabase Dashboard → Edge Function Secrets for `ROLyfe-Trading-Intelligence-Classroom` before expecting live translations. Never place the OpenAI secret in GitHub page code.
+- The Classroom provider status endpoint authenticated successfully; configured flags were true for Tickerbot, Finnhub, Alpha Vantage, CoinGecko and Massive. This only confirms the secrets exist, not that each provider grants the requested data entitlement.
+- A live Massive AAPL snapshot request returned provider HTTP 403 (`Massive account or plan does not include this stock snapshot`), surfaced as HTTP 502 by the Classroom Edge Function. The Massive credential exists, but the account/plan needs snapshot access before this particular feed is usable.
+- The live translation smoke test is correctly blocked while `OPENAI_API_KEY` is missing; once added, the workflow will submit a small Spanish translation batch.
+- Sports provider verification in the Sports repo confirms the Supabase project is healthy and Edge Functions are ACTIVE, but API-Football reports `Your account is suspended`. The Sports Supabase project is not the problem; restore/resolve API-Football account access before expecting live fixtures.
+- A GitHub Actions backend smoke test records these configuration and provider-entitlement checks separately.
 - Supabase performance advisor returned no findings. Security advisor reported existing warnings for `public.rls_auto_enable()` being executable by `anon` and `authenticated` as a SECURITY DEFINER function; this unrelated database function was not modified.
 
 ## Other backend note
