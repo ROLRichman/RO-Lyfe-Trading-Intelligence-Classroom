@@ -62,10 +62,72 @@ jobs:
           SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
         run: |
           set -euo pipefail
-          snapshot="$(curl --fail-with-body --silent --show-error "$SUPABASE_URL/functions/v1/market-data?provider=massive-stock-snapshot&symbol=AAPL" \
+          response="$(curl --silent --show-error --write-out '\nHTTP_CODE:%{http_code}' "$SUPABASE_URL/functions/v1/market-data?provider=massive-stock-snapshot&symbol=AAPL" \
             -H "apikey: $SUPABASE_ANON_KEY" \
             -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
-            -H "Accept: application/json")"
+            -H "Accept: application/json" || true)"
+          http_code="${response##*
+      - name: Flag missing Massive secret
+        if: steps.status.outputs.massive_configured != 'true'
+        run: |
+          echo "::error::ROLYFE_RTIC_MARKET_INTELLIGENCE is missing in the Classroom Supabase Edge Function Secrets."
+          exit 1
+      - name: Test live page translation
+        if: steps.status.outputs.openai_configured == 'true'
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          payload='{"language":"Spanish","segments":["Page language","Scan status"]}'
+          result="$(curl --fail-with-body --silent --show-error --request POST "$SUPABASE_URL/functions/v1/rol-page-translate" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            --data "$payload")"
+          echo "$result" | jq -e '.language == "Spanish" and (.translations | length == 2) and all(.translations[]; type == "string" and length > 0)' >/dev/null
+          echo "Live translation Edge Function returned a complete Spanish batch."
+      - name: Flag missing OpenAI secret
+        if: steps.status.outputs.openai_configured != 'true'
+        run: |
+          echo "::error::OPENAI_API_KEY is missing from Supabase Edge Function Secrets for ROLyfe-Trading-Intelligence-Classroom."
+          exit 1
+\n'HTTP_CODE:}"
+          snapshot="${response%
+      - name: Flag missing Massive secret
+        if: steps.status.outputs.massive_configured != 'true'
+        run: |
+          echo "::error::ROLYFE_RTIC_MARKET_INTELLIGENCE is missing in the Classroom Supabase Edge Function Secrets."
+          exit 1
+      - name: Test live page translation
+        if: steps.status.outputs.openai_configured == 'true'
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          payload='{"language":"Spanish","segments":["Page language","Scan status"]}'
+          result="$(curl --fail-with-body --silent --show-error --request POST "$SUPABASE_URL/functions/v1/rol-page-translate" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            --data "$payload")"
+          echo "$result" | jq -e '.language == "Spanish" and (.translations | length == 2) and all(.translations[]; type == "string" and length > 0)' >/dev/null
+          echo "Live translation Edge Function returned a complete Spanish batch."
+      - name: Flag missing OpenAI secret
+        if: steps.status.outputs.openai_configured != 'true'
+        run: |
+          echo "::error::OPENAI_API_KEY is missing from Supabase Edge Function Secrets for ROLyfe-Trading-Intelligence-Classroom."
+          exit 1
+\n'HTTP_CODE:*}"
+          echo "Massive snapshot HTTP status: $http_code"
+          echo "$snapshot" | jq -c .
+          if [[ "$http_code" != "200" ]]; then
+            echo "::error::Massive snapshot provider returned HTTP $http_code through the Classroom market-data function."
+            exit 1
+          fi
           echo "$snapshot" | jq -e '.provider == "massive" and .symbol == "AAPL" and (.price | type == "number" and . > 0)' >/dev/null
           echo "Massive returned a positive AAPL snapshot."
       - name: Flag missing Massive secret
