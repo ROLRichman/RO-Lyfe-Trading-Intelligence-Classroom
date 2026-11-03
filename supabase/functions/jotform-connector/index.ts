@@ -59,12 +59,12 @@ async function jotformRequest(path: string, apiKey: string) {
 }
 
 function safeAnswer(answer: unknown, label: string, type: string): { value: unknown; redacted: boolean } {
-  if (SENSITIVE_LABEL.test(label) || FILE_TYPES.test(type)) {
-    return { value: "[REDACTED - sensitive field or attachment]", redacted: true };
-  }
-
   if (answer === null || answer === undefined || answer === "") {
     return { value: null, redacted: false };
+  }
+
+  if (SENSITIVE_LABEL.test(label) || FILE_TYPES.test(type)) {
+    return { value: "[REDACTED - sensitive field or attachment]", redacted: true };
   }
 
   if (typeof answer === "string" || typeof answer === "number" || typeof answer === "boolean") {
