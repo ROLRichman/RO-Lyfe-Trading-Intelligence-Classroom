@@ -26,7 +26,7 @@
   const translatorInput=$("rolTranslateInput"),translatorOutput=$("rolTranslateResult"),translatorStatus=$("rolTranslateStatus");
   const translatorLanguageKey="rolyfe-translate-language";
   const selectedLanguage=$("rolTranslateLanguageSelect");
-  const rememberTranslatorLanguage=value=>{try{localStorage.setItem(translatorLanguageKey,value)}catch(_){}};
+  const rememberTranslatorLanguage=value=>{try{localStorage.setItem(translatorLanguageKey,value)}catch(_){}window.dispatchEvent(new CustomEvent("rol-page-language-change",{detail:{language:value}}));};
   if(selectedLanguage){
     try{const saved=localStorage.getItem(translatorLanguageKey);if(saved&&Array.from(selectedLanguage.options).some(option=>option.value===saved))selectedLanguage.value=saved}catch(_){}
     selectedLanguage.addEventListener("change",()=>rememberTranslatorLanguage(selectedLanguage.value));
