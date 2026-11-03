@@ -100,16 +100,20 @@ The suite covers navigation and section loading, Market Room asset/symbol/timefr
 A source-level syntax/selector check has been performed. A green GitHub Actions result is still required to confirm the browser-driven suite passes in CI; no test result should be inferred from the presence of the workflow alone.
 
 
-## Jotform API connector (read-only first release)
+## Jotform API connector (read-only submission review)
 
-The Supabase project `ROLyfe-Trading-Intelligence-Classroom` now includes the separately deployed Edge Function `jotform-connector`.
+The Supabase project `ROLyfe-Trading-Intelligence-Classroom` includes the Edge Function `jotform-connector`.
 
 - Source: `supabase/functions/jotform-connector/index.ts`
-- Required Supabase Edge Function secret: `JOTFORM_API_KEY`
+- Required Edge Function secrets: `JOTFORM_API_KEY` and, for submission retrieval only, `JOTFORM_READ_ACCESS_TOKEN`.
 - Function URL: `https://ykmdyfbklvuoseqdjnxy.supabase.co/functions/v1/jotform-connector`
-- JWT verification is enabled; callers must pass the project's accepted Supabase JWT.
-- POST action `{"action":"status"}` checks the Jotform account connection and returns limited account status/plan/API-call information.
-- POST action `{"action":"forms","limit":25,"offset":0}` returns form metadata and public form URLs, with a maximum page size of 50.
-- The connector does **not** fetch submission answers, documents, SSNs, bank details, or other borrower records. It does not create, edit, or delete forms or submissions.
+- Supabase JWT verification remains enabled.
+- POST action `{"action":"status"}` checks the Jotform account connection.
+- POST action `{"action":"forms","limit":25,"offset":0}` returns limited form metadata.
+- POST action `{"action":"submissions","limit":100,"offset":0}` retrieves a page of submissions from the six approved Root Of Lyfe forms. Optional `formIds` may select a subset. Maximum page size is 1,000 per form; use the returned `nextOffset` when `hasMore` is true.
+- Submission reads additionally require the private `x-rol-read-token` request header matching `JOTFORM_READ_ACCESS_TOKEN`. Never put this token in public browser code or GitHub.
+- The endpoint uses Jotform GET requests only. It does not create, update, flag, or delete submissions or forms; it does not send emails or edit applications.
+- Sensitive identifiers and upload fields are redacted. Attachment URLs, IP addresses, and raw Jotform payloads are not returned. Only normalized review fields are exposed.
+- Keep the endpoint private to trusted authenticated callers. Do not expose submission responses to public GitHub Pages, public chat visitors, or client-side logs.
 
-The Jotform API key is read only inside the Edge Function through `Deno.env.get("JOTFORM_API_KEY")`. Never place that value in this repository, browser JavaScript, a public HTML page, or a client-side environment variable. Before enabling any submission-reading workflow, design a separate authenticated, purpose-limited access policy and review sensitive-data handling.
+The Jotform API key and read-access token remain server-side in Supabase Edge Function Secrets. Never commit secrets, borrower records, uploaded documents, or raw submissions to this repository.
