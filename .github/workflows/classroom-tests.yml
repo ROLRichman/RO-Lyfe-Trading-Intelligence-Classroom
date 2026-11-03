@@ -35,3 +35,34 @@ jobs:
             test-results/
             playwright-report/
           if-no-files-found: ignore
+
+  page-language-backend-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Supabase status endpoint and OpenAI secret
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ5a21keWZia2x2b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          status="$(curl --fail-with-body --silent --show-error "$SUPABASE_URL/functions/v1/market-data-status" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Accept: application/json")"
+          echo "$status" | jq -e '.secrets.tradingAiConfigured == true' >/dev/null
+          echo "Supabase status endpoint is responding and OPENAI_API_KEY is configured."
+      - name: Test a live page-translation batch
+        env:
+          SUPABASE_URL: https://ykmdyfbklvuoseqdjnxy.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ5a21keWZia2x2b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I
+        run: |
+          set -euo pipefail
+          payload='{"language":"Spanish","segments":["Page language","Scan status"]}'
+          result="$(curl --fail-with-body --silent --show-error --request POST "$SUPABASE_URL/functions/v1/rol-page-translate" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            --data "$payload")"
+          echo "$result" | jq -e '.language == "Spanish" and (.translations | length == 2) and all(.translations[]; type == "string" and length > 0)' >/dev/null
+          echo "Live translation Edge Function returned a complete Spanish batch."
