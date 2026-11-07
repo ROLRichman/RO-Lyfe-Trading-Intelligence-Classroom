@@ -157,3 +157,18 @@ html[data-rol-theme] .ai-chips button {
 .rol-scanner-switcher-links a{display:block;padding:9px 10px;border:1px solid rgba(89,225,170,.12);border-radius:8px;color:#eaf7f0;font-size:.82rem;text-decoration:none}
 .rol-scanner-switcher-links a:hover{border-color:#59e1aa;background:rgba(89,225,170,.08)}
 @media(max-width:760px){.rol-scanner-switcher{width:100%;}.rol-scanner-switcher>summary{width:100%;justify-content:space-between}.rol-scanner-switcher-links{left:0;right:auto;width:100%;}}
+
+
+/* Fire HD 10 / tablet portrait: switch to the existing accessible menu before links crowd the topbar. */
+@media(max-width:850px){
+  .topbar{height:66px}
+  .menu-toggle{display:block}
+  #mainNav{
+    display:none;position:absolute;top:65px;left:0;right:0;
+    padding:15px 20px 20px;background:#081421;
+    border-bottom:1px solid #2b4058;flex-direction:column;gap:0;
+    max-height:calc(100dvh - 66px);overflow:auto;
+  }
+  #mainNav.open{display:flex}
+  #mainNav>a{padding:12px 0;font-size:13px;border-bottom:1px solid #172b40}
+}
