@@ -314,3 +314,21 @@ test('scanner directory links the existing RO’Lyfe scanner engines without rep
   await expect(page.locator('#tactical-scanner-launch')).toBeAttached();
   await expect(page.locator('#tacticalScannerFrame')).toHaveAttribute('src', /rtic-scanner\.js\/\?embed=desk/);
 });
+
+
+test('tablet portrait layout has no horizontal overflow and the menu opens and closes', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'tablet-chromium', 'Fire HD 10 portrait check runs in the tablet project');
+  await page.goto('/');
+  const dimensions = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    page: document.documentElement.scrollWidth,
+    toggle: getComputedStyle(document.querySelector('#menuToggle')).display
+  }));
+  expect(dimensions.page).toBeLessThanOrEqual(dimensions.viewport + 1);
+  expect(dimensions.toggle).not.toBe('none');
+  await page.locator('#menuToggle').click();
+  await expect(page.locator('#mainNav')).toHaveClass(/open/);
+  await expect(page.locator('#mainNav a[href="#market-room"]')).toBeVisible();
+  await page.locator('#mainNav a[href="#market-room"]').click();
+  await expect(page.locator('#mainNav')).not.toHaveClass(/open/);
+});
