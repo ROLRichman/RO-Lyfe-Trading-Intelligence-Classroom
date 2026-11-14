@@ -102,9 +102,36 @@ function renderAlerts(){
   left.append(title,small);right.textContent="Review →";button.append(left,right);button.addEventListener("click",()=>openTicket(item.symbol,item));host.append(button);
  });
 }
+function boolValue(value){
+ if(value===true||value===1)return true;
+ const text=safeText(value).toLowerCase();
+ return text==="true"||text==="1"||text==="yes";
+}
 function cardSignal(symbol){
  if(symbol===currentSymbol())return getSignal();
+ const rows=Array.isArray(window.ROLyfeLatestScanRows)?window.ROLyfeLatestScanRows:[];
+ const row=rows.find(item=>safeText(item.ticker||item.symbol).toUpperCase()===symbol);
+ if(!row)return "neutral";
+ let bullish=0,bearish=0;
+ const vote=(up,down)=>{if(up)bullish++;else if(down)bearish++;};
+ if(row.above_vwap!==undefined||row.above_sma_50!==undefined||row.above_sma_200!==undefined){
+  vote(boolValue(row.above_vwap),row.above_vwap!==undefined&&!boolValue(row.above_vwap));
+  vote(boolValue(row.above_sma_50),row.above_sma_50!==undefined&&!boolValue(row.above_sma_50));
+  vote(boolValue(row.above_sma_200),row.above_sma_200!==undefined&&!boolValue(row.above_sma_200));
+ }
+ const rsi=Number(row.rsi_14),macd=Number(row.macd_histogram),k=Number(row.stochastic_k),d=Number(row.stochastic_d);
+ if(Number.isFinite(rsi))vote(rsi>=55,rsi<=45);
+ if(Number.isFinite(macd))vote(macd>0,macd<0);
+ if(Number.isFinite(k)&&Number.isFinite(d))vote(k>d,k<d);
+ if(bullish>=3&&bullish>bearish)return "bullish";
+ if(bearish>=3&&bearish>bullish)return "bearish";
  return "neutral";
+}
+function passesSignalFilter(item,reference){
+ const filter=$("#rolPersonalSignalFilter")?.value||"all";
+ if(filter==="all")return true;
+ const signal=reference?(item.side==="BUY"?"bullish":"neutral"):cardSignal(item.symbol);
+ return signal===filter;
 }
 function renderWatchlist(){
  const select=$("#rolPersonalWatchlistSelect"),host=$("#rolPersonalWatchlistCards"),count=$("#rolWatchCount");
@@ -112,18 +139,21 @@ function renderWatchlist(){
  selectedList=select.value;
  if(selectedList==="coach"){
   host.innerHTML="";
-  COACH_POSITIONS.forEach(item=>host.append(createWatchCard(item,{reference:true})));
-  if(count)count.textContent="18 refs";
+  const visible=COACH_POSITIONS.filter(item=>passesSignalFilter(item,true));
+  visible.forEach(item=>host.append(createWatchCard(item,{reference:true})));
+  if(count)count.textContent=visible.length+" / 18";
+  if(!visible.length){const p=document.createElement("p");p.className="personal-empty";p.textContent="No coach reference positions match this signal filter.";host.append(p);}
   return;
  }
  const lists=readLists(),items=lists[selectedList]||[];
+ const visible=items.filter(item=>passesSignalFilter(item,false));
  host.innerHTML="";
- if(count)count.textContent=String(items.length);
- if(!items.length){
+ if(count)count.textContent=visible.length+(visible.length!==items.length?" / "+items.length:"");
+ if(!visible.length){
   const p=document.createElement("p");p.className="personal-empty";p.textContent=selectedList==="discovery"?"No momentum symbols imported yet. Import your coach’s 98-symbol .txt or .csv list below.":"This list is empty. Add a ticker below.";
   host.append(p);return;
  }
- items.forEach(item=>host.append(createWatchCard(item,{reference:false})));
+ visible.forEach(item=>host.append(createWatchCard(item,{reference:false})));
 }
 function createWatchCard(item,options){
  const ref=Boolean(options?.reference),button=document.createElement("button");button.type="button";button.className="personal-watch-card";
@@ -142,7 +172,9 @@ function addSymbol(raw){
  let symbol=safeText(raw).trim().toUpperCase();
  if(symbol.includes(":"))symbol=symbol.split(":").pop();
  if(!/^[A-Z0-9.^_-]{1,20}$/.test(symbol))throw new Error("Enter a valid ticker symbol.");
- const lists=readLists(),list=lists[selectedList]||lists.stocks;
+ const lists=readLists();
+ if(selectedList==="coach"){selectedList="stocks";if($("#rolPersonalWatchlistSelect"))$("#rolPersonalWatchlistSelect").value="stocks";}
+ const list=lists[selectedList]||lists.stocks;
  const normalized=selectedList==="crypto"&&!symbol.endsWith("-USD")?symbol+"-USD":symbol;
  if(list.some(item=>item.symbol===normalized)){window.ROLyfeChartDesk?.setSymbol?.(normalized);return normalized;}
  const item={symbol:normalized,name:normalized};
@@ -301,6 +333,8 @@ function init(){
  const date=$("#rolPersonalCalendar");if(date){date.value=new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});date.addEventListener("change",()=>{$("#rolCalendarNote").textContent=date.value?"Selected review date · "+date.value:"Choose a date to focus your journal and review.";});}
  renderAlerts();renderCoachPositions();renderWatchlist();syncPosture();
  $("#rolPersonalWatchlistSelect")?.addEventListener("change",renderWatchlist);
+ $("#rolPersonalSignalFilter")?.addEventListener("change",renderWatchlist);
+ window.addEventListener("rol-scan-complete",renderWatchlist);
  $("#rolRefreshWatchlist")?.addEventListener("click",()=>{renderWatchlist();syncPosture();});
  $("#rolPersonalAddForm")?.addEventListener("submit",(e)=>{e.preventDefault();try{addSymbol($("#rolPersonalAddSymbol").value);$("#rolPersonalAddSymbol").value="";}catch(error){alert(error.message);}});
  $("#rolImportMomentum")?.addEventListener("click",()=>importMomentum($("#rolMomentumImportText").value));
