@@ -1,5 +1,9 @@
 /* RO'Lyfe engine identity — contained hero visuals, never a full-page background. */
 .rol-engine-hero{position:relative;isolation:isolate}
+.rol-engine-hero> :not(.rol-engine-visual):not(.rol-motion-toggle),
+.rol-engine-hero .hero-art> :not(.rol-engine-visual),
+.rol-engine-hero .hero-panel> :not(.rol-engine-visual),
+.rol-engine-hero .hero-card> :not(.rol-engine-visual){position:relative;z-index:1}
 .rol-engine-hero .hero-art,.rol-engine-hero .hero-panel,.rol-engine-hero .hero-card{position:relative;isolation:isolate;overflow:hidden}
 .rol-engine-visual{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;border-radius:inherit;opacity:.94;
   background:radial-gradient(circle at 52% 45%,color-mix(in srgb,var(--rol-a) 35%,transparent),transparent 42%),
