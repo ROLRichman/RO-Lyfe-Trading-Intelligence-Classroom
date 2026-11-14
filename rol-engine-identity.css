@@ -1,0 +1,67 @@
+/* RO'Lyfe engine identity — contained hero visuals, never a full-page background. */
+.rol-engine-hero{position:relative;isolation:isolate}
+.rol-engine-hero> :not(.rol-engine-visual):not(.rol-motion-toggle),
+.rol-engine-hero .hero-art> :not(.rol-engine-visual),
+.rol-engine-hero .hero-panel> :not(.rol-engine-visual),
+.rol-engine-hero .hero-card> :not(.rol-engine-visual){position:relative;z-index:1}
+.rol-engine-hero .hero-art,.rol-engine-hero .hero-panel,.rol-engine-hero .hero-card{position:relative;isolation:isolate;overflow:hidden}
+.rol-engine-visual{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;border-radius:inherit;opacity:.94;
+  background:radial-gradient(circle at 52% 45%,color-mix(in srgb,var(--rol-a) 35%,transparent),transparent 42%),
+             radial-gradient(circle at 78% 18%,color-mix(in srgb,var(--rol-b) 23%,transparent),transparent 34%),
+             linear-gradient(140deg,#09121d 0%,#0c1621 58%,#10121b 100%)}
+.rol-engine-visual:before{content:"";position:absolute;inset:8%;border:1px solid color-mix(in srgb,var(--rol-a) 42%,transparent);border-radius:50%;transform:rotate(-18deg) scaleX(1.12);animation:rol-orbit 26s linear infinite}
+.rol-engine-visual:after{content:"";position:absolute;inset:17% 4%;border-top:1px solid color-mix(in srgb,var(--rol-b) 46%,transparent);border-bottom:1px solid color-mix(in srgb,var(--rol-c) 25%,transparent);transform:rotate(-16deg);opacity:.55;animation:rol-drift 9s ease-in-out infinite alternate}
+.rol-visual-halo{position:absolute;width:68%;aspect-ratio:1;left:16%;top:10%;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--rol-b) 26%,transparent),transparent 67%);filter:blur(5px);animation:rol-pulse 4.8s ease-in-out infinite}
+.rol-visual-ring{position:absolute;width:68%;aspect-ratio:1;left:16%;top:10%;border:1px solid color-mix(in srgb,var(--rol-a) 70%,transparent);border-radius:50%;box-shadow:0 0 32px color-mix(in srgb,var(--rol-a) 18%,transparent),inset 0 0 24px color-mix(in srgb,var(--rol-a) 12%,transparent);transform:rotateX(62deg) rotateZ(-18deg);animation:rol-orbit 21s linear infinite}
+.rol-visual-ring.ring-two{width:47%;left:26.5%;top:20.5%;border-color:color-mix(in srgb,var(--rol-b) 72%,transparent);transform:rotateX(60deg) rotateZ(35deg);animation-duration:15s;animation-direction:reverse}
+.rol-visual-core{position:absolute;left:36%;top:30%;width:28%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;border:1px solid color-mix(in srgb,var(--rol-b) 72%,transparent);background:radial-gradient(circle at 35% 28%,color-mix(in srgb,var(--rol-b) 46%,#172334),#0b1420 70%);box-shadow:0 0 42px color-mix(in srgb,var(--rol-a) 28%,transparent),inset 0 0 22px color-mix(in srgb,var(--rol-a) 18%,transparent);animation:rol-float 5s ease-in-out infinite}
+.rol-visual-core:after{content:attr(data-mark);font:800 clamp(22px,4vw,46px)/1 system-ui,sans-serif;color:#fff;text-shadow:0 0 18px var(--rol-a)}
+.rol-visual-signal{position:absolute;left:13%;right:13%;bottom:17%;height:21%;opacity:.62;border-radius:8px;background:repeating-linear-gradient(90deg,var(--rol-a) 0 3px,transparent 3px 13px);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);animation:rol-bars 1.65s ease-in-out infinite alternate}
+.rol-visual-caption{position:absolute;left:0;right:0;bottom:7%;text-align:center;color:#eaf4ffb8;font:800 9px/1.2 system-ui,sans-serif;letter-spacing:.22em;text-shadow:0 0 12px var(--rol-a)}
+.rol-engine-hero[data-rol-engine="cinema"]{--rol-a:#ff654f;--rol-b:#ffc56a;--rol-c:#9a78ff}
+.rol-engine-hero[data-rol-engine="audio"]{--rol-a:#a78bfa;--rol-b:#35d9f2;--rol-c:#fb72c7}
+.rol-engine-hero[data-rol-engine="sports"]{--rol-a:#38bdf8;--rol-b:#fb923c;--rol-c:#facc15}
+.rol-engine-hero[data-rol-engine="trading"]{--rol-a:#34d399;--rol-b:#7dd3fc;--rol-c:#a3e635}
+.rol-engine-hero[data-rol-engine="capital"]{--rol-a:#e8ba62;--rol-b:#82b6e7;--rol-c:#f4dc9a}
+.rol-engine-hero[data-rol-engine="gaming"]{--rol-a:#25d879;--rol-b:#e879f9;--rol-c:#69b8ff}
+.rol-engine-hero[data-rol-engine="wealth"]{--rol-a:#41f2a1;--rol-b:#ffd45a;--rol-c:#76baff}
+.rol-engine-hero[data-rol-engine="sports"] .rol-engine-visual{right:0;left:auto;width:43%;height:100%;border-radius:22px;background:radial-gradient(circle at 50% 50%,#38bdf833,transparent 50%),linear-gradient(135deg,#071c31,#10243b 65%,#171a2a)}
+.rol-engine-hero[data-rol-engine="sports"] .rol-visual-signal{width:64%;height:64%;left:18%;right:auto;bottom:18%;border:1px solid #38bdf899;border-radius:50%;background:conic-gradient(from 12deg,transparent 0 68%,#38bdf855 70%,transparent 78%);mask-image:none;animation:rol-orbit 12s linear infinite}
+.rol-engine-hero[data-rol-engine="trading"] .rol-visual-signal{height:30%;bottom:18%;clip-path:polygon(0 82%,12% 62%,23% 70%,36% 28%,47% 42%,60% 8%,72% 32%,84% 18%,100% 0,100% 100%,0 100%);background:linear-gradient(180deg,#7dd3fcaa,#34d39922);border-top:2px solid var(--rol-a);border-radius:0;mask-image:none}
+.rol-engine-hero[data-rol-engine="capital"] .rol-visual-signal{height:35%;bottom:14%;border-radius:0;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);background:repeating-linear-gradient(90deg,transparent 0 5%,#e8ba6266 5.2% 6%,transparent 6.2% 10%,#82b6e766 10.2% 11.4%,transparent 11.6% 16%);clip-path:polygon(0 53%,9% 53%,9% 25%,17% 25%,17% 44%,25% 44%,25% 5%,34% 5%,34% 38%,43% 38%,43% 17%,52% 17%,52% 49%,62% 49%,62% 0,71% 0,71% 34%,81% 34%,81% 13%,90% 13%,90% 43%,100% 43%,100% 100%,0 100%);animation:rol-city 5s ease-in-out infinite alternate}
+.rol-engine-hero[data-rol-engine="gaming"] .rol-engine-visual{right:2%;left:auto;width:48%;height:88%;border-radius:24px;background:radial-gradient(circle at 50% 45%,#e879f933,transparent 42%),linear-gradient(145deg,#071b17,#111329 68%,#0a1221)}
+.rol-engine-hero[data-rol-engine="wealth"] .rol-engine-visual{opacity:.42}
+.rol-engine-hero[data-rol-engine="audio"] .rol-visual-signal{height:29%;bottom:16%;background:repeating-linear-gradient(90deg,var(--rol-b) 0 4px,transparent 4px 12px);transform-origin:center;animation:rol-bars 1.05s ease-in-out infinite alternate}
+.rol-engine-hero[data-rol-engine="audio"] .rol-visual-core{box-shadow:0 0 48px #a78bfa55,inset 0 0 22px #35d9f244}
+.rol-engine-hero[data-rol-engine="cinema"] .rol-visual-core{border-radius:22%;transform:rotate(45deg);background:linear-gradient(145deg,#ffc56a,#6b2534 58%,#111421)}
+.rol-engine-hero[data-rol-engine="cinema"] .rol-visual-core:after{transform:rotate(-45deg)}
+.rol-engine-hero[data-rol-engine="gaming"] .rol-visual-core{border-radius:28%;transform:rotate(45deg);background:linear-gradient(145deg,#25d879,#26315b 62%,#151326)}
+.rol-engine-hero[data-rol-engine="gaming"] .rol-visual-core:after{transform:rotate(-45deg)}
+.rol-motion-toggle{position:absolute;z-index:5;right:12px;top:12px;border:1px solid #ffffff38!important;border-radius:999px!important;background:#050b13b8!important;color:#eaf4ff!important;padding:6px 10px!important;font-size:11px!important;line-height:1.2!important;backdrop-filter:blur(10px);cursor:pointer}
+.rol-capital-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.7fr);gap:20px;align-items:center;position:relative;isolation:isolate;overflow:hidden;margin:18px 0 24px;padding:28px 30px;min-height:210px;border:1px solid #e8ba6244;border-radius:22px;background:linear-gradient(125deg,#111a29,#101521 60%,#181a21);box-shadow:0 18px 52px #0006}
+.rol-capital-hero .rol-engine-visual{inset:0 0 0 auto;width:44%;height:100%;border-radius:0;background:radial-gradient(circle at 56% 48%,#e8ba6233,transparent 48%),linear-gradient(140deg,#0e1a2b,#1b1c24)}
+.rol-capital-copy{position:relative;z-index:2;max-width:700px}
+.rol-capital-copy .eyebrow{margin:0 0 8px;color:#e8ba62;font-size:11px;letter-spacing:.2em;font-weight:800}
+.rol-capital-copy h2{margin:0;font-size:clamp(27px,4vw,44px);line-height:1.04;letter-spacing:-.04em;color:#f7f4ec}
+.rol-capital-copy p{margin:12px 0 0;max-width:620px;color:#b7c2d0;font-size:14px}
+.rol-capital-hero .rol-motion-toggle{top:auto;bottom:10px;right:12px}
+.rol-motion-paused .rol-engine-visual,.rol-motion-paused .rol-engine-visual:before,.rol-motion-paused .rol-engine-visual:after,.rol-motion-paused .rol-engine-visual *{animation-play-state:paused!important}
+@keyframes rol-orbit{to{transform:rotateX(62deg) rotateZ(342deg)}}
+@keyframes rol-drift{from{translate:-2% 0}to{translate:2% 0}}
+@keyframes rol-pulse{0%,100%{transform:scale(.92);opacity:.55}50%{transform:scale(1.08);opacity:1}}
+@keyframes rol-float{0%,100%{translate:0 0}50%{translate:0 -9px}}
+@keyframes rol-bars{from{transform:scaleY(.46);opacity:.35}to{transform:scaleY(1);opacity:.8}}
+@keyframes rol-city{from{opacity:.34;transform:translateY(3px)}to{opacity:.8;transform:translateY(-3px)}}
+@media(max-width:760px){
+ .rol-engine-hero .rol-engine-visual{opacity:.48}
+ .rol-engine-hero[data-rol-engine="sports"] .rol-engine-visual,.rol-engine-hero[data-rol-engine="gaming"] .rol-engine-visual{width:54%;height:72%;top:14%}
+ .rol-engine-hero[data-rol-engine="sports"] .rol-visual-caption,.rol-engine-hero[data-rol-engine="gaming"] .rol-visual-caption{font-size:7px}
+ .rol-engine-hero[data-rol-engine="gaming"] .hero-copy{max-width:72%}
+ .rol-capital-hero{grid-template-columns:1fr;padding:23px 18px;min-height:190px}
+ .rol-capital-hero .rol-engine-visual{width:58%;opacity:.42}
+ .rol-motion-toggle{top:auto;bottom:7px;right:8px;font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .rol-engine-visual,.rol-engine-visual:before,.rol-engine-visual:after,.rol-engine-visual *{animation:none!important;transition:none!important}
+ .rol-motion-toggle{display:none!important}
+}
