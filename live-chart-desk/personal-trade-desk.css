@@ -125,3 +125,7 @@
 @media(max-width:760px){.personal-desk-heading{flex-direction:column}.personal-utility-grid{grid-template-columns:1fr 1fr}.personal-posture-card{grid-column:1/-1}.personal-workspace-grid{grid-template-columns:1fr}.personal-right-rail{grid-template-columns:1fr 1fr}.personal-range-group{grid-template-columns:1fr;gap:5px}.personal-sim-disclosure{grid-template-columns:1fr;gap:4px}}
 @media(max-width:520px){.personal-desk{padding:12px;border-radius:15px;margin:10px -2px 18px}.personal-utility-grid{grid-template-columns:1fr}.personal-posture-card{grid-column:auto}.personal-clock-footer{display:grid}.personal-watch-cards{grid-template-columns:1fr 1fr;max-height:390px}.personal-right-rail{grid-template-columns:1fr}.personal-scanner-links{grid-template-columns:1fr 1fr}.personal-position-summary{grid-template-columns:1fr 1fr 1fr}.personal-position-list{grid-template-columns:1fr 1fr}.personal-execution-fields{grid-template-columns:1fr}.personal-execution-modal{padding:14px}.personal-atlas{right:10px;bottom:10px}.personal-atlas-launch{padding-right:10px}.personal-atlas-panel{max-height:68vh}}
 @media(prefers-reduced-motion:reduce){.personal-watch-card{transition:none}}
+
+.personal-signal-filter{display:grid;gap:5px;margin:0 0 10px}
+.personal-signal-filter label{font-size:9px;color:#9fb2c7;font-weight:800;letter-spacing:.05em}
+.personal-signal-filter select{width:100%;min-height:38px;border:1px solid #2d435a;border-radius:8px;background:#07111b;color:#e9f1fa;padding:8px 10px;font:inherit;font-size:10px}
