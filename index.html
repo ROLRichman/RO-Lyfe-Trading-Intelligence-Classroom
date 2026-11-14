@@ -8,6 +8,7 @@
   <title>RO’Lyfe Trading Intelligence Classroom™</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/market-room.css">
+  <link rel="stylesheet" href="rol-engine-identity.css?v=20261113-1">
 </head>
 <body>
   <header class="topbar">
@@ -30,7 +31,7 @@
   <div class="rol-theme-picker" aria-label="Choose classroom background theme"><span>Theme</span><button type="button" data-rol-theme="blue" aria-label="Ocean Blue background" title="Ocean Blue" style="--swatch:#70a7ff"></button><button type="button" data-rol-theme="green" aria-label="Lyfe Green background" title="Lyfe Green" style="--swatch:#65d6a0"></button><button type="button" data-rol-theme="amber" aria-label="Amber background" title="Amber" style="--swatch:#e8bd68"></button><button type="button" data-rol-theme="violet" aria-label="Violet background" title="Violet" style="--swatch:#b59aff"></button><button type="button" data-rol-theme="crimson" aria-label="Crimson background" title="Crimson" style="--swatch:#ef7187"></button></div>
 </div>
   <main id="top">
-    <section class="hero">
+    <section class="hero rol-engine-hero" data-rol-engine="trading">
       <div class="hero-copy">
         <p class="eyebrow">STUDY • PLAN • EXECUTE • REVIEW</p>
         <h1>Read the chart.<br><span>Respect the risk.</span></h1>
@@ -38,7 +39,7 @@
         <div class="hero-actions"><a class="btn primary" href="#market-room">Open Market Room</a><a class="btn ghost" href="https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/" target="_blank" rel="noopener">Open Tactical Center ↗</a><a class="btn ghost" href="live-chart-desk/">Live Chart Desk ↗</a><a class="btn ghost" href="#strategy">Compare Strategies</a></div>
         <p class="disclaimer-mini">Educational tool · Sample data only · No brokerage connection</p>
       </div>
-      <div class="hero-panel">
+      <div class="hero-panel"><div class="rol-engine-visual" aria-hidden="true"><span class="rol-visual-halo"></span><span class="rol-visual-ring"></span><span class="rol-visual-ring ring-two"></span><span class="rol-visual-core" data-mark="↗"></span><span class="rol-visual-signal"></span><span class="rol-visual-caption">DATA · SIGNAL · RISK</span></div>
         <div class="panel-head"><span class="live-dot"></span> CLASSROOM STATUS <span class="pill">PRACTICE MODE</span></div>
         <div class="hero-stat-grid">
           <div><small>Chart mode</small><strong>Heikin-Ashi</strong></div>
@@ -48,7 +49,8 @@
         </div>
         <div class="rule-strip"><span>01</span> Stock chart first <span class="rule-arrow">→</span> <span>02</span> Option risk second</div>
       </div>
-    </section>
+    <button class="rol-motion-toggle" type="button" data-rol-motion-toggle aria-pressed="false">Pause motion</button>
+</section>
 
 
   <section class="real-chart-launcher" id="real-chart-study">
@@ -352,5 +354,6 @@
   <span class="rol-jamal-dot" aria-hidden="true"></span><span>Ask Jamal</span><span aria-hidden="true">↗</span>
 </a>
 
+<script>(()=>{const root=document.documentElement;document.querySelectorAll('[data-rol-motion-toggle]').forEach(button=>button.addEventListener('click',()=>{const paused=root.classList.toggle('rol-motion-paused');button.setAttribute('aria-pressed',String(paused));button.textContent=paused?'Resume motion':'Pause motion';}));})();</script>
 </body>
 </html>
