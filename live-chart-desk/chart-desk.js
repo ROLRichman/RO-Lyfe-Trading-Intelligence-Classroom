@@ -415,6 +415,8 @@ function renderList(){const root=$("#watchlist");root.innerHTML="";lists[activeL
 function addSymbol(raw){let symbol=raw.trim().toUpperCase();if(!symbol)return;if(symbol.includes(":"))symbol=symbol.split(":").pop();if(!/^[A-Z0-9.^_-]{1,20}$/.test(symbol))return;const list=lists[activeList]||lists.stocks;if(list.some(x=>x.symbol===symbol)){chart(symbol);return;}const item={symbol,name:symbol,assetClass:activeList==="futures"?"futures":activeList==="crypto"?"crypto":"stocks"};if(activeList==="crypto"&&!symbol.endsWith("-USD")){item.symbol=symbol+"-USD";item.api=symbol;}list.push(item);saveLists();renderList();chart(item.symbol);}
 
 function scanRender(rows){
+ window.ROLyfeLatestScanRows=Array.isArray(rows)?rows:[];
+ window.dispatchEvent(new CustomEvent("rol-scan-complete"));
  const host=$("#scannerResults");host.innerHTML="";
  if(!rows.length){host.textContent="No provider results returned for this list.";return;}
  rows.forEach(row=>{
