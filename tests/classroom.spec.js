@@ -337,6 +337,7 @@ test('tablet portrait layout has no horizontal overflow and the menu opens and c
 test('Personal Trading Desk shows coach reference positions, imports momentum tickers and logs paper-only tickets', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
+  await page.route('**/functions/v1/market-data**', route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'provider disabled for deterministic UI test' }) }));
   await page.goto('/live-chart-desk/?embed=classroom');
   await expect(page.locator('#rolPersonalDesk')).toBeVisible();
   await expect(page.locator('#rolPersonalClock')).not.toHaveText('--:--:--');
