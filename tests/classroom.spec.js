@@ -340,7 +340,7 @@ test('Personal Trading Desk shows coach reference positions, imports momentum ti
   await page.goto('/live-chart-desk/?embed=classroom');
   await expect(page.locator('#rolPersonalDesk')).toBeVisible();
   await expect(page.locator('#rolPersonalClock')).not.toHaveText('--:--:--');
-  await expect(page.locator('#rolPersonalCalendar')).toHaveValue(/\\d{4}-\\d{2}-\\d{2}/);
+  await expect(page.locator('#rolPersonalCalendar')).toHaveValue(/[0-9]{4}-[0-9]{2}-[0-9]{2}/);
   await page.locator('#rolPersonalWatchlistSelect').selectOption('coach');
   await expect(page.locator('.personal-position-row')).toHaveCount(18);
   await expect(page.locator('.personal-alert-row')).toHaveCount(3);
