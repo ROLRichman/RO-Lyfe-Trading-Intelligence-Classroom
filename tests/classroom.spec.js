@@ -345,7 +345,7 @@ test('Personal Trading Desk shows coach reference positions, imports momentum ti
   await page.locator('#rolPersonalWatchlistSelect').selectOption('coach');
   await expect(page.locator('.personal-position-row')).toHaveCount(18);
   await expect(page.locator('.personal-alert-row')).toHaveCount(3);
-  await page.locator('.personal-position-row').filter({ hasText: 'GRAL' }).click();
+  await page.locator('.personal-watch-card').filter({ hasText: 'GRAL' }).click();
   await expect(page.locator('#rolExecutionModal')).toBeVisible();
   await expect(page.locator('#rolExecutionEntry')).toHaveValue('121.6000');
   await expect(page.locator('#rolExecutionStop')).toHaveValue('113.0300');
