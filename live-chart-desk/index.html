@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#05070b">
 <title>RO’Lyfe Live Chart Desk™</title>
-<link rel="stylesheet" href="chart-desk.css"><script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js"></script><script>window.addEventListener("load",function(){if(!window.LightweightCharts){var s=document.createElement("script");s.src="https://unpkg.com/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js";s.onload=function(){if(window.ROLyfeChartDesk&&window.ROLyfeChartDesk.refresh)window.ROLyfeChartDesk.refresh();};document.head.appendChild(s);}});</script>
+<link rel="stylesheet" href="chart-desk.css"><link rel="stylesheet" href="personal-trade-desk.css?v=20261114-1"><script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js"></script><script>window.addEventListener("load",function(){if(!window.LightweightCharts){var s=document.createElement("script");s.src="https://unpkg.com/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js";s.onload=function(){if(window.ROLyfeChartDesk&&window.ROLyfeChartDesk.refresh)window.ROLyfeChartDesk.refresh();};document.head.appendChild(s);}});</script>
 </head>
 <body>
 <script>(function(){const mode=new URLSearchParams(location.search).get('embed');if(mode==='auction')document.body.classList.add('auction-embed');if(mode==='classroom')document.body.classList.add('classroom-embed');})();</script>
@@ -15,6 +15,133 @@
   <div class="rol-theme-picker" aria-label="Choose classroom highlight color"><span>Accent</span><button type="button" data-rol-theme="blue" aria-label="Blue theme" style="--swatch:#70a7ff"></button><button type="button" data-rol-theme="green" aria-label="Green theme" style="--swatch:#65d6a0"></button><button type="button" data-rol-theme="amber" aria-label="Amber theme" style="--swatch:#e8bd68"></button><button type="button" data-rol-theme="violet" aria-label="Violet theme" style="--swatch:#b59aff"></button><button type="button" data-rol-theme="teal" aria-label="Teal theme" style="--swatch:#63d4d0"></button></div>
 </div>
 <main>
+<section class="personal-desk" id="rolPersonalDesk" aria-label="Personal RO’Lyfe trading desk">
+  <div class="personal-desk-heading">
+    <div><p class="eyebrow">RO’LYFE · PERSONAL MARKET COMMAND</p><h1>My Watchlists &amp; Execution Desk</h1><p class="personal-subtitle">One home for your market clock, watchlists, scanner access, chart study and paper-trade planning.</p></div>
+    <span class="personal-mode-chip"><i></i> PAPER WORKSPACE · NO BROKER LINK</span>
+  </div>
+  <div class="personal-utility-grid">
+    <article class="personal-clock-card">
+      <span class="personal-kicker">NEW YORK MARKET CLOCK</span>
+      <strong id="rolPersonalClock">--:--:--</strong>
+      <div class="personal-clock-footer"><span id="rolPersonalDate">Loading date…</span><span id="rolPersonalSession">Market session status</span></div>
+    </article>
+    <article class="personal-calendar-card">
+      <div><span class="personal-kicker">TRADING CALENDAR</span><strong>Focus date</strong></div>
+      <label class="sr-only" for="rolPersonalCalendar">Select calendar date</label>
+      <input id="rolPersonalCalendar" type="date">
+      <p id="rolCalendarNote">Choose a date to focus your journal and review.</p>
+    </article>
+    <article class="personal-posture-card">
+      <span class="personal-kicker">CURRENT CHART POSTURE</span>
+      <strong id="rolPersonalPosture">NEUTRAL · WAITING</strong>
+      <small id="rolPersonalPostureNote">Select a ticker and load its candles to calculate a posture.</small>
+      <button type="button" class="personal-text-action" id="rolJumpToChart">Open execution chart ↓</button>
+    </article>
+  </div>
+
+  <div class="personal-workspace-grid">
+    <section class="personal-panel personal-watch-panel">
+      <div class="personal-panel-title"><div><p class="personal-kicker">01 / YOUR SYMBOLS</p><h2>My Watchlists</h2><p>Choose a list. Tap a symbol to open its chart and paper-execution ticket.</p></div><span class="personal-count" id="rolWatchCount">—</span></div>
+      <div class="personal-watch-controls">
+        <label for="rolPersonalWatchlistSelect">Watchlist</label>
+        <select id="rolPersonalWatchlistSelect">
+          <option value="stocks">Stocks / ETFs</option><option value="crypto">Crypto</option><option value="discovery">Momentum / Discovery</option><option value="futures">Futures</option><option value="coach">Coach reference positions · 18</option>
+        </select>
+        <button type="button" class="personal-small-button" id="rolRefreshWatchlist">Refresh list</button>
+      </div>
+      <div class="personal-signal-filter"><label for="rolPersonalSignalFilter">Signal / strategy label</label><select id="rolPersonalSignalFilter"><option value="all">All signals</option><option value="bullish">Bullish · Buy setup review</option><option value="bearish">Bearish · Sell / exit review</option><option value="neutral">Neutral · Wait / watch</option></select></div>
+      <div id="rolPersonalWatchlistCards" class="personal-watch-cards"><p class="personal-empty">Loading your saved browser watchlists…</p></div>
+      <form id="rolPersonalAddForm" class="personal-add-form">
+        <label for="rolPersonalAddSymbol">Add a ticker to the selected list</label>
+        <div><input id="rolPersonalAddSymbol" maxlength="20" placeholder="e.g. GRAL, NVDA, BTC-USD" required><button type="submit">Add symbol</button></div>
+      </form>
+      <details class="personal-import">
+        <summary>Import a Momentum Watchlist (.txt / .csv)</summary>
+        <p>Your screenshot shows a 98-symbol Momentum list, but not the 98 ticker symbols. Paste the list here or choose a text/CSV file; the dashboard will not invent missing tickers.</p>
+        <textarea id="rolMomentumImportText" rows="3" placeholder="Paste symbols separated by commas, spaces or new lines…"></textarea>
+        <div class="personal-import-actions"><input id="rolMomentumImportFile" type="file" accept=".txt,.csv,text/plain,text/csv" aria-label="Choose momentum watchlist file"><button type="button" id="rolImportMomentum">Import into Momentum / Discovery</button></div>
+        <p id="rolMomentumImportStatus" class="personal-muted" aria-live="polite"></p>
+      </details>
+    </section>
+
+    <div class="personal-right-rail">
+      <section class="personal-panel personal-alert-panel">
+        <div class="personal-panel-title"><div><p class="personal-kicker">02 / LATEST TRADE ALERTS</p><h2>Newest Alerts</h2><p>Coach reference alerts supplied in your notes.</p></div><span class="personal-alert-count">3 alerts</span></div>
+        <div id="rolPersonalAlerts" class="personal-alert-list"></div>
+      </section>
+
+      <section class="personal-panel personal-positions-panel">
+        <div class="personal-panel-title"><div><p class="personal-kicker">03 / REFERENCE PORTFOLIO</p><h2>Open Positions</h2><p>Reference figures from the portfolio you supplied—not verified live holdings.</p></div><strong class="personal-position-total">18</strong></div>
+        <div class="personal-position-summary" id="rolCoachPositionSummary"></div>
+        <details class="personal-position-details"><summary>View all 18 coach reference positions</summary><div id="rolCoachPositionCards" class="personal-position-list"></div></details>
+      </section>
+
+      <section class="personal-panel personal-option-panel">
+        <div class="personal-panel-title"><div><p class="personal-kicker">04 / OPTIONS WATCH</p><h2>Option Plays</h2><p>Optional. Review the underlying stock chart first.</p></div><span class="personal-option-chip">1 reference play</span></div>
+        <button type="button" class="personal-option-card" id="rolHngeOption">
+          <span><strong>HNGE · $100 CALL</strong><small>18 Dec 2026 · Reference entry $8.75 · Pay no more than $9.62</small></span><b>Review ↗</b>
+        </button>
+      </section>
+
+      <section class="personal-panel personal-scanner-panel">
+        <div class="personal-panel-title"><div><p class="personal-kicker">05 / SCANNER SWITCHBOARD</p><h2>Your Scanners</h2><p>Optional modules. Each can load a symbol into the chart.</p></div><span class="personal-option-chip">CONNECTED</span></div>
+        <div class="personal-scanner-links">
+          <button type="button" data-personal-scanner="symbol-scanner">Live Watchlist Scanner</button>
+          <button type="button" data-personal-scanner="sector-scanner-launch">Sector Scanner · 17 sectors</button>
+          <button type="button" data-personal-scanner="tactical-scanner-launch">Tactical RTIC Scanner</button>
+          <button type="button" data-personal-scanner="rolMtfGrid">Multi-timeframe posture</button>
+        </div>
+        <p class="personal-muted">Scan results are research filters. A signal label is not an instruction to trade.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="personal-panel personal-range-panel">
+    <div class="personal-panel-title"><div><p class="personal-kicker">06 / EXECUTION CHART WINDOWS</p><h2>Chart Timeframes</h2><p>Choose the candle interval or a daily lookback window.</p></div><span id="rolPersonalChartRange" class="personal-range-readout">Current chart · 1D</span></div>
+    <div class="personal-range-group"><span>Intraday / bar interval</span><div class="personal-range-buttons">
+      <button type="button" data-rol-interval="1m">1 min</button><button type="button" data-rol-interval="5m">5 min</button><button type="button" data-rol-interval="10m">10 min</button><button type="button" data-rol-interval="15m">15 min</button><button type="button" data-rol-interval="30m">30 min</button><button type="button" data-rol-interval="1h">1 hour</button><button type="button" data-rol-interval="2h">2 hours</button><button type="button" data-rol-interval="4h">4 hours</button><button type="button" data-rol-interval="1d">1 day</button><button type="button" data-rol-interval="1mo">1 month</button>
+    </div></div>
+    <div class="personal-range-group"><span>Daily history window</span><div class="personal-range-buttons">
+      <button type="button" data-rol-range-days="90" data-rol-range-label="3M / 1D">3M / 1D</button><button type="button" data-rol-range-days="180" data-rol-range-label="6M / 1D">6M / 1D</button><button type="button" data-rol-range-days="365" data-rol-range-label="1Y / 1D">1Y / 1D</button><button type="button" data-rol-range-days="1095" data-rol-range-label="3Y / 1D">3Y / 1D</button>
+    </div></div>
+    <p class="personal-muted">10-minute bars are locally aggregated from provider 1-minute OHLCV bars. Longer daily windows request up to 1,000 candles. Actual history depends on provider coverage and entitlement; missing data is shown as unavailable.</p>
+  </section>
+
+  <div class="personal-sim-disclosure"><strong>PAPER-ONLY DISCLOSURE</strong><span>This workspace does not connect to a brokerage. “Run paper simulation” records a local planning scenario only; it does not place, route, cancel, or monitor real orders. Quotes may be delayed or unavailable. Verify all inputs independently.</span></div>
+</section>
+
+<div class="personal-execution-backdrop" id="rolExecutionBackdrop" hidden></div>
+<section class="personal-execution-modal" id="rolExecutionModal" hidden role="dialog" aria-modal="true" aria-labelledby="rolExecutionTitle">
+  <div class="personal-execution-head"><div><p class="personal-kicker">RO’LYFE · PAPER ORDER TICKET</p><h2 id="rolExecutionTitle">Execution Review</h2><p id="rolExecutionMeta">Preparing quote and chart context…</p></div><button type="button" id="rolExecutionClose" aria-label="Close execution ticket">×</button></div>
+  <div class="personal-execution-status-row"><span id="rolExecutionPosture" class="signal-neutral">NEUTRAL · WAIT</span><span id="rolExecutionQuote" class="personal-muted">Quote pending</span></div>
+  <div class="personal-execution-fields">
+    <label>Side<select id="rolExecutionSide"><option value="BUY">BUY</option><option value="SELL">SELL</option></select></label>
+    <label>Order style<select id="rolExecutionType"><option value="MARKET">Market · simulated at displayed quote</option><option value="LIMIT">Limit · scenario only</option><option value="STOP">Stop · scenario only</option><option value="STOP_LIMIT">Stop-limit · scenario only</option></select></label>
+    <label>Entry / assumed fill ($)<input id="rolExecutionEntry" type="number" min="0.0001" step="0.0001" placeholder="Waiting for quote"></label>
+    <label>Stop loss ($)<input id="rolExecutionStop" type="number" min="0.0001" step="0.0001" placeholder="Enter planned stop"></label>
+    <label>Target ($)<input id="rolExecutionTarget" type="number" min="0.0001" step="0.0001" placeholder="Enter planned target"></label>
+    <label>Shares / units<input id="rolExecutionQty" type="number" min="1" step="1" value="1"></label>
+    <label>Risk budget ($)<input id="rolExecutionBudget" type="number" min="0" step="0.01" value="100"></label>
+  </div>
+  <div class="personal-execution-summary" id="rolExecutionSummary">A quote and valid stop are needed to calculate the plan.</div>
+  <div class="personal-execution-actions"><button type="button" class="personal-ask-atlas" id="rolExplainExecution">Ask Atlas to explain</button><button type="button" class="personal-run-paper" id="rolRunPaperExecution">Run paper simulation</button></div>
+  <p class="personal-muted">Market mode uses the latest displayed provider quote as a hypothetical price only. Limit/stop modes are scenario labels, not broker-triggered orders. Every simulation is saved only in this browser.</p>
+</section>
+
+<div class="personal-atlas" id="rolPersonalAtlas">
+  <button type="button" class="personal-atlas-launch" id="rolAtlasLaunch" aria-expanded="false" aria-controls="rolAtlasPanel"><span class="personal-atlas-orb">A</span><span>Atlas · AI</span><i>⌃</i></button>
+  <section class="personal-atlas-panel" id="rolAtlasPanel" hidden>
+    <div class="personal-atlas-head"><div><strong>Atlas</strong><small>RO’Lyfe Trading Guide · analysis only</small></div><button type="button" id="rolAtlasClose" aria-label="Close Atlas">×</button></div>
+    <div class="personal-atlas-shortcuts"><button type="button" data-atlas-prompt="Explain the selected chart posture and what would invalidate the setup.">Read chart</button><button type="button" data-atlas-prompt="Explain the risk, stop loss, target and position size for the current paper execution ticket.">Explain execution</button><button type="button" data-atlas-prompt="Explain bullish, bearish and neutral signals in plain language.">Explain labels</button></div>
+    <label class="sr-only" for="rolAtlasQuestion">Ask Atlas a question</label>
+    <textarea id="rolAtlasQuestion" rows="3" maxlength="2400" placeholder="Ask Atlas about the chart, scanner, risk or execution…"></textarea>
+    <div class="personal-atlas-actions"><button type="button" id="rolAtlasAsk">Ask Atlas</button><button type="button" id="rolAtlasSpeak">Read aloud</button><button type="button" id="rolAtlasStop">Stop</button></div>
+    <p id="rolAtlasStatus" aria-live="polite">Atlas can explain the supplied data. It does not place trades.</p>
+    <div id="rolAtlasAnswer" aria-live="polite">Your chart and paper-ticket explanations will appear here.</div>
+  </section>
+</div>
+
 <section class="intro"><div><p class="eyebrow">RO’LYFE TRADING INTELLIGENCE CLASSROOM</p><h1>Live Chart Desk</h1><p class="sub">Search a ticker, load its chart, and keep your watchlist beside the price action.</p></div><div class="market-label"><span>CHART FEED</span><strong>Tickerbot OHLCV</strong><small>Historical candles; refresh and coverage depend on provider.</small></div></section>
 <section class="searchbar"><label for="symbolSearch">Search ticker / symbol</label><div class="searchline"><input id="symbolSearch" value="NASDAQ:AAPL" placeholder="e.g. NASDAQ:NVDA, BTCUSD, NYSE:SPY" autocomplete="off"><button id="loadSymbol">Load chart</button></div><div class="quick"><button data-symbol="NASDAQ:AAPL">AAPL</button><button data-symbol="NASDAQ:NVDA">NVDA</button><button data-symbol="NASDAQ:TSLA">TSLA</button><button data-symbol="AMEX:SPY">SPY</button><button data-symbol="BTC-USD">BTC</button><button data-symbol="ETH-USD">ETH</button><button data-symbol="SOL-USD">SOL</button></div><p class="hint">Use a stock ticker such as NVDA or SPY. Crypto candles use Tickerbot's X:BASEUSD format; quote symbols remain BASE-USD.</p></section>
 <details class="rol-scanner-switcher desk-scanner-switcher" id="rolScannerDirectory"><summary>🔎 SCANNER DIRECTORY · Choose a workspace</summary><div class="rol-scanner-switcher-links"><a href="#symbol-scanner" data-open-live-scanner>Live Desk Watchlist Scanner · open in this page</a><a href="#market-room">Classroom Market Room · practice workspace</a><a href="#sector-scanner-launch">Sector Scanner + Chart Lab · 17 sectors</a><a href="#tactical-scanner-launch">Tactical Intelligence RTIC Scanner · embedded below</a><a href="https://rolrichman.github.io/RO-Lyfe-Tactical-Intelligence-Center-/" target="_blank" rel="noopener">Open Tactical Intelligence Center ↗</a><a href="https://rolrichman.github.io/rolyfe-market-terminal/" target="_blank" rel="noopener">Market Terminal Scanner ↗</a><a href="https://rolrichman.github.io/ROlyfe-Trading-Calculator-Pro/" target="_blank" rel="noopener">Trading Calculator Pro · module status ↗</a></div></details>
@@ -157,5 +284,6 @@
 <script src="../js/rol-tools.js"></script>
 <script src="chart-desk.js"></script>
 <script src="posture-extension.js"></script>
+<script src="personal-trade-desk.js"></script>
 <div class="desk-scroll-controls" aria-label="Page navigation"><button type="button" id="deskScrollMid" title="Jump to middle of page" aria-label="Jump to middle of page">↕</button><button type="button" id="deskScrollTop" title="Back to top" aria-label="Back to top">↑</button></div>
 </body></html>

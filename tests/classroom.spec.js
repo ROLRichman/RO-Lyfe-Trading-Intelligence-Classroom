@@ -332,3 +332,35 @@ test('tablet portrait layout has no horizontal overflow and the menu opens and c
   await page.locator('#mainNav a[href="#market-room"]').click();
   await expect(page.locator('#mainNav')).not.toHaveClass(/open/);
 });
+
+
+test('Personal Trading Desk shows coach reference positions, imports momentum tickers and logs paper-only tickets', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  await page.route('**/functions/v1/market-data**', route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'provider disabled for deterministic UI test' }) }));
+  await page.goto('/live-chart-desk/?embed=classroom');
+  await expect(page.locator('#rolPersonalDesk')).toBeVisible();
+  await expect(page.locator('#rolPersonalClock')).not.toHaveText('--:--:--');
+  await expect(page.locator('#rolPersonalCalendar')).toHaveValue(/[0-9]{4}-[0-9]{2}-[0-9]{2}/);
+  await page.locator('#rolPersonalWatchlistSelect').selectOption('coach');
+  await expect(page.locator('.personal-position-row')).toHaveCount(18);
+  await expect(page.locator('.personal-alert-row')).toHaveCount(3);
+  await page.locator('.personal-watch-card').filter({ hasText: 'GRAL' }).click();
+  await expect(page.locator('#rolExecutionModal')).toBeVisible();
+  await expect(page.locator('#rolExecutionEntry')).toHaveValue('121.6000');
+  await expect(page.locator('#rolExecutionStop')).toHaveValue('113.0300');
+  await page.locator('#rolRunPaperExecution').click();
+  await expect(page.locator('#rolExecutionSummary')).toContainText('NO ORDER WAS SENT');
+  const paperLog = await page.evaluate(() => JSON.parse(localStorage.getItem('rol-personal-paper-executions') || '[]'));
+  expect(paperLog).toHaveLength(1);
+  expect(paperLog[0].sentToBroker).toBe(false);
+  await page.locator('#rolExecutionClose').click();
+  await page.locator('#rolPersonalWatchlistSelect').selectOption('discovery');
+  await page.locator('#rolMomentumImportText').fill('GRAL, CRL, WAT');
+  await page.locator('#rolImportMomentum').click();
+  await expect(page.locator('#rolPersonalWatchlistCards')).toContainText('GRAL');
+  await expect(page.locator('#rolMomentumImportStatus')).toContainText('3 ticker(s) imported');
+  await expect(page.locator('#rolAtlasLaunch')).toBeVisible();
+  await expect(page.locator('#rolAtlasPanel')).toBeHidden();
+  expect(pageErrors).toEqual([]);
+});
