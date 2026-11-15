@@ -164,7 +164,7 @@ test('classroom provides working live Tactical Center launch links', async ({ pa
   expect(missingHrefs).toEqual([]);
 });
 
-test('Classroom exposes funding and credit links, utility controls and five-language translator', async ({ page }) => {
+test('Classroom exposes funding and credit links, utility controls and twelve-language translator', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#mainNav .rol-nav-dropdown')).toBeAttached();
   await expect(page.locator('#mainNav [data-rol-links-menu] a')).toHaveCount(50);
@@ -172,7 +172,7 @@ test('Classroom exposes funding and credit links, utility controls and five-lang
   await expect(page.locator('#rolFocusBtn')).toBeVisible();
   await expect(page.locator('#rolZoomSlider')).toHaveAttribute('min', '75');
   await expect(page.locator('#rolZoomSlider')).toHaveAttribute('max', '125');
-  await expect(page.locator('#rol-classroom-translator [data-translate-target]')).toHaveCount(5);
+  await expect(page.locator('#rol-classroom-translator [data-translate-target]')).toHaveCount(12);
   await expect(page.locator('#classroomChartFrame')).toHaveAttribute('allow', /fullscreen/);
   await expect(page.locator('#classroomChartFrame')).toHaveAttribute('src', /live-chart-desk/);
 });
@@ -239,7 +239,7 @@ test('Live Desk has additional discovery and futures lists, same-chart scanner, 
   await expect(media.locator('.channels details')).toHaveCount(4);
   await expect(media.locator('#muteAll')).toBeVisible();
   await expect(media.locator('#sports-center iframe')).toHaveAttribute('src', /RO-Lyfe-Live-Sports-Center/);
-  await expect(page.locator('#translator [data-translate-target]')).toHaveCount(5);
+  await expect(page.locator('#translator [data-translate-target]')).toHaveCount(12);
   await expect(page.locator('#technicalPosturePanel')).toBeAttached();
   await expect(page.locator('#hmaToggle')).toBeAttached();
   await expect(page.locator('#indicatorSelect option[value="hma"]')).toHaveCount(1);
@@ -268,7 +268,7 @@ test('Live Desk exposes provider-backed higher timeframes and the Sector Scanner
   expect(monthlyAccepted).toBe(true);
 });
 
-test('Classroom themes change five background palettes and language selector stays in translator', async ({ page }) => {
+test('Classroom themes change five background palettes and twelve-language selector stays in translator', async ({ page }) => {
   await page.goto('/');
   const themes = [
     ['blue', '#07101d', '#70a7ff'],
@@ -289,7 +289,7 @@ test('Classroom themes change five background palettes and language selector sta
   }
   const language = page.locator('#rolTranslateLanguageSelect');
   await expect(language).toBeVisible();
-  await expect(language.locator('option')).toHaveCount(5);
+  await expect(language.locator('option')).toHaveCount(12);
   await language.selectOption('Haitian Creole');
   await expect(language).toHaveValue('Haitian Creole');
   await expect(page.locator('#rolTranslateSelected')).toBeVisible();
