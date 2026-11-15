@@ -496,3 +496,9 @@ if(typeof savedView.hma==="boolean"&&$("#hmaToggle"))$("#hmaToggle").checked=sav
 if(savedView.ma&&typeof savedView.ma==="object")document.querySelectorAll(".ma-toggle").forEach(el=>{if(typeof savedView.ma[el.value]==="boolean")el.checked=savedView.ma[el.value];});
 renderList();chart(current,false);renderOptionLadder();renderMovingAverages();renderIndicator();window.ROLyfeTradeContext=()=>({symbol:current,chart:window.ROLyfeChartDesk?.getState?.()||{},currentQuote:quotes[current]||null,stockLadder:$("#stockLadderOutput")?.innerText||"",stockOrderDraft:$("#stockOrderPreview")?.innerText||"",optionChoice:$("#rolTradeAiMode")?.value||"auto",selectedOption:selectedOptionContract||null,optionLadder:$("#optionBracketText")?.textContent||"",optionPremiumFields:{entry:$("#optEntry")?.value,stop:$("#optStop")?.value,contracts:$("#optQty")?.value,budget:$("#optBudget")?.value}});setInterval(()=>{loadBars();showQuote(findItem(current)).catch(()=>{});},60000);
 })();
+
+window.addEventListener("rol-global-symbol-change",event=>{
+ const selected=String(event.detail&&event.detail.symbol||"").trim().toUpperCase();
+ if(!selected)return;
+ try{chart(selected,false);}catch(error){const status=document.querySelector("#chartStatus");if(status)status.textContent="Global symbol selected: "+selected+". This chart could not load it yet."}
+});
