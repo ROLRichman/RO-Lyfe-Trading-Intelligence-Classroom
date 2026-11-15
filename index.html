@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/market-room.css">
   <link rel="stylesheet" href="rol-engine-identity.css?v=20261113-1">
+  <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/rolyfe-global-tools.js?v=20261115-2" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -66,11 +67,11 @@
     <div id="classroomChartFrameWrap"><iframe id="classroomChartFrame" title="RO’Lyfe real market chart, watchlist, quotes and indicators" loading="eager" allow="fullscreen" src="live-chart-desk/?embed=classroom&amp;symbol=AAPL"></iframe></div>
     <p class="tiny classroom-advanced-link"><a href="live-chart-desk/">Open the advanced Live Chart Desk directly →</a></p>
   </section>
-  <script>(function(){const select=document.getElementById("classroomSymbol"),frame=document.getElementById("classroomChartFrame");if(!select||!frame)return;const send=()=>{try{frame.contentWindow.postMessage({type:"rol-set-chart-symbol",symbol:select.value},location.origin)}catch(_){}};frame.addEventListener("load",send);select.addEventListener("change",send);window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.type==="rol-live-chart-symbol"){const value=String(e.data.symbol||"");let option=Array.from(select.options).find(o=>o.value===value);if(!option){option=document.createElement("option");option.value=value;option.textContent=value+" — Custom";select.add(option)}select.value=value}});setTimeout(send,800);setTimeout(send,1800)})();</script>
+  <script>(function(){const select=document.getElementById("classroomSymbol"),frame=document.getElementById("classroomChartFrame");if(!select||!frame)return;const send=()=>{try{frame.contentWindow.postMessage({type:"rol-set-chart-symbol",symbol:select.value},location.origin)}catch(_){}};frame.addEventListener("load",send);select.addEventListener("change",send);window.addEventListener("rol-global-symbol-change",e=>{const value=String(e.detail?.symbol||"").toUpperCase();if(!value)return;let option=Array.from(select.options).find(o=>o.value===value);if(!option){option=document.createElement("option");option.value=value;option.textContent=value+" — Global instrument";select.add(option)}select.value=value;send()});window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.type==="rol-live-chart-symbol"){const value=String(e.data.symbol||"");let option=Array.from(select.options).find(o=>o.value===value);if(!option){option=document.createElement("option");option.value=value;option.textContent=value+" — Custom";select.add(option)}select.value=value}});setTimeout(send,800);setTimeout(send,1800)})();</script>
 
 <section class="section rol-translator" id="rol-classroom-translator">
-  <div class="section-heading"><div><p class="eyebrow">RO’LYFE CLASSROOM TOOLS</p><h2>Five-Language Translator</h2><p class="muted">Translate lessons, notes and trading explanations. Symbols, prices and formulas are preserved in the translation.</p></div></div>
-  <div class="rol-language-select-row"><label for="rolTranslateLanguageSelect">Select Language</label><select id="rolTranslateLanguageSelect"><option value="English">English</option><option value="Spanish">Español</option><option value="French">Français</option><option value="Haitian Creole">Kreyòl Ayisyen</option><option value="Portuguese">Português</option></select><button type="button" id="rolTranslateSelected" class="rol-control">Translate selected language</button></div>
+  <div class="section-heading"><div><p class="eyebrow">RO’LYFE CLASSROOM TOOLS</p><h2>12-Language Translator</h2><p class="muted">Translate lessons, notes and trading explanations. Symbols, prices and formulas are preserved in the translation.</p></div></div>
+  <div class="rol-language-select-row"><label for="rolTranslateLanguageSelect">Select Language</label><select id="rolTranslateLanguageSelect"><option value="English">English</option><option value="Spanish">Español</option><option value="French">Français</option><option value="Haitian Creole">Kreyòl Ayisyen</option><option value="Portuguese">Português</option><option value="German">Deutsch</option><option value="Italian">Italiano</option><option value="Arabic">العربية</option><option value="Chinese (Simplified)">简体中文</option><option value="Japanese">日本語</option><option value="Korean">한국어</option><option value="Hindi">हिन्दी</option></select><button type="button" id="rolTranslateSelected" class="rol-control">Translate selected language</button></div>
   <label for="rolTranslateInput">Text to translate</label>
   <textarea id="rolTranslateInput" rows="3" maxlength="4000" placeholder="Paste the message, explanation or trading term here…"></textarea>
   <div class="rol-language-buttons" aria-label="Choose translation language">
@@ -79,6 +80,13 @@
     <button type="button" data-translate-target="French" class="lang-fr">Français</button>
     <button type="button" data-translate-target="Haitian Creole" class="lang-ht">Kreyòl Ayisyen</button>
     <button type="button" data-translate-target="Portuguese" class="lang-pt">Português</button>
+    <button type="button" data-translate-target="German">Deutsch</button>
+    <button type="button" data-translate-target="Italian">Italiano</button>
+    <button type="button" data-translate-target="Arabic">العربية</button>
+    <button type="button" data-translate-target="Chinese (Simplified)">简体中文</button>
+    <button type="button" data-translate-target="Japanese">日本語</button>
+    <button type="button" data-translate-target="Korean">한국어</button>
+    <button type="button" data-translate-target="Hindi">हिन्दी</button>
   </div>
   <p id="rolTranslateStatus" class="tiny muted" aria-live="polite">Translation requires the classroom AI service and its server-side provider key.</p>
   <div id="rolTranslateResult" class="rol-translator-output" aria-live="polite">Your translation will appear here.</div>
