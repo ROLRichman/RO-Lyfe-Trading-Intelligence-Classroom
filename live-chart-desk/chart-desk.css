@@ -320,3 +320,26 @@ body.rol-focus-locked main{padding-top:6px}body.rol-focus-locked .layout{display
 .tactical-scanner-launch>summary:before{border-color:#4bba8a;color:#7be6b7}
 #tacticalScannerFrame{display:block;width:100%;height:980px;min-height:760px;border:1px solid var(--line);border-radius:12px;background:#050b09}
 @media(max-width:700px){#tacticalScannerFrame{height:1080px;min-height:900px}.desk-scanner-switcher .rol-scanner-switcher-links{width:100%}}
+
+
+/* Collapsible display tools; IDs remain unchanged for the existing control script. */
+.rol-utility-fold{display:block;width:min(1180px,calc(100% - 28px));margin:8px auto 12px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,var(--panel),var(--panel2));overflow:hidden}
+.rol-utility-fold>.rol-utility-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;padding:8px 11px;color:var(--text);font-size:11px;font-weight:800;cursor:pointer;list-style:none}
+.rol-utility-fold>.rol-utility-summary::-webkit-details-marker{display:none}
+.rol-utility-fold>.rol-utility-summary:after{content:"+";color:var(--blue);font-size:16px}
+.rol-utility-fold[open]>.rol-utility-summary:after{content:"−"}
+.rol-utility-fold>.rol-utility-summary span{color:var(--muted);font-size:10px;font-weight:600}
+.rol-utility-fold[open]>.rol-utility-summary{border-bottom:1px solid var(--line)}
+.rol-utility-fold .rol-utility-bar{margin:0;padding:8px 10px;border:0;border-radius:0;box-shadow:none}
+body.rol-focus-locked .top,body.rol-focus-locked .intro{display:none!important}
+body.rol-focus-locked .rol-utility-fold{position:sticky;top:0;z-index:100}
+body.rol-focus-locked .rol-utility-fold .rol-theme-picker{display:none!important}
+
+/* One small floating entry point holds Mid-page, Lock screen and Top. */
+.desk-scroll-controls{right:10px;bottom:12px;align-items:flex-end;gap:7px}
+.desk-scroll-controls .desk-scroll-toggle{width:auto;min-width:94px;height:34px;padding:0 11px;border:1px solid #486481;border-radius:18px;background:rgba(9,20,34,.96);color:#e7f2ff;font-size:10px;font-weight:850;letter-spacing:.01em}
+.desk-scroll-actions{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:7px;border:1px solid #37526e;border-radius:13px;background:rgba(5,14,25,.96);box-shadow:0 8px 24px #0009;backdrop-filter:blur(10px)}
+.desk-scroll-actions[hidden]{display:none!important}
+.desk-scroll-controls .desk-scroll-actions button{width:116px;height:34px;padding:0 9px;text-align:left;font-size:10px}
+.desk-scroll-controls .desk-scroll-actions button[aria-pressed="true"]{border-color:#50e0a2;color:#9af0c2;background:#10291e}
+@media(max-width:640px){.desk-scroll-controls{right:8px;bottom:10px}.desk-scroll-controls .desk-scroll-toggle{min-height:36px}.desk-scroll-controls .desk-scroll-actions{padding:6px}.desk-scroll-controls .desk-scroll-actions button{width:112px;height:36px}}

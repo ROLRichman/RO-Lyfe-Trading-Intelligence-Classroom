@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/market-room.css">
   <link rel="stylesheet" href="rol-engine-identity.css?v=20261113-1">
-  <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/rolyfe-global-tools.js?v=20261115-5" defer></script>
+  <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/rolyfe-global-tools.js?v=20261116-1" defer></script>
 <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/atlas-local.js?v=20261115-3" defer></script>
 <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/atlas-universal.js?v=20261115-2" defer></script>
 </head>
@@ -27,12 +27,15 @@
     </nav>
   </header>
 
+  <details class="rol-utility-fold" id="rolUtilityFold">
+  <summary class="rol-utility-summary">🛠 Screen &amp; display controls <span>Open tools ▾</span></summary>
   <div class="rol-utility-bar" aria-label="Classroom display controls">
   <button type="button" class="rol-control" id="rolFullscreenBtn">⛶ Full Screen</button>
   <button type="button" class="rol-control" id="rolFocusBtn" aria-pressed="false">🔒 Lock Focus</button>
   <label class="rol-zoom-control" for="rolZoomSlider">Zoom <input id="rolZoomSlider" type="range" min="75" max="125" step="5" value="100"><output id="rolZoomValue">100%</output></label>
   <div class="rol-theme-picker" aria-label="Choose classroom background theme"><span>Theme</span><button type="button" data-rol-theme="blue" aria-label="Ocean Blue background" title="Ocean Blue" style="--swatch:#70a7ff"></button><button type="button" data-rol-theme="green" aria-label="Lyfe Green background" title="Lyfe Green" style="--swatch:#65d6a0"></button><button type="button" data-rol-theme="amber" aria-label="Amber background" title="Amber" style="--swatch:#e8bd68"></button><button type="button" data-rol-theme="violet" aria-label="Violet background" title="Violet" style="--swatch:#b59aff"></button><button type="button" data-rol-theme="crimson" aria-label="Crimson background" title="Crimson" style="--swatch:#ef7187"></button></div>
-</div>
+  </div>
+  </details>
   <main id="top">
     <section class="hero rol-engine-hero" data-rol-engine="trading">
       <div class="hero-copy">

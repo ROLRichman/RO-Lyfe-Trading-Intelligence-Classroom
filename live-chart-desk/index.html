@@ -4,19 +4,22 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#05070b">
 <title>RO’Lyfe Live Chart Desk™</title>
 <link rel="stylesheet" href="chart-desk.css"><script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js"></script><script>window.addEventListener("load",function(){if(!window.LightweightCharts){var s=document.createElement("script");s.src="https://unpkg.com/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js";s.onload=function(){if(window.ROLyfeChartDesk&&window.ROLyfeChartDesk.refresh)window.ROLyfeChartDesk.refresh();};document.head.appendChild(s);}});</script>
-<script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/rolyfe-global-tools.js?v=20261115-5" defer></script>
+<script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/rolyfe-global-tools.js?v=20261116-1" defer></script>
 <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/atlas-local.js?v=20261115-3" defer></script>
 <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/atlas-universal.js?v=20261115-2" defer></script>
 </head>
 <body>
 <script>(function(){const mode=new URLSearchParams(location.search).get('embed');if(mode==='auction')document.body.classList.add('auction-embed');if(mode==='classroom')document.body.classList.add('classroom-embed');})();</script>
 <header class="top"><a class="brand" href="../index.html">RO’Lyfe <span>LIVE CHART DESK™</span></a><div class="top-actions"><button id="toggleSidebar" class="sidebar-toggle" type="button" aria-controls="marketSidebar" aria-expanded="false">☰ Watchlist</button><details class="rol-nav-dropdown"><summary>Funding &amp; Credit ▾</summary><div class="rol-menu-panel" data-rol-links-menu></div></details><div class="top-status"><i></i> CONNECTED CHART WORKSPACE</div><a class="back" href="../index.html">← Classroom</a></div></header>
-<div class="rol-utility-bar" aria-label="Classroom display controls">
+<details class="rol-utility-fold" id="rolUtilityFold">
+  <summary class="rol-utility-summary">🛠 Screen &amp; display controls <span>Open tools ▾</span></summary>
+  <div class="rol-utility-bar" aria-label="Classroom display controls">
   <button type="button" class="rol-control" id="rolFullscreenBtn">⛶ Full Screen</button>
   <button type="button" class="rol-control" id="rolFocusBtn" aria-pressed="false">🔒 Lock Focus</button>
   <label class="rol-zoom-control" for="rolZoomSlider">Zoom <input id="rolZoomSlider" type="range" min="75" max="125" step="5" value="100"><output id="rolZoomValue">100%</output></label>
   <div class="rol-theme-picker" aria-label="Choose classroom highlight color"><span>Accent</span><button type="button" data-rol-theme="blue" aria-label="Blue theme" style="--swatch:#70a7ff"></button><button type="button" data-rol-theme="green" aria-label="Green theme" style="--swatch:#65d6a0"></button><button type="button" data-rol-theme="amber" aria-label="Amber theme" style="--swatch:#e8bd68"></button><button type="button" data-rol-theme="violet" aria-label="Violet theme" style="--swatch:#b59aff"></button><button type="button" data-rol-theme="teal" aria-label="Teal theme" style="--swatch:#63d4d0"></button></div>
-</div>
+  </div>
+  </details>
 <main>
 <section class="intro"><div><p class="eyebrow">RO’LYFE TRADING INTELLIGENCE CLASSROOM</p><h1>Live Chart Desk</h1><p class="sub">Search a ticker, load its chart, and keep your watchlist beside the price action.</p></div><div class="market-label"><span>CHART FEED</span><strong>Tickerbot OHLCV</strong><small>Historical candles; refresh and coverage depend on provider.</small></div></section>
 <section class="searchbar"><label for="symbolSearch">Search ticker / symbol</label><div class="searchline"><input id="symbolSearch" value="NASDAQ:AAPL" placeholder="e.g. NASDAQ:NVDA, BTCUSD, NYSE:SPY" autocomplete="off"><button id="loadSymbol">Load chart</button></div><div class="quick"><button data-symbol="NASDAQ:AAPL">AAPL</button><button data-symbol="NASDAQ:NVDA">NVDA</button><button data-symbol="NASDAQ:TSLA">TSLA</button><button data-symbol="AMEX:SPY">SPY</button><button data-symbol="BTC-USD">BTC</button><button data-symbol="ETH-USD">ETH</button><button data-symbol="SOL-USD">SOL</button></div><p class="hint">Use a stock ticker such as NVDA or SPY. Crypto candles use Tickerbot's X:BASEUSD format; quote symbols remain BASE-USD.</p></section>
@@ -160,5 +163,12 @@
 <script src="../js/rol-tools.js"></script>
 <script src="chart-desk.js"></script>
 <script src="posture-extension.js"></script>
-<div class="desk-scroll-controls" aria-label="Page navigation"><button type="button" id="deskScrollMid" title="Jump to middle of page" aria-label="Jump to middle of page">↕</button><button type="button" id="deskScrollTop" title="Back to top" aria-label="Back to top">↑</button></div>
+<div class="desk-scroll-controls" aria-label="Page navigation">
+  <button type="button" id="deskScrollToggle" class="desk-scroll-toggle" aria-expanded="false" aria-controls="deskScrollActions">☰ Page tools</button>
+  <div id="deskScrollActions" class="desk-scroll-actions" hidden>
+    <button type="button" id="deskScrollMid" title="Jump to middle of page" aria-label="Jump to middle of page">↕ Mid-page</button>
+    <button type="button" id="deskLockFocus" title="Hide page header for a focused chart view" aria-label="Lock screen" aria-pressed="false">🔒 Lock screen</button>
+    <button type="button" id="deskScrollTop" title="Back to top" aria-label="Back to top">↑ Top</button>
+  </div>
+</div>
 </body></html>
