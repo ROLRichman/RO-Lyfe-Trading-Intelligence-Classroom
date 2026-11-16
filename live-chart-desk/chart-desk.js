@@ -485,10 +485,16 @@ const sectorPanel=$("#sector-scanner-launch"),sectorFrame=$("#sectorScannerFrame
 $("[data-open-sector-scanner]")?.addEventListener("click",()=>{if(layout.classList.contains("sidebar-open"))setSidebar(false);if(sectorPanel){sectorPanel.open=true;sectorPanel.scrollIntoView({behavior:"smooth",block:"start"});}});
 window.addEventListener("message",e=>{if(e.origin!==location.origin||!sectorFrame||e.source!==sectorFrame.contentWindow||!e.data||e.data.type!=="rol-sports-embed-height")return;const h=Number(e.data.height);if(Number.isFinite(h)&&h>400&&h<9000)sectorFrame.style.height=Math.ceil(h)+"px";});
 const scrollTop=$("#deskScrollTop"),scrollMid=$("#deskScrollMid"),scrollControls=$(".desk-scroll-controls");
+const scrollToggle=$("#deskScrollToggle"),scrollActions=$("#deskScrollActions"),deskLock=$("#deskLockFocus"),focusControl=$("#rolFocusBtn");
+function closePageTools(){if(scrollActions)scrollActions.hidden=true;if(scrollToggle)scrollToggle.setAttribute("aria-expanded","false");if(scrollControls)scrollControls.classList.remove("open");}
+function syncDeskLock(){const active=document.body.classList.contains("rol-focus-locked");if(deskLock){deskLock.setAttribute("aria-pressed",String(active));deskLock.textContent=active?"🔓 Unlock screen":"🔒 Lock screen";}}
 function updateScrollControls(){if(scrollControls)scrollControls.classList.toggle("visible",window.scrollY>380);}
-scrollTop?.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
-scrollMid?.addEventListener("click",()=>window.scrollTo({top:Math.max(0,Math.round((document.documentElement.scrollHeight-window.innerHeight)/2)),behavior:"smooth"}));
-window.addEventListener("scroll",updateScrollControls,{passive:true});updateScrollControls();
+scrollToggle?.addEventListener("click",()=>{const open=!!scrollActions&&scrollActions.hidden; if(scrollActions)scrollActions.hidden=!open;if(scrollToggle)scrollToggle.setAttribute("aria-expanded",String(open));if(scrollControls)scrollControls.classList.toggle("open",open);});
+scrollTop?.addEventListener("click",()=>{closePageTools();window.scrollTo({top:0,behavior:"smooth"});});
+scrollMid?.addEventListener("click",()=>{closePageTools();window.scrollTo({top:Math.max(0,Math.round((document.documentElement.scrollHeight-window.innerHeight)/2)),behavior:"smooth"});});
+deskLock?.addEventListener("click",()=>{if(focusControl)focusControl.click();else document.body.classList.toggle("rol-focus-locked");syncDeskLock();closePageTools();});
+focusControl?.addEventListener("click",syncDeskLock);
+window.addEventListener("scroll",updateScrollControls,{passive:true});updateScrollControls();syncDeskLock();
 if(savedView.candleStyle&&["standard","heikin"].includes(savedView.candleStyle)){$("#candleStyle").value=savedView.candleStyle;candleStyle=savedView.candleStyle;}
 if(savedView.indicator)$("#indicatorSelect").value=savedView.indicator;
 if(typeof savedView.vwap==="boolean"&&$("#vwapToggle"))$("#vwapToggle").checked=savedView.vwap;
