@@ -197,7 +197,7 @@ test('Live Desk groups Mid-page, Lock screen and Top controls in a collapsible p
   await expect(page.locator('#deskLockFocus')).toHaveAttribute('aria-pressed', 'true');
   await page.evaluate(() => window.scrollTo(0, 500));
   await page.locator('#deskScrollToggle').click();
-  await page.locator('#deskScrollToggle').click();
+  await expect(page.locator('#deskLockFocus')).toContainText('Unlock screen');
   await page.locator('#deskLockFocus').click();
   await expect(page.locator('body')).not.toHaveClass(/rol-focus-locked/);
 });
