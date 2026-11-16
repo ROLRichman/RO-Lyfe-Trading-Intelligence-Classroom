@@ -168,6 +168,9 @@ test('Classroom exposes funding and credit links, utility controls and twelve-la
   await page.goto('/');
   await expect(page.locator('#mainNav .rol-nav-dropdown')).toBeAttached();
   await expect(page.locator('#mainNav [data-rol-links-menu] a')).toHaveCount(50);
+  await expect(page.locator('#rolUtilityFold')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#rolFullscreenBtn')).toBeHidden();
+  await page.locator('#rolUtilityFold > summary').click();
   await expect(page.locator('#rolFullscreenBtn')).toBeVisible();
   await expect(page.locator('#rolFocusBtn')).toBeVisible();
   await expect(page.locator('#rolZoomSlider')).toHaveAttribute('min', '75');
@@ -175,6 +178,28 @@ test('Classroom exposes funding and credit links, utility controls and twelve-la
   await expect(page.locator('#rol-classroom-translator [data-translate-target]')).toHaveCount(12);
   await expect(page.locator('#classroomChartFrame')).toHaveAttribute('allow', /fullscreen/);
   await expect(page.locator('#classroomChartFrame')).toHaveAttribute('src', /live-chart-desk/);
+});
+
+test('Live Desk groups Mid-page, Lock screen and Top controls in a collapsible page-tools menu', async ({ page }) => {
+  await page.goto('/live-chart-desk/?embed=classroom');
+  await expect(page.locator('#rolUtilityFold')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#rolFullscreenBtn')).toBeHidden();
+  await expect(page.locator('#deskScrollActions')).toBeHidden();
+  await page.locator('#deskScrollToggle').scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollTo(0, 500));
+  await expect(page.locator('.desk-scroll-controls')).toHaveClass(/visible/);
+  await page.locator('#deskScrollToggle').click();
+  await expect(page.locator('#deskScrollMid')).toBeVisible();
+  await expect(page.locator('#deskLockFocus')).toBeVisible();
+  await expect(page.locator('#deskScrollTop')).toBeVisible();
+  await page.locator('#deskLockFocus').click();
+  await expect(page.locator('body')).toHaveClass(/rol-focus-locked/);
+  await expect(page.locator('#deskLockFocus')).toHaveAttribute('aria-pressed', 'true');
+  await page.evaluate(() => window.scrollTo(0, 500));
+  await page.locator('#deskScrollToggle').click();
+  await page.locator('#deskScrollToggle').click();
+  await page.locator('#deskLockFocus').click();
+  await expect(page.locator('body')).not.toHaveClass(/rol-focus-locked/);
 });
 
 test('AI Co-Pilot sends the selected teaching role to the secure analysis endpoint', async ({ page }) => {
