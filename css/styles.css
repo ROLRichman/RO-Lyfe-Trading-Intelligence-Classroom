@@ -176,3 +176,9 @@ html[data-rol-theme] .ai-chips button {
 /* Keep the Classroom demo inside the phone viewport. */
 html,body{max-width:100%;overflow-x:clip}
 @media(max-width:620px){.ai-fab{left:14px;bottom:14px}.ai-panel{left:14px;right:14px;width:auto;bottom:78px}}
+
+/* Accessible floating classroom prompt builder. */
+.ai-fab{position:fixed!important;left:14px!important;right:auto!important;bottom:14px!important;z-index:2147483000!important;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border:1px solid #2d8b70;border-radius:999px;background:#123c32;color:#e9fff5;box-shadow:0 8px 28px #0008;cursor:pointer;pointer-events:auto}
+.ai-panel{position:fixed!important;left:14px!important;right:auto!important;bottom:78px!important;z-index:2147483001!important;width:min(390px,calc(100vw - 28px));max-height:min(72vh,640px);overflow:auto;padding:14px;border:1px solid #2b5263;border-radius:16px;background:#0d1b27;color:#e7f1f7;box-shadow:0 12px 36px #000a;pointer-events:auto}
+.ai-panel[hidden]{display:none!important}
+@media(max-width:620px){.ai-fab{left:14px!important;bottom:14px!important}.ai-panel{left:14px!important;right:14px!important;width:auto;bottom:78px!important}}
