@@ -356,6 +356,8 @@ test('Personal Trading Desk shows coach reference positions, imports momentum ti
   expect(paperLog[0].sentToBroker).toBe(false);
   await page.locator('#rolExecutionClose').click();
   await page.locator('#rolPersonalWatchlistSelect').selectOption('discovery');
+  await page.locator('.personal-import > summary').click();
+  await expect(page.locator('#rolMomentumImportText')).toBeVisible();
   await page.locator('#rolMomentumImportText').fill('GRAL, CRL, WAT');
   await page.locator('#rolImportMomentum').click();
   await expect(page.locator('#rolPersonalWatchlistCards')).toContainText('GRAL');
