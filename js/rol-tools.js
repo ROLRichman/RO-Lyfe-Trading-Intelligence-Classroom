@@ -1,6 +1,5 @@
 (() => {
   "use strict";
-  const API = "https://ykmdyfbklvuoseqdjnxy.supabase.co/functions/v1/rol-trading-ai";
   const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I";
   const $ = id => document.getElementById(id);
   async function aiRequest(_payload) {
