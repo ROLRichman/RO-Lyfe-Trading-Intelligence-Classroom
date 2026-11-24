@@ -298,26 +298,34 @@ function setAtlasOpen(open){
  panel.hidden=!open;button.setAttribute("aria-expanded",String(open));button.querySelector("i").textContent=open?"⌄":"⌃";
 }
 function askAtlas(){
- const input=$("#rolAtlasQuestion"),status=$("#rolAtlasStatus"),answer=$("#rolAtlasAnswer"),target=$("#rolTradeAiQuestion"),form=$("#rolTradeAiForm");
- const question=input?.value.trim();if(!question){if(status)status.textContent="Enter a question or choose a shortcut.";return;}
- if(!target||!form){if(status)status.textContent="Trading AI form is not available on this page.";return;}
- const state=getChartState(),context="Current symbol: "+(state.symbol||"unknown")+". Chart interval: "+(state.rangeLabel||state.interval||"unknown")+". Quote: "+(state.quote?money(state.quote.price)+" from "+state.quote.provider+" at "+state.quote.stamp:"not available")+". Chart posture: "+($("#technicalPostureBadge")?.textContent||"not available")+". Paper ticket: "+(activeTicket?($("#rolExecutionSummary")?.textContent||"open ticket"): "none open")+".";
- target.value=question+"\n\nAdditional current context: "+context;
- if($("#rolSidekickMode"))$("#rolSidekickMode").value="coach";
- if(status)status.textContent="Atlas is reviewing the current chart and the information supplied…";
- if(answer)answer.textContent="Atlas is preparing an explanation…";
- latestAnswer="";
- const observer=new MutationObserver(()=>{
-  const text=$("#rolTradeAiAnswer")?.textContent?.trim()||"";
-  if(text&&text!=="AI analysis will appear here after the first question."&&text!==latestAnswer){
-   latestAnswer=text;if(answer)answer.textContent=text;
-   if(status)status.textContent=$("#rolTradeAiStatus")?.textContent||"Atlas response ready.";
-   observer.disconnect();
-  }
- });
- if(answer)observer.observe($("#rolTradeAiAnswer"),{childList:true,characterData:true,subtree:true});
- form.requestSubmit();
- setTimeout(()=>{if(status&&status.textContent.includes("reviewing"))status.textContent=$("#rolTradeAiStatus")?.textContent||"Atlas request submitted to the trading analysis service.";},1800);
+ const input=$("#rolAtlasQuestion"),status=$("#rolAtlasStatus"),answer=$("#rolAtlasAnswer");
+ const question=input?.value.trim();
+ if(!question){if(status)status.textContent="Enter a question or choose a shortcut.";return;}
+ const state=getChartState();
+ const quote=state.quote&&Number.isFinite(Number(state.quote.price))
+  ?money(Number(state.quote.price))+" from "+(state.quote.provider||"unknown provider")+" at "+(state.quote.stamp||"timestamp not supplied")
+  :"not available or not verified";
+ const context=[
+  "Current symbol: "+(state.symbol||currentSymbol()||"not selected"),
+  "Chart timeframe: "+(state.rangeLabel||state.interval||"not supplied"),
+  "Visible quote: "+quote,
+  "Chart technical posture: "+($("#technicalPostureBadge")?.textContent||"not available"),
+  "Chart explanation: "+($("#technicalPostureCopy")?.textContent||"not available"),
+  "Paper ticket: "+(activeTicket?($("#rolExecutionSummary")?.textContent||"open paper ticket"):"none open"),
+  "Paper records are browser-local only. No brokerage is connected. This page does not send orders.",
+  "No cloud AI provider is connected to this answer. Do not infer or invent a live price, market feed, or missing indicator."
+ ].join("\n");
+ try{
+  const local=window.ROLyfeAtlasLocal;
+  const reply=local&&typeof local.respond==="function"
+   ?local.respond(question,context,{symbol:state.symbol||currentSymbol(),pageTitle:document.title,lastAction:"User asked Atlas Local Guide: "+question})
+   :"ATLAS · LOCAL GUIDE\nThe offline guide script is not available on this page. Check the Atlas Local Guide script connection. No cloud AI request was sent.";
+  if(answer)answer.textContent=reply;
+  if(status)status.textContent="Local guide ready · no cloud AI/API call used.";
+ }catch(error){
+  if(answer)answer.textContent="Atlas Local Guide could not complete this explanation. No cloud AI request was sent.";
+  if(status)status.textContent="Local guide error · "+(error?.message||"unknown error");
+ }
 }
 function speakAtlas(){
  const text=$("#rolAtlasAnswer")?.textContent?.trim();
