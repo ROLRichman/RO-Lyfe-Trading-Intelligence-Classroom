@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/market-room.css">
   <link rel="stylesheet" href="rol-engine-identity.css?v=20261113-1">
-  <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/rolyfe-global-tools.js?v=20261115-5" defer></script>
+  <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/rolyfe-global-tools.js?v=20261124-4" defer></script>
 <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/atlas-local.js?v=20261115-3" defer></script>
 <script src="https://rolrichman.github.io/rolyfe-personal-trading-desk/shared/atlas-universal.js?v=20261124-3" defer></script>
 </head>
@@ -310,13 +310,13 @@
     <footer><div class="brand footer-brand"><span class="brand-mark">R</span><span><strong>RO’Lyfe</strong><small>TRADE SMART. STAY DISCIPLINED.</small></span></div><p>Educational use only. This page uses illustrative data, not live quotes, investment advice, or brokerage execution. Options involve risk and may expire worthless.</p><a href="#top" class="back-top">↑ Back to top</a></footer>
   </main>
 
-  <button class="ai-fab" id="aiFab" aria-label="Open AI classroom questions" aria-expanded="false">✦<span>Ask AI</span></button>
+  <button class="ai-fab" id="aiFab" aria-label="Open AI classroom questions" aria-expanded="false">✦<span>Build Prompt</span></button>
   <aside class="ai-panel" id="aiPanel" aria-label="AI question helper" hidden>
-    <div class="ai-head"><div><strong>RO’Lyfe Intelligence Desk</strong><small>Connected AI assistant · Classroom questions and explanations</small></div><button class="icon-btn" id="aiClose" aria-label="Close assistant">×</button></div>
-    <p class="muted">Ask the classroom AI for explanations and trade-planning education. Classroom-level questions do not include live quotes; use the Live Desk AI to analyze chart and quote context.</p>
+    <div class="ai-head"><div><strong>RO’Lyfe Intelligence Desk</strong><small>Prompt builder · Cloud AI paused in this classroom preview</small></div><button class="icon-btn" id="aiClose" aria-label="Close assistant">×</button></div>
+    <p class="muted">Prepare a question here, then copy it into your preferred AI assistant. This classroom preview does not send questions to a cloud AI service.</p>
     <div class="ai-chips"><button data-prompt="Explain this Heikin-Ashi chart in educational terms.">Explain chart</button><button data-prompt="Compare this options strategy's risks and payoff.">Compare strategies</button><button data-prompt="Help me review this stock-first trade plan and identify missing risk controls.">Review trade plan</button><button data-prompt="Help me evaluate a real-estate investment's assumptions and downside risks.">Real estate</button></div>
     <label for="aiQuestion">Your question</label><textarea id="aiQuestion" rows="4" placeholder="Ask a trading, investing or real-estate question…"></textarea>
-    <div class="ai-actions"><button class="btn primary small" id="askAiNow">Ask Jamal</button><button class="btn ghost small" id="copyPrompt">Copy question</button><button class="btn ghost small" id="clearPrompt">Clear</button></div><div id="aiAnswer" class="rol-ai-answer" aria-live="polite"></div>
+    <div class="ai-actions"><button class="btn primary small" id="askAiNow">Prepare prompt</button><button class="btn ghost small" id="copyPrompt">Copy question</button><button class="btn ghost small" id="clearPrompt">Clear</button></div><div id="aiAnswer" class="rol-ai-answer" aria-live="polite"></div>
     <p id="aiStatus" class="tiny muted" aria-live="polite"></p>
   </aside>
 
