@@ -118,11 +118,18 @@ test('journal saves locally, survives reload, deletes entries and exports JSON',
   await expect(page.locator('#journalEntries')).not.toContainText('AAPL practice');
 });
 
-test('AI helper is clearly a prompt builder and opens/closes', async ({ page }) => {
+test('AI helper is a local prompt builder and sends no cloud AI requests', async ({ page }) => {
+  const aiRequests = [];
+  page.on('request', request => {
+    if (request.url().includes('/functions/v1/rol-trading-ai') || request.url().includes('/functions/v1/rol-trading-claude-test')) aiRequests.push(request.url());
+  });
   await page.goto('/');
   await page.locator('#aiFab').click();
   await expect(page.locator('#aiPanel')).toBeVisible();
   await page.locator('#aiQuestion').fill('Explain risk per share');
+  await page.locator('#askAiNow').click();
+  await expect(page.locator('#aiStatus')).toContainText('Prompt prepared locally');
+  expect(aiRequests).toHaveLength(0);
   await page.locator('#clearPrompt').click();
   await expect(page.locator('#aiStatus')).toContainText('Question cleared');
   await page.locator('#aiClose').click();
@@ -177,19 +184,19 @@ test('Classroom exposes funding and credit links, utility controls and twelve-la
   await expect(page.locator('#classroomChartFrame')).toHaveAttribute('src', /live-chart-desk/);
 });
 
-test('AI Co-Pilot sends the selected teaching role to the secure analysis endpoint', async ({ page }) => {
-  let requestBody = null;
-  await page.route('**/functions/v1/rol-trading-ai', async route => {
-    requestBody = route.request().postDataJSON();
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'Professor mode test response', model: 'test-model' }) });
+test('Live Desk cloud AI is paused and local Atlas guide remains available', async ({ page }) => {
+  const aiRequests = [];
+  page.on('request', request => {
+    if (request.url().includes('/functions/v1/rol-trading-ai') || request.url().includes('/functions/v1/rol-trading-claude-test')) aiRequests.push(request.url());
   });
   await page.goto('/live-chart-desk/?embed=classroom');
-  await page.locator('#rolSidekickMode').selectOption('professor');
-  await page.locator('#rolTradeAiQuestion').fill('Explain EMA 20 and VWAP.');
-  await page.locator('#rolTradeAiForm button[type="submit"]').click();
-  await expect(page.locator('#rolTradeAiAnswer')).toContainText('Professor mode test response');
-  expect(requestBody.sidekickMode).toBe('professor');
-  expect(JSON.parse(requestBody.context).sidekickMode).toBe('professor');
+  await expect(page.locator('#rolTradeAiStatus')).toContainText('Cloud AI paused');
+  await expect(page.locator('#rolTradeAiAnswer')).toContainText('Cloud AI is paused');
+  await expect(page.locator('#rolTradeAiForm button[type="submit"]')).toBeDisabled();
+  await expect(page.locator('[data-translate-target]').first()).toBeDisabled();
+  const localGuideAvailable = await page.evaluate(() => typeof window.ROLyfeAtlasLocal?.respond === 'function');
+  expect(localGuideAvailable).toBe(true);
+  expect(aiRequests).toHaveLength(0);
 });
 
 test('Live Desk has additional discovery and futures lists, same-chart scanner, Stock and Option Ladders', async ({ page }) => {

@@ -1,13 +1,9 @@
 (() => {
   "use strict";
-  const API = "https://ykmdyfbklvuoseqdjnxy.supabase.co/functions/v1/rol-trading-ai";
   const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbWR5ZmJrbHZ1b3NlcWRqbnh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3ODk5OTQsImV4cCI6MjEwODM2NTk5NH0._YEZj2GSnPcLGXmwgj98V_JzXdJIhTmOFoAH9BSia2I";
   const $ = id => document.getElementById(id);
-  async function aiRequest(payload) {
-    const selectedLanguage=window.ROLyfeLanguage?.name||localStorage.getItem("rolyfe-ui-language")||"English";
-    const requestPayload={...payload,language:payload.language||selectedLanguage};
-    const response = await fetch(API, {method:"POST",headers:{apikey:ANON,Authorization:"Bearer "+ANON,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(requestPayload),cache:"no-store"});
-    const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || "AI service request failed."); return data;
+  async function aiRequest(_payload) {
+    throw new Error("Cloud AI is paused in this classroom preview. Use the prompt builder to prepare and copy your question; the Live Desk's local Atlas guide remains available for chart education.");
   }
 
   const statusUrl="https://ykmdyfbklvuoseqdjnxy.supabase.co/functions/v1/market-data-status";
@@ -15,7 +11,7 @@
     const s=data.secrets||{};
     if(s.massiveConfigured===false&&$("optionChainStatus"))$("optionChainStatus").textContent="Massive key is not present in this Supabase project yet. Add ROLYFE_RTIC_MARKET_INTELLIGENCE under Supabase → Edge Functions → Secrets. A GitHub Actions secret is not automatically available to Supabase.";
     else if(s.massiveConfigured===true&&$("optionChainStatus"))$("optionChainStatus").textContent="Massive key detected in Supabase secrets. Provider plan access and actual quote timestamps will be checked when you load a chain.";
-    if(s.tradingAiConfigured===false){if($("rolTradeAiStatus"))$("rolTradeAiStatus").textContent="Trading AI key is not detected. Add OPENAI_API_KEY in Supabase Edge Function Secrets to enable analysis and translation.";if($("rolTranslateStatus"))$("rolTranslateStatus").textContent="Translation service needs OPENAI_API_KEY in Supabase Edge Function Secrets.";}
+    if($("rolTradeAiStatus"))$("rolTradeAiStatus").textContent="Cloud AI paused · prepare and copy prompts locally; no AI request is sent.";if($("rolTranslateStatus"))$("rolTranslateStatus").textContent="Cloud translation paused · use your preferred translation tool.";
   }).catch(()=>{});
   const palette={blue:{accent:"#70a7ff",soft:"rgba(112,167,255,.13)",bg:"#07101d",panel:"#0d1929",panel2:"#112137",line:"#24364d",glow:"#16375a"},green:{accent:"#65d6a0",soft:"rgba(101,214,160,.13)",bg:"#061711",panel:"#0b2118",panel2:"#103023",line:"#28503d",glow:"#174b34"},amber:{accent:"#e8bd68",soft:"rgba(232,189,104,.14)",bg:"#181307",panel:"#211a0c",panel2:"#312510",line:"#5b4720",glow:"#695019"},violet:{accent:"#b59aff",soft:"rgba(181,154,255,.14)",bg:"#100b1c",panel:"#1a142b",panel2:"#251b3b",line:"#47375e",glow:"#3b2b64"},crimson:{accent:"#ef7187",soft:"rgba(239,113,135,.14)",bg:"#1b090d",panel:"#261117",panel2:"#371720",line:"#66303c",glow:"#612338"}};
   let stored="blue";try{stored=localStorage.getItem("rolyfe-classroom-accent")||"blue"}catch(_){}if(stored==="teal")stored="crimson";
@@ -30,7 +26,12 @@
   const selectedLanguage=$("rolTranslateLanguageSelect"),translateSelected=$("rolTranslateSelected");
   translateSelected?.addEventListener("click",async()=>{const text=translatorInput?.value.trim(),language=selectedLanguage?.value||"English";if(!text){if(translatorStatus)translatorStatus.textContent="Enter text to translate first.";translatorInput?.focus();return;}translateSelected.disabled=true;if(translatorStatus)translatorStatus.textContent="Translating into "+language+"…";try{const result=await aiRequest({action:"translate",language,text});if(translatorOutput)translatorOutput.textContent=result.answer;if(translatorStatus)translatorStatus.textContent="Translated into "+language+" · "+result.model;}catch(error){if(translatorStatus)translatorStatus.textContent=error.message;}finally{translateSelected.disabled=false;}});
   const ask=$("askAiNow"),question=$("aiQuestion"),answer=$("aiAnswer"),status=$("aiStatus");
-  if(ask)ask.addEventListener("click",async()=>{const q=question?.value.trim();if(!q){if(status)status.textContent="Enter a question first.";question?.focus();return;}ask.disabled=true;if(status)status.textContent="RO’Lyfe AI is analyzing the question…";try{const result=await aiRequest({action:"analyze",question:q,context:JSON.stringify({page:"Trading Intelligence Classroom",note:"No live market quote is attached to this classroom-level question. The Live Desk sends its own quote/chart context."})});if(answer)answer.textContent=result.answer;if(typeof window.ROLyfeSpeak==="function")window.ROLyfeSpeak(result.answer);if(status)status.textContent="Analysis ready · "+result.model}catch(error){if(status)status.textContent=error.message}finally{ask.disabled=false}});
+  if(ask)ask.addEventListener("click",async()=>{
+    const q=question?.value.trim();
+    if(!q){if(status)status.textContent="Enter a question first.";question?.focus();return;}
+    if(answer)answer.textContent=q;
+    if(status)status.textContent="Prompt prepared locally. Use Copy question to paste it into your preferred AI assistant.";
+  });
   const tradeForm=$("rolTradeAiForm");
   if(tradeForm)tradeForm.addEventListener("submit",async e=>{e.preventDefault();const q=$("rolTradeAiQuestion")?.value.trim(),status=$("rolTradeAiStatus"),out=$("rolTradeAiAnswer"),btn=tradeForm.querySelector("button[type=submit]");if(!q){if(status)status.textContent="Enter a question or choose a prompt.";return;}const ctx=typeof window.ROLyfeTradeContext==="function"?window.ROLyfeTradeContext():{note:"No verified live market context supplied."};ctx.analysisPreference=$("rolTradeAiMode")?.value||"auto";ctx.sidekickMode=$("rolSidekickMode")?.value||"coach";if(btn)btn.disabled=true;if(status)status.textContent="Analyzing selected symbol, quote status and calculated plan…";try{const result=await aiRequest({action:"analyze",question:q,context:JSON.stringify(ctx),sidekickMode:ctx.sidekickMode});if(out)out.textContent=result.answer;if(typeof window.ROLyfeSpeak==="function")window.ROLyfeSpeak(result.answer);if(status)status.textContent="Analysis ready · "+result.model+" · Check data timestamps before acting."}catch(error){if(status)status.textContent=error.message}finally{if(btn)btn.disabled=false}});
   document.querySelectorAll("[data-ai-prompt]").forEach(b=>b.addEventListener("click",()=>{const target=$("rolTradeAiQuestion")||question;if(target){target.value=b.dataset.aiPrompt;target.focus()}}));
