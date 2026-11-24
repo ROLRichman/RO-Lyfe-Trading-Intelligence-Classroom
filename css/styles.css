@@ -169,6 +169,6 @@ html[data-rol-theme] .ai-chips button {
     border-bottom:1px solid #2b4058;flex-direction:column;gap:0;
     max-height:calc(100dvh - 66px);overflow:auto;
   }
-  #mainNav.open{display:flex}
+  #mainNav.open{display:flex;z-index:60}
   #mainNav>a{padding:12px 0;font-size:13px;border-bottom:1px solid #172b40}
 }
