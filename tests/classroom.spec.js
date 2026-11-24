@@ -177,19 +177,21 @@ test('Classroom exposes funding and credit links, utility controls and five-lang
   await expect(page.locator('#classroomChartFrame')).toHaveAttribute('src', /live-chart-desk/);
 });
 
-test('AI Co-Pilot sends the selected teaching role to the secure analysis endpoint', async ({ page }) => {
-  let requestBody = null;
+test('Cloud AI is paused and the offline Atlas guide answers without a provider request', async ({ page }) => {
+  let cloudRequest = false;
   await page.route('**/functions/v1/rol-trading-ai', async route => {
-    requestBody = route.request().postDataJSON();
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'Professor mode test response', model: 'test-model' }) });
+    cloudRequest = true;
+    await route.fulfill({ status: 500, body: 'Cloud AI must remain disabled in this build.' });
   });
   await page.goto('/live-chart-desk/?embed=classroom');
-  await page.locator('#rolSidekickMode').selectOption('professor');
-  await page.locator('#rolTradeAiQuestion').fill('Explain EMA 20 and VWAP.');
-  await page.locator('#rolTradeAiForm button[type="submit"]').click();
-  await expect(page.locator('#rolTradeAiAnswer')).toContainText('Professor mode test response');
-  expect(requestBody.sidekickMode).toBe('professor');
-  expect(JSON.parse(requestBody.context).sidekickMode).toBe('professor');
+  await expect(page.getByText('Cloud AI · Coming Soon')).toBeVisible();
+  await expect(page.locator('#rolAtlasLaunch')).toBeVisible();
+  await page.locator('#rolAtlasLaunch').click();
+  await expect(page.locator('#rolAtlasPanel')).toBeVisible();
+  await page.locator('#rolAtlasQuestion').fill('Explain EMA 20 and VWAP.');
+  await page.locator('#rolAtlasAsk').click();
+  await expect(page.locator('#rolAtlasAnswer')).toContainText('ATLAS · LOCAL DESK GUIDE');
+  expect(cloudRequest).toBe(false);
 });
 
 test('Live Desk has additional discovery and futures lists, same-chart scanner, Stock and Option Ladders', async ({ page }) => {
@@ -364,5 +366,11 @@ test('Personal Trading Desk shows coach reference positions, imports momentum ti
   await expect(page.locator('#rolMomentumImportStatus')).toContainText('3 ticker(s) imported');
   await expect(page.locator('#rolAtlasLaunch')).toBeVisible();
   await expect(page.locator('#rolAtlasPanel')).toBeHidden();
+  await expect(page.locator('[data-rol-futures-bias]')).toBeVisible();
+  await expect(page.locator('.rol-futures-bias h2')).toHaveText('Multi-Timeframe Futures Bias');
+  await page.locator('#rolAtlasLaunch').click();
+  await page.locator('#rolAtlasQuestion').fill('How should I review my stop risk?');
+  await page.locator('#rolAtlasAsk').click();
+  await expect(page.locator('#rolAtlasAnswer')).toContainText('ATLAS · LOCAL DESK GUIDE');
   expect(pageErrors).toEqual([]);
 });
