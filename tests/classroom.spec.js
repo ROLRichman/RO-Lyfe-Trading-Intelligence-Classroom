@@ -118,11 +118,18 @@ test('journal saves locally, survives reload, deletes entries and exports JSON',
   await expect(page.locator('#journalEntries')).not.toContainText('AAPL practice');
 });
 
-test('AI helper is clearly a prompt builder and opens/closes', async ({ page }) => {
+test('AI helper is a local prompt builder and sends no cloud AI requests', async ({ page }) => {
+  const aiRequests = [];
+  page.on('request', request => {
+    if (request.url().includes('/functions/v1/rol-trading-ai') || request.url().includes('/functions/v1/rol-trading-claude-test')) aiRequests.push(request.url());
+  });
   await page.goto('/');
   await page.locator('#aiFab').click();
   await expect(page.locator('#aiPanel')).toBeVisible();
   await page.locator('#aiQuestion').fill('Explain risk per share');
+  await page.locator('#askAiNow').click();
+  await expect(page.locator('#aiStatus')).toContainText('Prompt prepared locally');
+  expect(aiRequests).toHaveLength(0);
   await page.locator('#clearPrompt').click();
   await expect(page.locator('#aiStatus')).toContainText('Question cleared');
   await page.locator('#aiClose').click();
