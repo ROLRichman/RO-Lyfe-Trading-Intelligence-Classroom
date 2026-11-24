@@ -180,12 +180,13 @@ test('Classroom exposes funding and credit links, utility controls and twelve-la
 test('Live Desk cloud AI is paused and local Atlas guide remains available', async ({ page }) => {
   const aiRequests = [];
   page.on('request', request => {
-    if (request.url().includes('/functions/v1/rol-trading-ai')) aiRequests.push(request.url());
+    if (request.url().includes('/functions/v1/rol-trading-ai') || request.url().includes('/functions/v1/rol-trading-claude-test')) aiRequests.push(request.url());
   });
   await page.goto('/live-chart-desk/?embed=classroom');
   await expect(page.locator('#rolTradeAiStatus')).toContainText('Cloud AI is paused');
   await expect(page.locator('#rolTradeAiAnswer')).toContainText('Cloud AI is paused');
   await expect(page.locator('#rolTradeAiForm button[type="submit"]')).toBeDisabled();
+  await expect(page.locator('[data-translate-target]').first()).toBeDisabled();
   const localGuideAvailable = await page.evaluate(() => typeof window.ROLyfeAtlasLocal?.respond === 'function');
   expect(localGuideAvailable).toBe(true);
   expect(aiRequests).toHaveLength(0);
