@@ -190,7 +190,7 @@ test('Live Desk cloud AI is paused and local Atlas guide remains available', asy
     if (request.url().includes('/functions/v1/rol-trading-ai') || request.url().includes('/functions/v1/rol-trading-claude-test')) aiRequests.push(request.url());
   });
   await page.goto('/live-chart-desk/?embed=classroom');
-  await expect(page.locator('#rolTradeAiStatus')).toContainText('Cloud AI is paused');
+  await expect(page.locator('#rolTradeAiStatus')).toContainText('Cloud AI paused');
   await expect(page.locator('#rolTradeAiAnswer')).toContainText('Cloud AI is paused');
   await expect(page.locator('#rolTradeAiForm button[type="submit"]')).toBeDisabled();
   await expect(page.locator('[data-translate-target]').first()).toBeDisabled();
