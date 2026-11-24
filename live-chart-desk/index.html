@@ -130,13 +130,15 @@
 </section>
 
 <div class="personal-atlas" id="rolPersonalAtlas">
-  <button type="button" class="personal-atlas-launch" id="rolAtlasLaunch" aria-expanded="false" aria-controls="rolAtlasPanel"><span class="personal-atlas-orb">A</span><span>Atlas · AI</span><i>⌃</i></button>
+  <button type="button" class="personal-atlas-launch" id="rolAtlasLaunch" aria-expanded="false" aria-controls="rolAtlasPanel"><span class="personal-atlas-orb">A</span><span>Atlas · LOCAL</span><i>⌃</i></button>
   <section class="personal-atlas-panel" id="rolAtlasPanel" hidden>
-    <div class="personal-atlas-head"><div><strong>Atlas</strong><small>RO’Lyfe Trading Guide · analysis only</small></div><button type="button" id="rolAtlasClose" aria-label="Close Atlas">×</button></div>
+    <div class="personal-atlas-head"><div><strong>Atlas</strong><small>Offline trading guide · no API key required</small></div><button type="button" id="rolAtlasClose" aria-label="Close Atlas">×</button></div>
     <div class="personal-atlas-shortcuts"><button type="button" data-atlas-prompt="Explain the selected chart posture and what would invalidate the setup.">Read chart</button><button type="button" data-atlas-prompt="Explain the risk, stop loss, target and position size for the current paper execution ticket.">Explain execution</button><button type="button" data-atlas-prompt="Explain bullish, bearish and neutral signals in plain language.">Explain labels</button></div>
     <label class="sr-only" for="rolAtlasQuestion">Ask Atlas a question</label>
     <textarea id="rolAtlasQuestion" rows="3" maxlength="2400" placeholder="Ask Atlas about the chart, scanner, risk or execution…"></textarea>
     <div class="personal-atlas-actions"><button type="button" id="rolAtlasAsk">Ask Atlas</button><button type="button" id="rolAtlasSpeak">Read aloud</button><button type="button" id="rolAtlasStop">Stop</button></div>
+    <a class="personal-jotform-agent" href="https://agent.jotform.com/019bdd1fe57172838101dccf3612b1e9e787" target="_blank" rel="noopener noreferrer">Open Jotform Agent ↗</a>
+    <p class="personal-muted">The existing agent share link opens in a new tab. Its published embed snippet is still needed for a true in-panel Jotform widget.</p>
     <p id="rolAtlasStatus" aria-live="polite">Atlas can explain the supplied data. It does not place trades.</p>
     <div id="rolAtlasAnswer" aria-live="polite">Your chart and paper-ticket explanations will appear here.</div>
   </section>
@@ -257,20 +259,12 @@
   <div class="option-bracket-box"><h3>Bracket checklist</h3><p id="optionBracketText">Long Call plan for AAPL · entry $1.25 · protective stop $0.85 · laddered limit exits at 1R, 2R, 3R and 4R runner.</p><p class="option-small">Manual planning only. This tool does not fetch a live option chain or send orders to a broker. Confirm the contract, spread, liquidity, expiration, and order type yourself. Standard contract math assumes 100 shares; adjusted contracts may differ. Stop fills can slip, so actual losses can exceed the estimate.</p></div>
 </section>
 <section class="rol-live-ai" id="rol-trading-ai">
-  <div class="option-ladder-head"><div><p class="eyebrow">RO’LYFE INTELLIGENCE AGENT</p><h2>AI Trade Analysis &amp; What-If</h2><p class="option-sub">Ask about the selected symbol, chart, trade calculations or option choice. AI uses only supplied provider data and calculator outputs.</p></div><span class="pill">ANALYSIS ONLY</span></div>
-  <div class="ai-choice-row"><label for="rolSidekickMode">RO’Lyfe AI Co-Pilot role</label><select id="rolSidekickMode"><option value="coach">Trading Coach · explain setup and risk</option><option value="analyst">Market Analyst · compare scenarios and confluence</option><option value="professor">Professor Mode · teach the why, step by step</option></select></div>
-  <div class="ai-choice-row"><label for="rolTradeAiMode">Analysis preference</label><select id="rolTradeAiMode"><option value="auto">Let AI compare stock, call and put scenarios</option><option value="stock">Analyze stock first</option><option value="call">I want to evaluate a CALL</option><option value="put">I want to evaluate a PUT</option><option value="compare">Compare calls vs puts</option></select></div>
-  <div class="ai-prompt-chips"><button type="button" data-ai-prompt="Explain the current chart posture, major indicator confluence and what would invalidate the setup.">Read chart</button><button type="button" data-ai-prompt="Compare conditional buy limit, buy stop, sell limit and sell stop scenarios. Explain their triggers and risks.">Compare order types</button><button type="button" data-ai-prompt="Review the Stock Ladder math, position sizing, stop distance and 1R, 2R and 3R targets.">Check stock risk</button><button type="button" data-ai-prompt="Evaluate the selected option contract's ITM, ATM or OTM status, premium spread, liquidity, IV and Greeks. Identify missing data.">Review option premium</button></div>
-  <form id="rolTradeAiForm"><label for="rolTradeAiQuestion">Ask the trading agent</label><textarea id="rolTradeAiQuestion" rows="3" maxlength="2400" placeholder="Example: If I risk $75 with a $2.10 stop distance, how many shares fit? Explain a buy-stop vs buy-limit plan…"></textarea><button type="submit" class="action-accent">Analyze Selected Setup</button></form>
-  <p id="rolTradeAiStatus" class="chain-status" aria-live="polite">AI analysis does not submit, modify or cancel orders. Review every quote, assumption and calculated value.</p>
-  <div id="rolTradeAiAnswer" class="rol-live-ai-answer" aria-live="polite">AI analysis will appear here after the first question.</div>
+  <div class="option-ladder-head"><div><p class="eyebrow">RO’LYFE INTELLIGENCE AGENT</p><h2>Cloud AI · Coming Soon</h2><p class="option-sub">OpenAI and Claude calls are paused while the trading workspace uses the offline Atlas Local Guide and the Jotform agent. Market data, indicators and risk calculations remain separate from AI.</p></div><span class="pill">CLOUD AI PAUSED</span></div>
+  <p class="chain-status">Use the floating Atlas · LOCAL panel for immediate, offline explanations. The Jotform agent is available from that panel; its verified embed code is needed before it can run inside this page.</p>
 </section>
 <section class="rol-live-translator" id="translator">
-  <p class="eyebrow">CLASSROOM ACCESSIBILITY</p><h2>Five-Language Translator</h2>
-  <p class="option-sub">Translate any lesson, note or trade explanation. Tickers and numeric values remain intact.</p>
-  <label for="rolTranslateInput">Text to translate</label><textarea id="rolTranslateInput" rows="3" maxlength="4000" placeholder="Paste text to translate…"></textarea>
-  <div class="rol-language-buttons"><button type="button" data-translate-target="English" class="lang-en">English</button><button type="button" data-translate-target="Spanish" class="lang-es">Español</button><button type="button" data-translate-target="French" class="lang-fr">Français</button><button type="button" data-translate-target="Haitian Creole" class="lang-ht">Kreyòl Ayisyen</button><button type="button" data-translate-target="Portuguese" class="lang-pt">Português</button></div>
-  <p id="rolTranslateStatus" class="chain-status" aria-live="polite">Select a language to translate your text.</p><div id="rolTranslateResult" class="rol-live-ai-answer">Translation will appear here.</div>
+  <p class="eyebrow">CLASSROOM ACCESSIBILITY</p><h2>Cloud Translation · Coming Soon</h2>
+  <p class="option-sub">Cloud translation is temporarily paused with the OpenAI/Claude integrations. The local Atlas guide currently responds in English; your page themes and trading tools remain available.</p>
 </section>
 <section class="rol-media-hub-shell" id="rol-media-hub"><div class="option-ladder-head"><div><p class="eyebrow">RO’LYFE INTELLIGENCE MEDIA HUB™</p><h2>Watch · Listen · Learn · Discover</h2><p class="option-sub">Market coverage, news, property intelligence, weather, trading education and RO’Lyfe Sports — inside the Live Desk.</p></div><span class="pill">2 OPEN PLAYERS</span></div><iframe id="rolMediaHubFrame" class="rol-media-hub-frame" title="RO’Lyfe Intelligence Media Hub and embedded Sports Center" src="media-hub.html" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></section>
 <div class="chart-foot"><span>Chart powered by Tickerbot OHLCV + Lightweight Charts</span><span>Not an order-entry or brokerage connection</span></div>
