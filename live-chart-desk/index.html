@@ -181,4 +181,6 @@
 <script>
 (()=>{const p=document.getElementById("tradingViewNewsPanel");if(!p)return;let loaded=false;const load=()=>{if(loaded)return;const c=p.querySelector(".tv-news-widget-config"),host=p.querySelector(".tv-news-widget");if(!c||!host)return;let cfg;try{cfg=JSON.parse(c.textContent||"{}");cfg.colorTheme="dark";cfg.isTransparent=false}catch(_){return}const s=document.createElement("script");s.src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js";s.async=true;s.textContent=JSON.stringify(cfg);host.appendChild(s);loaded=true};if(p.open)load();p.addEventListener("toggle",()=>{if(p.open)load()})})();
 </script>
+
+<script src="https://rolrichman.github.io/rolyfe-emg/mister-l-launcher.js?v=1" defer></script>
 </body></html>
